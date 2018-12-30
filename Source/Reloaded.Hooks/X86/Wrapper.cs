@@ -80,7 +80,7 @@ namespace Reloaded.Hooks.X86
             // Write function to buffer and return pointer.
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            return wrapperBuffer.Add(ref assembledMnemonics);
+            return wrapperBuffer.Add(assembledMnemonics);
         }
 
         /// <summary>
