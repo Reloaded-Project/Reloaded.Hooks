@@ -1,24 +1,4 @@
-﻿/*
-    [Reloaded] Mod Loader Common Library (libReloaded)
-    The main library acting as common, shared code between the Reloaded Mod 
-    Loader Launcher, Mods as well as plugins.
-    Copyright (C) 2018  Sewer. Sz (Sewer56)
-
-    [Reloaded] is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    [Reloaded] is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>
-*/
-
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
@@ -166,8 +146,9 @@ namespace Reloaded.Hooks.X86
                                     $"Please mark the {typeof(TFunction).Name} with an appropriate ReloadedFunctionAttribute");
         }
 
-        /* Override Equals & GetHashCode */
+        /* Override Equals & GetHashCode: ReSharper Generated */
 
+        [ExcludeFromCodeCoverage]
         public override bool Equals(Object obj)
         {
             FunctionAttribute functionAttribute = obj as FunctionAttribute;
@@ -180,6 +161,7 @@ namespace Reloaded.Hooks.X86
                    functionAttribute.SourceRegisters.SequenceEqual(SourceRegisters);
         }
 
+        [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
             int initialHash = 13;

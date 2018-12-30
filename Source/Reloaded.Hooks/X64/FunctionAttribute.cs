@@ -128,8 +128,9 @@ namespace Reloaded.Hooks.X64
                                     $"Please mark the {typeof(TFunction).Name} with an appropriate ReloadedFunctionAttribute");
         }
 
-        /* Override Equals & GetHashCode */
+        /* Override Equals & GetHashCode: ReSharper Generated */
 
+        [ExcludeFromCodeCoverage]
         public override bool Equals(Object obj)
         {
             FunctionAttribute functionAttribute = obj as FunctionAttribute;
@@ -141,6 +142,7 @@ namespace Reloaded.Hooks.X64
                    functionAttribute.SourceRegisters.SequenceEqual(SourceRegisters);
         }
         
+        [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
             int initialHash = 13;
