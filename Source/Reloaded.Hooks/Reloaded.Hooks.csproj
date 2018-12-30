@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;NET47</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Authors>Sewer56</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://github.com/Reloaded-Project/Reloaded.Hooks/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</PackageProjectUrl>
+    <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Company />
+    <Description>Advanced x86 and x64 native. Welcome to the next level.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.2" />
+    <PackageReference Include="SharpDisasm" Version="1.1.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="HookException.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,3 @@
+cd /D "%~dp0"
+OpenCover\OpenCover.Console.exe -register:user -target:"XUnit\xunit.console.exe" -targetargs:"..\Source\Reloaded.Hooks.Tests.X64\bin\x64\Debug\net472\Reloaded.Hooks.Tests.X64.dll -noshadow" -output:".\Coverage.xml" -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*"
+OpenCover\OpenCover.Console.exe -register:user -target:"XUnit\xunit.console.x86.exe" -targetargs:"..\Source\Reloaded.Hooks.Tests.X86\bin\x86\Debug\net472\Reloaded.Hooks.Tests.X86.dll -noshadow" -output:".\Coverage.xml" -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*" -mergeoutput
