@@ -12,7 +12,8 @@
     <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Company />
-    <Description>Advanced x86 and x64 native. Welcome to the next level.</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
