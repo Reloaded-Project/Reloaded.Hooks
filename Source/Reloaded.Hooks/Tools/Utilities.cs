@@ -160,8 +160,8 @@ namespace Reloaded.Hooks.Tools
 
         public static MemoryBuffer FindOrCreateBufferInRange(int size, long minimumAddress = 1, long maximumAddress = int.MaxValue)
         {
-            var buffers = _bufferHelper.FindBuffers(IntPtr.Size, (IntPtr)minimumAddress, (IntPtr)maximumAddress);
-            return buffers.Length > 0 ? buffers[0] : _bufferHelper.CreateMemoryBuffer(IntPtr.Size, minimumAddress, maximumAddress);
+            var buffers = _bufferHelper.FindBuffers(size, (IntPtr)minimumAddress, (IntPtr)maximumAddress);
+            return buffers.Length > 0 ? buffers[0] : _bufferHelper.CreateMemoryBuffer(size, minimumAddress, maximumAddress);
         }
 
         /*
