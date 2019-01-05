@@ -14,7 +14,7 @@
     <Company />
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Reloaded.Assembler" Version="1.0.2" />
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.4" />
     <PackageReference Include="SharpDisasm" Version="1.1.11" />
   </ItemGroup>
 
