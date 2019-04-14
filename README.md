@@ -40,7 +40,7 @@ As advanced as the library may sound, in reality using the library is super simp
 The following links below should help you get started with the library:
 
 + [Explain Hooking: What do you use this library for](https://github.com/Reloaded-Project/Reloaded.Hooks/issues/1)
-+ [Getting Started](https://github.com/Reloaded-Project/Reloaded.Hooks/blob/master/Docs/Getting-Started.md)
++ [Getting Started](Docs/Getting-Started.md)
 
 In addition, feel free to look through `Reloaded.Hooks.Tests` for some ideas 😉.
 
