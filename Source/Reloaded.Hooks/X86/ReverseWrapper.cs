@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 
 namespace Reloaded.Hooks.X86
@@ -58,11 +59,14 @@ namespace Reloaded.Hooks.X86
 
         private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, IntPtr functionPtr)
         {
+            Mutex.MakeReverseWrapperMutex.WaitOne();
             var reloadedFunctionAttribute = FunctionAttribute.GetAttribute<TFunction>();
 
             // CDECL is hot path, as our TFunction will already be CDECL, we marshal if it's anything else.
             if (! reloadedFunctionAttribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
                 reverseFunctionWrapper.WrapperPointer = Create(functionPtr, reloadedFunctionAttribute);
+
+            Mutex.MakeReverseWrapperMutex.ReleaseMutex();
         }
         
         private static IntPtr Create(IntPtr functionAddress, FunctionAttribute fromFunction)

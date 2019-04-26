@@ -1,11 +1,14 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Memory.Sources;
 using SharpDisasm;
 using static Reloaded.Memory.Sources.Memory;
+using Mutex = Reloaded.Hooks.Internal.Mutex;
 
 namespace Reloaded.Hooks.X64
 {
@@ -64,6 +67,8 @@ namespace Reloaded.Hooks.X64
 
         private static void Create(Hook<TFunction> hook, ReverseWrapper<TFunction> reverseWrapper, long functionAddress, int minHookLength = -1)
         {
+            Mutex.MakeHookMutex.WaitOne();
+
             /* Create Convention => CDECL Wrapper. */
             List<byte> jumpOpcodes = Utilities.AssembleAbsoluteJump(reverseWrapper.WrapperPointer, true).ToList();
 
@@ -101,6 +106,8 @@ namespace Reloaded.Hooks.X64
             hook.ReverseWrapper    = reverseWrapper;
             hook._otherHookPatches = functionPatch.Patches;
             hook._hookPatch        = new Patch((IntPtr)functionAddress, jumpOpcodes.ToArray());
+
+            Mutex.MakeHookMutex.ReleaseMutex();
         }
 
         /// <summary>

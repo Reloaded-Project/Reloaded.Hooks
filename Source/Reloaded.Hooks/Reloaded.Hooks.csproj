@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Reloaded.Assembler" Version="1.0.4" />
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.5" />
     <PackageReference Include="SharpDisasm" Version="1.1.11" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 
 namespace Reloaded.Hooks.X64
@@ -38,6 +39,8 @@ namespace Reloaded.Hooks.X64
         /// <returns>Address of the wrapper in memory you can call .</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, FunctionAttribute fromConvention, FunctionAttribute toConvention)
         {
+            Mutex.MakeWrapperMutex.WaitOne();
+
             // Retrieve number of parameters.
             int numberOfParameters    = Utilities.GetNumberofParametersWithoutFloats(typeof(TFunction));
             List<string> assemblyCode = new List<string> {"use64"};
@@ -91,6 +94,8 @@ namespace Reloaded.Hooks.X64
             // Write function to buffer and return pointer.
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length, 1, long.MaxValue);
+
+            Mutex.MakeWrapperMutex.ReleaseMutex();
             return wrapperBuffer.Add(assembledMnemonics);
         }
 

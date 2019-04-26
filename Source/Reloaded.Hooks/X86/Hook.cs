@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Reloaded.Hooks.Internal;
@@ -76,6 +76,9 @@ namespace Reloaded.Hooks.X86
                     B2. Assign OriginalFunction to that function stub.
             */
 
+
+            Mutex.MakeHookMutex.WaitOne();
+
             /* Create Convention => CDECL Wrapper. */
             List<byte> jumpOpcodes  = Utilities.AssembleAbsoluteJump(reverseWrapper.WrapperPointer, false).ToList();
             
@@ -114,6 +117,8 @@ namespace Reloaded.Hooks.X86
             hook.ReverseWrapper    = reverseWrapper;
             hook._otherHookPatches = functionPatch.Patches;
             hook._hookPatch        = new Patch((IntPtr) functionAddress, jumpOpcodes.ToArray());
+
+            Mutex.MakeHookMutex.ReleaseMutex();
         }
 
         /// <summary>

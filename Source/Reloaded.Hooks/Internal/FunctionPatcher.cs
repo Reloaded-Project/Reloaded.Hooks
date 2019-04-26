@@ -74,6 +74,8 @@ namespace Reloaded.Hooks.Internal
                         jmp [0x123456]
              */
 
+            Mutex.FunctionPatcherMutex.WaitOne();
+
             FunctionPatch functionPatch = new FunctionPatch();
             long reloadedHookEndAddress = oldFunction.Count + (long)baseAddress; // End of our own hook.
 
@@ -101,6 +103,7 @@ namespace Reloaded.Hooks.Internal
                 PatchReturnAddresses(jumpDetails, functionPatch, reloadedHookEndAddress);
             }
 
+            Mutex.FunctionPatcherMutex.ReleaseMutex();
             return functionPatch;
         }
 
