@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Reloaded.Hooks.Internal;
@@ -15,6 +15,17 @@ namespace Reloaded.Hooks.X64
     /// </summary>
     public class Hook<TFunction> : IHook<TFunction>
     {
+        /// <summary>
+        /// Returns true if the hook is enabled and currently functional, else false.
+        /// </summary>
+        public bool IsHookEnabled { get; private set; } = false;
+
+        /// <summary>
+        /// Returns true if the hook has been activated.
+        /// The hook may only be activated once.
+        /// </summary>
+        public bool IsHookActivated { get; private set; } = false;
+
         /// <summary>
         /// Allows you to call the original function that was hooked.
         /// </summary>
@@ -35,6 +46,9 @@ namespace Reloaded.Hooks.X64
 
         private Patch       _hookPatch;
         private List<Patch> _otherHookPatches;
+
+        private Patch _disableHookPatch;
+        private Patch _enableHookPatch;
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -90,7 +104,7 @@ namespace Reloaded.Hooks.X64
         }
 
         /// <summary>
-        /// Activates our hook.
+        /// Performs a one time activation of the hook, making the necessary memory writes to permanently commit the hook.
         /// </summary>
         /// <remarks>
         ///     This function should be called after instantiation as soon as possible,
@@ -105,12 +119,48 @@ namespace Reloaded.Hooks.X64
         /// </remarks>
         public IHook<TFunction> Activate()
         {
+            /* Create enable/disable patch. */
+            var disableOpCodes = Utilities.AssembleAbsoluteJump(OriginalFunctionAddress, true);
+            CurrentProcess.SafeReadRaw(ReverseWrapper.WrapperPointer, out var originalOpcodes, disableOpCodes.Length);
+            _disableHookPatch = new Patch(ReverseWrapper.WrapperPointer, disableOpCodes);
+            _enableHookPatch = new Patch(ReverseWrapper.WrapperPointer, originalOpcodes);
+
+            /* Activate the hook. */
             _hookPatch.Apply();
 
             foreach (var hookPatch in _otherHookPatches)
                 hookPatch.Apply();
 
+            /* Set flags. */
+            IsHookEnabled = true;
+            IsHookActivated = true;
+
             return this;
+        }
+
+        /// <summary>
+        /// Temporarily disables the hook, causing all functions re-routed to your own function to be re-routed back to the original function instead.
+        /// </summary>
+        /// <remarks>This is implemented in such a fashion that the hook shall never touch C# code.</remarks>
+        public void Disable()
+        {
+            if (IsHookActivated)
+            {
+                _disableHookPatch.Apply();
+                IsHookEnabled = false;
+            }
+        }
+
+        /// <summary>
+        /// Re-enables the hook if it has been disabled, causing all functions to be once again re-routed to your own function.
+        /// </summary>
+        public void Enable()
+        {
+            if (IsHookActivated)
+            {
+                _enableHookPatch.Apply();
+                IsHookEnabled = true;
+            }
         }
 
         /// <summary>
