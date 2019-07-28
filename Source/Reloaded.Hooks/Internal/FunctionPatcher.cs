@@ -88,11 +88,11 @@ namespace Reloaded.Hooks.Internal
                 Instruction nextInstruction = (x + 1 < instructions.Length) ? instructions[x + 1] : null;
                 JumpDetails jumpDetails;
 
-                if      (IsRelativeJump(instruction))
+                if      (IsRelativeJump(instruction) && IsJumpTargetInDifferentModule((long) instruction.PC, GetRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRelativeJump(instruction, functionPatch);
-                else if (IsRIPRelativeJump(instruction))
+                else if (IsRIPRelativeJump(instruction) && IsJumpTargetInDifferentModule((long)instruction.PC, (long)GetRewriteRIPRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRIPRelativeJump(instruction, functionPatch);
-                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction))
+                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction) && IsJumpTargetInDifferentModule((long)instruction.PC, GetPushReturnTarget(instruction)) )
                     jumpDetails = RewritePushReturn(instruction, nextInstruction, functionPatch);
                 else
                 {
@@ -148,18 +148,25 @@ namespace Reloaded.Hooks.Internal
           ... and add the results to patch.NewFunction
         */
 
+        private long GetPushReturnTarget(Instruction pushInstruction) => GetOperandOffset(pushInstruction.Operands[0]);
+        private long GetRelativeJumpTarget(Instruction instruction) => (long)instruction.PC + GetOperandOffset(instruction.Operands[0]);
+        private IntPtr GetRewriteRIPRelativeJumpTarget(Instruction instruction)
+        {
+            IntPtr pointerAddress = (IntPtr)((long)instruction.PC + GetOperandOffset(instruction.Operands[0]));
+            CurrentProcess.Read(pointerAddress, out IntPtr targetAddress);
+            return targetAddress;
+        }
+
         private JumpDetails RewriteRelativeJump(Instruction instruction, FunctionPatch patch)
         {
-            long originalJmpTarget  = (long)instruction.PC + GetOperandOffset(instruction.Operands[0]);
+            long originalJmpTarget = GetRelativeJumpTarget(instruction);
             patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump((IntPtr) originalJmpTarget, Is64Bit()));
             return new JumpDetails((long) instruction.PC, originalJmpTarget);
         }
 
         private JumpDetails RewriteRIPRelativeJump(Instruction instruction, FunctionPatch patch)
         {
-            IntPtr pointerAddress = (IntPtr) ((long)instruction.PC + GetOperandOffset(instruction.Operands[0]));
-            CurrentProcess.Read(pointerAddress, out IntPtr targetAddress);
-
+            IntPtr targetAddress = GetRewriteRIPRelativeJumpTarget(instruction);
             patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(targetAddress, Is64Bit()));
             return new JumpDetails((long) instruction.PC, (long) targetAddress);
         }
@@ -167,7 +174,7 @@ namespace Reloaded.Hooks.Internal
         private JumpDetails RewritePushReturn(Instruction pushInstruction, Instruction retInstruction, FunctionPatch patch)
         {
             // Push does not support 64bit immediates. This makes our life considerably easier.
-            long originalJmpTarget = GetOperandOffset(pushInstruction.Operands[0]);
+            long originalJmpTarget = GetPushReturnTarget(pushInstruction);
             patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump((IntPtr)originalJmpTarget, Is64Bit()));
             return new JumpDetails((long) retInstruction.PC, originalJmpTarget);
         }
@@ -328,6 +335,19 @@ namespace Reloaded.Hooks.Internal
                    _architecture == ArchitectureMode.x86_64 &&
                    instruction.Operands.Length >= 1 &&
                    instruction.Operands[0].Base == ud_type.UD_R_RIP;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsJumpTargetInDifferentModule(long source, long target)
+        {
+            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            {
+                var range = new AddressRange((long) module.BaseAddress, (long) (module.BaseAddress + module.ModuleMemorySize));
+                if (range.Contains(source) && range.Contains(target))
+                    return false;
+            }
+
+            return true;
         }
 
         /* Other Utility Functions */
