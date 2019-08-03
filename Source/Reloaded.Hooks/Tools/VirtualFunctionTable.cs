@@ -93,9 +93,9 @@ namespace Reloaded.Hooks.Tools
         public TFunction CreateWrapperFunction<TFunction>(int index)
         {
             if (IntPtr.Size == 4)
-                return X86.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer);
+                return X86.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
             if (IntPtr.Size == 8)
-                return Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer);
+                return Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
 
             throw new Exception("Machine does not appear to be of a 32 or 64bit architecture.");
         }

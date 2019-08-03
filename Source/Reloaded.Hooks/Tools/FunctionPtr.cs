@@ -66,9 +66,9 @@ namespace Reloaded.Hooks.Tools
             }
 
             if (IntPtr.Size == 4)
-                _delegate = X86.Wrapper.Create<TDelegate>((long) functionPointer);
+                _delegate = X86.Wrapper.Create<TDelegate>((long) functionPointer, out var wrapperAddress);
             else
-                _delegate = X64.Wrapper.Create<TDelegate>((long)functionPointer);
+                _delegate = X64.Wrapper.Create<TDelegate>((long)functionPointer, out var wrapperAddress);
 
             _methodCache[functionPointer] = _delegate;
             _lastFunctionPointer = functionPointer;

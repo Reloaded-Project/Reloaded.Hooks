@@ -40,6 +40,12 @@ namespace Reloaded.Hooks.X64
         public IntPtr OriginalFunctionAddress { get; private set; }
 
         /// <summary>
+        /// The address of the wrapper used to call the <see cref="OriginalFunction"/>.
+        /// If the <see cref="OriginalFunction"/> is CDECL, this is equal to <see cref="OriginalFunctionAddress"/>.
+        /// </summary>
+        public IntPtr OriginalFunctionWrapperAddress { get; private set; }
+
+        /// <summary>
         /// The reverse function wrapper that allows us to call the C# function
         /// as if it were to be of another calling convention.
         /// </summary>
@@ -102,7 +108,9 @@ namespace Reloaded.Hooks.X64
 
             /* Create Hook instance. */
             hook.OriginalFunctionAddress = patchedFunctionAddress;
-            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)patchedFunctionAddress);
+            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)patchedFunctionAddress, out IntPtr originalFunctionWrapperAddress);
+            hook.OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
+
             hook.ReverseWrapper    = reverseWrapper;
             hook._otherHookPatches = functionPatch.Patches;
             hook._hookPatch        = new Patch((IntPtr)functionAddress, jumpOpcodes.ToArray());

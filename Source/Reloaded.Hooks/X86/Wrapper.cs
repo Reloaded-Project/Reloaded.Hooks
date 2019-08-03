@@ -21,14 +21,28 @@ namespace Reloaded.Hooks.X86
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         public static TFunction Create<TFunction>(long functionAddress)
         {
+            return Create<TFunction>(functionAddress, out var wrapperAddress);
+        }
+
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a CDECL function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function is CDECL, the wrapper address equals the function address.
+        /// </param>
+        public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
-            IntPtr wrapperFunctionPointer = (IntPtr)functionAddress;
+            wrapperAddress = (IntPtr)functionAddress;
 
             // Hot path: CDECL functions require no wrapping.
             if (! attribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
-                wrapperFunctionPointer = Create<TFunction>((IntPtr)functionAddress, attribute);
+                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute);
 
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperFunctionPointer);
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
         }
 
         /// <summary>

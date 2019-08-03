@@ -26,6 +26,12 @@ namespace Reloaded.Hooks
         IntPtr OriginalFunctionAddress { get; }
 
         /// <summary>
+        /// The address of the wrapper used to call the <see cref="OriginalFunction"/>.
+        /// If the <see cref="OriginalFunction"/> is CDECL, this is equal to <see cref="OriginalFunctionAddress"/>.
+        /// </summary>
+        IntPtr OriginalFunctionWrapperAddress { get; }
+
+        /// <summary>
         /// The reverse function wrapper that allows us to call the C# function
         /// as if it were to be of another calling convention.
         /// </summary>

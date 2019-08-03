@@ -20,14 +20,28 @@ namespace Reloaded.Hooks.X64
         /// <param name="functionAddress">Address of the function to wrap.</param>
         public static TFunction Create<TFunction>(long functionAddress)
         {
+            return Create<TFunction>(functionAddress, out var wrapperAddress);
+        }
+
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a Microsoft X64 calling convention function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to wrap.</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
+        /// </param>
+        public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
-            IntPtr wrapperFunctionPointer = (IntPtr)functionAddress;
+            wrapperAddress = (IntPtr)functionAddress;
 
             // Hot path: Microsoft X64 functions require no wrapping.
             if (!attribute.Equals(new FunctionAttribute(CallingConventions.Microsoft)))
-                wrapperFunctionPointer = Create<TFunction>((IntPtr)functionAddress, attribute, new FunctionAttribute(CallingConventions.Microsoft));
+                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, new FunctionAttribute(CallingConventions.Microsoft));
 
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperFunctionPointer);
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
         }
 
         /// <summary>
