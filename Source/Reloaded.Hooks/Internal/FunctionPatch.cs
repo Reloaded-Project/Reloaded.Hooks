@@ -8,8 +8,8 @@ namespace Reloaded.Hooks.Internal
     /// </summary>
     public class FunctionPatch
     {
-        public List<byte>  NewFunction;
-        public List<Patch> Patches;
+        public   List<byte>  NewFunction { get; private set; }
+        public   List<Patch> Patches;
 
         public FunctionPatch()
         {

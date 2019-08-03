@@ -96,19 +96,17 @@ namespace Reloaded.Hooks.X64
             CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, minHookLength);
 
             var functionPatcher = new FunctionPatcher(ArchitectureMode.x86_64);
-            var functionPatch = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
+            var functionPatch   = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
 
             IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
             functionPatch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(hookEndAddress, true));
 
-            /* Commit the original modified function to memory. */
-            byte[] patchedFunction = functionPatch.NewFunction.ToArray();
-            var buffer = Utilities.FindOrCreateBufferInRange(patchedFunction.Length, 1, long.MaxValue);
-            var patchedFunctionAddress = buffer.Add(patchedFunction);
+            /* Second wave of patching. */
+            var icedPatcher = new IcedPatcher(true, functionPatch.NewFunction.ToArray(), (IntPtr)functionAddress);
 
             /* Create Hook instance. */
-            hook.OriginalFunctionAddress = patchedFunctionAddress;
-            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)patchedFunctionAddress, out IntPtr originalFunctionWrapperAddress);
+            hook.OriginalFunctionAddress = icedPatcher.GetFunctionAddress();
+            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)icedPatcher.GetFunctionAddress(), out IntPtr originalFunctionWrapperAddress);
             hook.OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
 
             hook.ReverseWrapper    = reverseWrapper;

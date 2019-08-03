@@ -112,14 +112,12 @@ namespace Reloaded.Hooks.X86
             IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
             functionPatch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(hookEndAddress, false));
 
-            /* Commit the original modified function to memory. */
-            byte[] patchedFunction = functionPatch.NewFunction.ToArray();
-            var buffer = Utilities.FindOrCreateBufferInRange(patchedFunction.Length);
-            var patchedFunctionAddress = buffer.Add(patchedFunction);
+            /* Second wave of patching. */
+            var icedPatcher = new IcedPatcher(false, functionPatch.NewFunction.ToArray(), (IntPtr)functionAddress);
 
             /* Create Hook instance. */
-            hook.OriginalFunctionAddress = patchedFunctionAddress;
-            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)patchedFunctionAddress, out IntPtr originalFunctionWrapperAddress);
+            hook.OriginalFunctionAddress = icedPatcher.GetFunctionAddress();
+            hook.OriginalFunction  = Wrapper.Create<TFunction>((long)icedPatcher.GetFunctionAddress(), out IntPtr originalFunctionWrapperAddress);
             hook.OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
 
             hook.ReverseWrapper    = reverseWrapper;
