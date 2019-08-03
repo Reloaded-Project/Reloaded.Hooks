@@ -12,6 +12,7 @@ namespace Reloaded.Hooks.Tests.X86
         private Calculator.SubtractFunction _subtractFunction;
         private Calculator.DivideFunction _divideFunction;
         private Calculator.MultiplyFunction _multiplyFunction;
+        private Calculator.AddFunction _addWithBranchFunction;
 
         private IHook<Calculator.AddFunction>        _addHook01;
         private IHook<Calculator.SubtractFunction>   _subHook01;
@@ -23,6 +24,9 @@ namespace Reloaded.Hooks.Tests.X86
         private IHook<Calculator.DivideFunction>     _divideHook02;
         private IHook<Calculator.MultiplyFunction>   _multiplyHook02;
 
+        private IHook<Calculator.AddFunction> _addWithBranchHook01;
+        private IHook<Calculator.AddFunction> _addWithBranchHook02;
+
         public CalculatorDoubleHookTest()
         {
             _calculator = new Calculator();
@@ -30,6 +34,7 @@ namespace Reloaded.Hooks.Tests.X86
             _subtractFunction = Wrapper.Create<Calculator.SubtractFunction>((long)_calculator.Subtract);
             _divideFunction = Wrapper.Create<Calculator.DivideFunction>((long)_calculator.Divide);
             _multiplyFunction = Wrapper.Create<Calculator.MultiplyFunction>((long)_calculator.Multiply);
+            _addWithBranchFunction = Wrapper.Create<Calculator.AddFunction>((long)_calculator.AddWithBranch);
         }
 
         public void Dispose()
@@ -52,6 +57,29 @@ namespace Reloaded.Hooks.Tests.X86
                 {
                     int expected = ((x + y) + 1) + 1;
                     int result   = _addFunction(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+
+        [Fact]
+        public void TestHookAddWithBranch()
+        {
+            int Hookfunction01(int a, int b) { return _addWithBranchHook01.OriginalFunction(a, b) + 1; }
+            int Hookfunction02(int a, int b) { return _addWithBranchHook02.OriginalFunction(a, b) + 1; }
+
+            _addWithBranchHook01 = new Hook<Calculator.AddFunction>(Hookfunction01, (long)_calculator.AddWithBranch).Activate();
+            _addWithBranchHook02 = new Hook<Calculator.AddFunction>(Hookfunction02, (long)_calculator.AddWithBranch).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = ((x + y) + 1) + 1;
+                    int result = _addWithBranchFunction(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;

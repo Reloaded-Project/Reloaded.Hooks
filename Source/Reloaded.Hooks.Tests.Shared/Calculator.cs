@@ -42,6 +42,7 @@ namespace Reloaded.Hooks.Tests.Shared
         public IntPtr Multiply { get; private set; }
         public IntPtr Subtract { get; private set; }
         public IntPtr Add      { get; private set; }
+        public IntPtr AddWithBranch { get; private set; }
 
         public IntPtr VTable   { get; private set; }
 
@@ -67,6 +68,8 @@ namespace Reloaded.Hooks.Tests.Shared
             BuildDivide();
             BuildMultiply();
             BuildVTable();
+
+            BuildAddWithBranch();
         }
 
         [ExcludeFromCodeCoverage]
@@ -184,6 +187,39 @@ namespace Reloaded.Hooks.Tests.Shared
             buffer.Add(ref subtract, false, 1);
             buffer.Add(ref multiply, false, 1);
             buffer.Add(ref divide, false, 1);
+        }
+
+        /* Extra tests for Iced branch patching. */
+        private void BuildAddWithBranch()
+        {
+            int wordSize = IntPtr.Size;
+            string[] addFunction = new string[]
+            {
+                $"{_use32}",
+                "jmp actualfunction",
+
+                // Section of NOPs, iced must successfully manage to patch the jump over these.
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"nop",
+                $"actualfunction:",
+                $"mov {_eax}, [{_esp} + {wordSize * 1}]", // Left Parameter
+                $"mov {_ecx}, [{_esp} + {wordSize * 2}]", // Right Parameter
+                $"add {_eax}, {_ecx}",
+
+                $"ret"
+            };
+
+            var result = _assembler.Assemble(addFunction);
+            AddWithBranch = _memory.Allocate(result.Length);
+            _memory.WriteRaw(AddWithBranch, result);
         }
     }
 }

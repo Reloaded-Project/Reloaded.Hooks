@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
@@ -12,11 +13,14 @@ namespace Reloaded.Hooks.Tests.X64
         private Calculator.SubtractFunction _subtractFunction;
         private Calculator.DivideFunction _divideFunction;
         private Calculator.MultiplyFunction _multiplyFunction;
+        private Calculator.AddFunction _addWithBranchFunction;
 
         private IHook<Calculator.AddFunction> _addHook;
         private IHook<Calculator.SubtractFunction> _subHook;
         private IHook<Calculator.DivideFunction> _divideHook;
         private IHook<Calculator.MultiplyFunction> _multiplyHook;
+
+        private IHook<Calculator.AddFunction> _addWithBranchHook;
 
         public CalculatorHookTest()
         {
@@ -25,6 +29,7 @@ namespace Reloaded.Hooks.Tests.X64
             _subtractFunction = Wrapper.Create<Calculator.SubtractFunction>((long)_calculator.Subtract);
             _divideFunction = Wrapper.Create<Calculator.DivideFunction>((long)_calculator.Divide);
             _multiplyFunction = Wrapper.Create<Calculator.MultiplyFunction>((long)_calculator.Multiply);
+            _addWithBranchFunction = Wrapper.Create<Calculator.AddFunction>((long)_calculator.AddWithBranch);
         }
 
         public void Dispose()
@@ -44,6 +49,25 @@ namespace Reloaded.Hooks.Tests.X64
                 {
                     int expected = (x + y) + 1;
                     int result   = _addFunction(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+        [Fact]
+        public void TestHookAddWithBranch()
+        {
+            int Hookfunction(int a, int b) { return _addWithBranchHook.OriginalFunction(a, b) + 1; }
+            _addWithBranchHook = new Hook<Calculator.AddFunction>(Hookfunction, (long)_calculator.AddWithBranch).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result = _addWithBranchFunction(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;

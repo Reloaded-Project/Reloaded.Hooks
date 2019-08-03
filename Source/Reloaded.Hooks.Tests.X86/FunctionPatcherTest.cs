@@ -48,7 +48,6 @@ namespace Reloaded.Hooks.Tests.X86
         }
 
         /* Build Jump methods for Patching */
-
         private void BuildRelativeJmp()
         {
             var minMax = Utilities.GetRelativeJumpMinMax((long) _dummyFunctions.ReturnFive);
