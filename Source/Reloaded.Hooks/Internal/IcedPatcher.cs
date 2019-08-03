@@ -52,7 +52,7 @@ namespace Reloaded.Hooks.Internal
             return buffer.ExecuteWithLock(() =>
             {
                 // Patch prologue
-                var newBaseAddress = buffer.Properties.DataPointer;
+                var newBaseAddress = buffer.Properties.WritePointer;
                 var writer         = new CodeWriterImpl(estimateLength);
                 var block          = new InstructionBlock((CodeWriter) writer, DecodePrologue(), (ulong) newBaseAddress);
                 BlockEncoder.TryEncode(_bitness, block, out _);
