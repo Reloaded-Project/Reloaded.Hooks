@@ -1,7 +1,6 @@
 ﻿using System;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.Tools;
-using Reloaded.Hooks.X64;
 using Xunit;
 
 namespace Reloaded.Hooks.Tests.X64

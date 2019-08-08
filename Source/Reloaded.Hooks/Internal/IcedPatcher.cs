@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using Iced.Intel;
 using Reloaded.Hooks.Tools;
 using Reloaded.Memory.Buffers;

@@ -5,7 +5,6 @@ using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X86;
 using Reloaded.Memory.Sources;
-using SharpDisasm;
 using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks

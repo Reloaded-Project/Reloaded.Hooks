@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Forms;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
