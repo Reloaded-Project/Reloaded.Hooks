@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.X64;
 using Reloaded.Memory.Sources;
 using static Reloaded.Memory.Sources.Memory;

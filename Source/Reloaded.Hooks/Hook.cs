@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X86;

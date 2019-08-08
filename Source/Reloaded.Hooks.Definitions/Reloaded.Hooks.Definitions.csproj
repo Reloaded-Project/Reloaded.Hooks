@@ -12,6 +12,7 @@
     <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
     <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

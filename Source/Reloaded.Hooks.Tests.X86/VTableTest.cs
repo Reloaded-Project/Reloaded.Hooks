@@ -1,4 +1,5 @@
 ﻿using System;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.Tools;
 using Xunit;

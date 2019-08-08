@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Internal;
 
