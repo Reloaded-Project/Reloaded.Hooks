@@ -10,7 +10,7 @@ namespace Reloaded.Hooks.Tools
     /// <summary>
     /// Allows for easy storage of data about a virtual function table.
     /// </summary>
-    public class VirtualFunctionTable
+    public class VirtualFunctionTable : IVirtualFunctionTable
     {
         /// <summary>
         /// Stores a list of the individual table addresses for this Virtual Function Table.
@@ -27,23 +27,6 @@ namespace Reloaded.Hooks.Tools
         {
             get => TableEntries[i];
             set => TableEntries[i] = value;
-        }
-
-        /// <summary>
-        /// A structure type which describes the individual function pointer by its
-        /// memory location and its target address.
-        /// </summary>
-        public struct TableEntry
-        {
-            /// <summary>
-            /// The address in process memory where the VTable entry has been found.
-            /// </summary>
-            public IntPtr EntryAddress;
-
-            /// <summary>
-            /// The value of the individual entry in process memory for the VTable entry pointing to a function.
-            /// </summary>
-            public IntPtr FunctionPointer;
         }
 
         /* Factory constructor. */

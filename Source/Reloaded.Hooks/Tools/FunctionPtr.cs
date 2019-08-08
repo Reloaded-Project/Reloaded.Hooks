@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using Reloaded.Hooks.Definitions;
 
 namespace Reloaded.Hooks.Tools
 {
     /// <summary>
     /// Represents a native function pointer.
     /// </summary>
-    public unsafe class FunctionPtr<TDelegate> where TDelegate : Delegate
+    public unsafe class FunctionPtr<TDelegate> : IFunctionPtr<TDelegate> where TDelegate : Delegate
     {
         /// <summary>
         /// The address of the pointer in memory with which this class was instantiated with.
