@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29123.89
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks", "Reloaded.Hooks\Reloaded.Hooks.csproj", "{A0275F60-531B-472E-95B0-E48357AC8175}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.X86", "Reloaded.Hooks.Tests.X86\Reloaded.Hooks.Tests.X86.csproj", "{01C2996D-D3D4-45DF-9173-2765B4964FA3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.Shared", "Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj", "{D5D17EDC-6927-4624-B5AC-A2DA502F607F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reloaded.Hooks.Definitions", "Reloaded.Hooks.Definitions\Reloaded.Hooks.Definitions.csproj", "{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{D5D17EDC-6927-4624-B5AC-A2DA502F607F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5D17EDC-6927-4624-B5AC-A2DA502F607F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5D17EDC-6927-4624-B5AC-A2DA502F607F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

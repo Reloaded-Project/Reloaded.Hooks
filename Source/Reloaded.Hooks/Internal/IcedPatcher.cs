@@ -82,7 +82,7 @@ namespace Reloaded.Hooks.Internal
         }
         
         /// <summary>
-        /// Simple and inefficient code writer that stores data in a List<byte> with a ToArray method to get data.
+        /// Simple and inefficient code writer that stores data in a List(byte) with a ToArray method to get data.
         /// </summary>
         private sealed class CodeWriterImpl : CodeWriter
         {

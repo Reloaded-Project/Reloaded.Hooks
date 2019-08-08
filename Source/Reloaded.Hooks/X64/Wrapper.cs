@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 

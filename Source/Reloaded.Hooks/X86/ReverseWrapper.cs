@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 

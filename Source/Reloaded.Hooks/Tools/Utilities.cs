@@ -93,6 +93,19 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="hookAddress">The address that is to be hooked.</param>
         /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
+        /// <param name="is64Bit">True if 64bit, else false.</param>
+        public static int GetHookLength(IntPtr hookAddress, int hookLength, bool is64Bit)
+        {
+            ArchitectureMode architecture = is64Bit ? ArchitectureMode.x86_64 
+                                                    : ArchitectureMode.x86_32;
+            return GetHookLength(hookAddress, hookLength, architecture);
+        }
+
+        /// <summary>
+        /// Retrieves the length of the hook for trampoline, mid-function hooks etc.
+        /// </summary>
+        /// <param name="hookAddress">The address that is to be hooked.</param>
+        /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
         /// <param name="architectureMode">X86 or X64 to use for disassembly.</param>
         public static int GetHookLength(IntPtr hookAddress, int hookLength, ArchitectureMode architectureMode)
         {
@@ -156,6 +169,20 @@ namespace Reloaded.Hooks.Tools
             // Check for non-float and return amount.
             return parameters.Count(parameter => parameter.ParameterType != typeof(Single) && 
                                                  parameter.ParameterType != typeof(Double));
+        }
+
+        /// <summary>
+        /// Fills a given array with <see cref="value"/> until the array of bytes is as large as <see cref="length"/>.
+        /// </summary>
+        public static void FillArrayUntilSize<T>(List<T> array, T value, int length)
+        {
+            if (length > array.Count)
+            {
+                int values = length - array.Count;
+
+                for (int x = 0; x < values; x++)
+                    array.Add(value);
+            }
         }
 
         public static MemoryBuffer FindOrCreateBufferInRange(int size, long minimumAddress = 1, long maximumAddress = int.MaxValue)

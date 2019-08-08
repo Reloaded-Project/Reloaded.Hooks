@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
+using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Tools;
 using static Reloaded.Hooks.Tests.Functions.Macros.Macros;
 using FunctionAttribute = Reloaded.Hooks.X64.FunctionAttribute;
@@ -17,25 +18,25 @@ namespace Reloaded.Hooks.Tests.Shared
     {
         /// <summary> Performs A + B</summary>
         [X64.Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(X86.CallingConventions.Fastcall)]
+        [X86.Function(CallingConventions.Fastcall)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int AddFunction(int a, int b);
 
         /// <summary> Performs A - B. </summary>
         [X64.Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(X86.CallingConventions.Fastcall)]
+        [X86.Function(CallingConventions.Fastcall)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int SubtractFunction(int a, int b);
 
         /// <summary> Multiply A by B. </summary>
         [X64.Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(X86.CallingConventions.Fastcall)]
+        [X86.Function(CallingConventions.Fastcall)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int MultiplyFunction(int a, int b);
 
         /// <summary> Divide A by B. </summary>
         [X64.Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(X86.CallingConventions.Fastcall)]
+        [X86.Function(CallingConventions.Fastcall)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int DivideFunction(int a, int b);
 

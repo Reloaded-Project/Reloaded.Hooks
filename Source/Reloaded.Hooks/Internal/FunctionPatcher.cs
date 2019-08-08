@@ -19,6 +19,12 @@ namespace Reloaded.Hooks.Internal
     {
         private ArchitectureMode _architecture;
 
+        public FunctionPatcher(bool is64Bit)
+        {
+            _architecture = is64Bit ? ArchitectureMode.x86_64
+                                    : ArchitectureMode.x86_32;
+        }
+
         public FunctionPatcher(ArchitectureMode mode)
         {
             _architecture = mode;

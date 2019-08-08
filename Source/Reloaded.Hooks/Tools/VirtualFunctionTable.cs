@@ -105,12 +105,7 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         public IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType)
         {
-            if (IntPtr.Size == 4)
-                return new X86.Hook<TFunction>(delegateType, (long)TableEntries[index].FunctionPointer);
-            if (IntPtr.Size == 8)
-                return new Hook<TFunction>(delegateType, (long)TableEntries[index].FunctionPointer);
-
-            throw new Exception("Machine does not appear to be of a 32 or 64bit architecture.");
+            return new Hook<TFunction>(delegateType, (long)TableEntries[index].FunctionPointer);
         }
 
         /*

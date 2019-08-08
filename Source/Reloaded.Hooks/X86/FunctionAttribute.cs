@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Reloaded.Hooks.Definitions.X86;
 
 namespace Reloaded.Hooks.X86
 {

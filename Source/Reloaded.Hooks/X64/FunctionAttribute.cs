@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Reloaded.Hooks.Definitions.X64;
 
 namespace Reloaded.Hooks.X64
 {

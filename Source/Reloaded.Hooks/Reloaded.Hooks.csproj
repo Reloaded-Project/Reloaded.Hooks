@@ -57,4 +57,12 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Reloaded.Hooks.Definitions\Reloaded.Hooks.Definitions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="Hook.cs" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X64;
 using static Reloaded.Hooks.Tests.Functions.Macros.Macros;
@@ -10,7 +11,7 @@ namespace Reloaded.Hooks.Tests.Shared
     {
         /// <summary> Dummy function which returns "5". </summary>
         [Function(CallingConventions.Microsoft)]
-        [X86.Function(X86.CallingConventions.Cdecl)]
+        [X86.Function(Definitions.X86.CallingConventions.Cdecl)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int ReturnNumberDelegate();
 
