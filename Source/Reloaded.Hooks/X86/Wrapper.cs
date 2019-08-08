@@ -53,7 +53,7 @@ namespace Reloaded.Hooks.X86
         /// <param name="functionAddress">The address of the function.</param>
         /// <param name="fromFunction">Describes the properties of the function to wrap.</param>
         /// <returns>Address of the wrapper in memory you can call like a CDECL function.</returns>
-        public static IntPtr Create<TFunction>(IntPtr functionAddress, FunctionAttribute fromFunction)
+        public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction)
         {
             Mutex.MakeWrapperMutex.WaitOne();
 

@@ -7,7 +7,7 @@ using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X64;
 using SharpDisasm;
 using Xunit;
-using static Reloaded.Hooks.Tests.Functions.Macros.Macros;
+using static Reloaded.Hooks.Tests.Shared.Macros.Macros;
 using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks.Tests.X64

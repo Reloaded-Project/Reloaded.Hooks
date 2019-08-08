@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 using System.Security;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Tools;
-using static Reloaded.Hooks.Tests.Functions.Macros.Macros;
-using FunctionAttribute = Reloaded.Hooks.X64.FunctionAttribute;
+using static Reloaded.Hooks.Tests.Shared.Macros.Macros;
+using FunctionAttribute = Reloaded.Hooks.Definitions.X64.FunctionAttribute;
 
 namespace Reloaded.Hooks.Tests.Shared
 {
@@ -16,26 +16,26 @@ namespace Reloaded.Hooks.Tests.Shared
     public class Calculator : IDisposable
     {
         /// <summary> Performs A + B</summary>
-        [X64.Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(CallingConventions.Cdecl)]
+        [Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
+        [Definitions.X86.Function(CallingConventions.Cdecl)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int AddFunction(int a, int b);
 
         /// <summary> Performs A - B. </summary>
-        [X64.Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(CallingConventions.Cdecl)]
+        [Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
+        [Definitions.X86.Function(CallingConventions.Cdecl)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int SubtractFunction(int a, int b);
 
         /// <summary> Multiply A by B. </summary>
-        [X64.Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(CallingConventions.Cdecl)]
+        [Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
+        [Definitions.X86.Function(CallingConventions.Cdecl)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int MultiplyFunction(int a, int b);
 
         /// <summary> Divide A by B. </summary>
-        [X64.Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
-        [X86.Function(CallingConventions.Cdecl)]
+        [Function(new FunctionAttribute.Register[0] { }, FunctionAttribute.Register.rax, false)]
+        [Definitions.X86.Function(CallingConventions.Cdecl)]
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int DivideFunction(int a, int b);
 

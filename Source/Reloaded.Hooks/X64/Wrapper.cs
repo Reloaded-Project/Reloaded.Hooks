@@ -52,7 +52,7 @@ namespace Reloaded.Hooks.X64
         /// <param name="fromConvention">The calling convention to convert to toConvention. This is the convention of the function called.</param>
         /// <param name="toConvention">The target convention to which convert to fromConvention. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call .</returns>
-        public static IntPtr Create<TFunction>(IntPtr functionAddress, FunctionAttribute fromConvention, FunctionAttribute toConvention)
+        public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
             Mutex.MakeWrapperMutex.WaitOne();
 
@@ -114,7 +114,7 @@ namespace Reloaded.Hooks.X64
             return wrapperBuffer.Add(assembledMnemonics);
         }
 
-        private static string[] AssembleFunctionParameters(int parameterCount, ref FunctionAttribute fromConvention, ref FunctionAttribute toConvention)
+        private static string[] AssembleFunctionParameters(int parameterCount, ref IFunctionAttribute fromConvention, ref IFunctionAttribute toConvention)
         {
             List<string> assemblyCode = new List<string>();
 

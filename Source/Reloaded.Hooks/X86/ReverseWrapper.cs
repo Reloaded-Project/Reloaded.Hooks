@@ -70,7 +70,7 @@ namespace Reloaded.Hooks.X86
             Mutex.MakeReverseWrapperMutex.ReleaseMutex();
         }
         
-        private static IntPtr Create(IntPtr functionAddress, FunctionAttribute fromFunction)
+        private static IntPtr Create(IntPtr functionAddress, IFunctionAttribute fromFunction)
         {
             // CDECL is hot path, as our TFunction will already be CDECL, we marshal if it's anything else.
             if (fromFunction.Equals(new FunctionAttribute(CallingConventions.Cdecl)))

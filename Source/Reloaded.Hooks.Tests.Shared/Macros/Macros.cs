@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Reloaded.Hooks.Tests.Functions.Macros
+namespace Reloaded.Hooks.Tests.Shared.Macros
 {
     public static class Macros
     {
