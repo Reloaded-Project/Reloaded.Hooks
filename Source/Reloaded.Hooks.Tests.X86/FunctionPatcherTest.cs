@@ -64,7 +64,7 @@ namespace Reloaded.Hooks.Tests.X86
 
             var asm = _assembler.Assemble(relativeJmp);
             _relativeJmpLength = asm.Length;
-            _relativeJmpPtr = buffer.Add(asm);
+            _relativeJmpPtr = buffer.Add(asm, 1);
         }
 
         private void BuildPushReturn()
