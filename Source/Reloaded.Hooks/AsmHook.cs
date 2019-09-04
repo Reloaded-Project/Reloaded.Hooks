@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Reloaded.Hooks.Definitions;
-using Reloaded.Hooks.Enums;
+using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Memory.Buffers;

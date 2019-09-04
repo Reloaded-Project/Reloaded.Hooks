@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Reloaded.Hooks.Definitions;
-using Reloaded.Hooks.Enums;
+using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.X64; // Watch out!
 using Xunit;

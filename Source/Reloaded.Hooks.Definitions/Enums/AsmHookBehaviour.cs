@@ -1,4 +1,4 @@
-﻿namespace Reloaded.Hooks.Enums
+﻿namespace Reloaded.Hooks.Definitions.Enums
 {
     /// <summary>
     /// Defines the behaviour used by the <see cref="AsmHook"/>
