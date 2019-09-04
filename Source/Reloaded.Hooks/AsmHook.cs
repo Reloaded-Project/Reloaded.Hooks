@@ -39,7 +39,7 @@ namespace Reloaded.Hooks
         }
 
         /// <summary>
-        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a 
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
         /// </summary>
         /// <param name="asmCode">
         ///     The assembly code to execute, in FASM syntax.
@@ -52,7 +52,7 @@ namespace Reloaded.Hooks
         { }
 
         /// <summary>
-        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a 
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
         /// </summary>
         /// <param name="asmCode">The assembly code to execute, precompiled.</param>
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
