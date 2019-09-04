@@ -17,7 +17,6 @@ In this article, will quickly-ish demonstrate simple usage allowing you to get s
 As this library, part of *Reloaded-Mod-Loader* was originally created to deal with modifying and reverse engineering games; many of the examples in this article will show game functions as opposed to common APIs. That said - nothing changes when hooking arbitrary APIs.
 
 ## Table of Contents
-- [Adding Reloaded.Hooks to your project.](#adding-reloadedhooks-to-your-project)
 - [Prologue: Native Functions](#prologue-native-functions)
   - [Defining Reloaded-Compatible Delegates](#defining-reloaded-compatible-delegates)
     - [Examples](#examples)
@@ -27,8 +26,12 @@ As this library, part of *Reloaded-Mod-Loader* was originally created to deal wi
     - [Hooking Functions: Remarks](#hooking-functions-remarks)
   - [Calling Function Pointers](#calling-function-pointers)
     - [Function Pointers: Performance](#function-pointers-performance)
+  - [Assembly Hooks (Advanced Users)](#assembly-hooks-advanced-users)
+    - [Assembly Hooks: Example](#assembly-hooks-example)
+      - [Discarding Original Code](#discarding-original-code)
+      - [Executing Original Code First](#executing-original-code-first)
+      - [Executing Original Code Last](#executing-original-code-last)
   - [Function Pointers to C# Functions](#function-pointers-to-c-functions)
-
 
 ## Adding Reloaded.Hooks to your project.
 1.  Open/Create project in Visual Studio.
@@ -200,6 +203,84 @@ The class performs caching of pointers and function wrappers under the hood as t
 
 This means that for those custom functions whose pointers will alternate between a set number of values... Most, if not all at some point will already have a pre-prepared function wrapper ready to call.
 
+### Assembly Hooks (Advanced Users)
+For advanced users requiring very specialized uses (e.g. Mid Function Hooks), a Cheat-Engine like pure assembly code hook is also available.
+
+This hook replaces the original application code with a jump to your own custom supplied code and (optionally) the original code in either of the three combinations:
+
+- Discard Original Code
+- Execute Custom Code First
+- Execute Custom Code Last
+
+
+#### Assembly Hooks: Example
+Consider the following function.
+
+```csharp
+[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+public delegate int AddFunction(int a, int b);
+```
+
+In native assembly, this function can be represented by something like the following:
+
+```x86asm
+// Unoptimized code, for demonstration only.
+push _ebp,
+mov _ebp, _esp,
+mov _eax, [_ebp + wordSize * 2], // Left Parameter
+mov _ecx, [_ebp + wordSize * 3], // Right Parameter
+add _eax, _ecx,
+pop _ebp,
+ret
+```
+
+`(Macros used in example. wordSize = 4 on x86, wordSize = 8 on x64. _ebp is ebp on x86, _ebp is rbp on x64, etc.)`
+
+This function could, for example be manipulated to return `result + 1`, in any of the following ways.
+
+
+##### Discarding Original Code
+```x86asm
+int wordSize = IntPtr.Size;
+string[] addFunction = 
+{
+    $"{_use32}",
+    $"push {_ebp}",
+    $"mov {_ebp}, {_esp}",
+
+    $"mov {_eax}, [{_ebp} + {wordSize * 2}]", // Left Parameter
+    $"mov {_ecx}, [{_ebp} + {wordSize * 3}]", // Right Parameter
+    $"add {_eax}, 1",                         // Left Parameter
+};
+
+_addNoOriginalHook = new AsmHook(addFunction, (long) _calculator.Add, AsmHookBehaviour.DoNotExecuteOriginal).Activate();
+```
+
+##### Executing Original Code First
+```x86asm
+string[] addFunction =
+{
+    $"{_use32}",
+    $"add {_eax}, 1", // Left Parameter - Should have already been copied from stack.
+};
+
+_addAfterOriginalHook = new AsmHook(addFunction, (long)_calculator.Add, AsmHookBehaviour.ExecuteAfter).Activate();
+```
+
+##### Executing Original Code Last
+```x86asm
+int wordSize = IntPtr.Size;
+string[] addFunction =
+{
+    $"{_use32}",
+    $"add [{_esp} + {wordSize * 1}], byte 1",      // Left Parameter
+};
+
+_addBeforeOriginalHook = new AsmHook(addFunction, (long)_calculator.Add, AsmHookBehaviour.ExecuteFirst).Activate();
+```
+
+Note: The above example was lifted directly out of the unit tests for this library.
+
 ### Function Pointers to C# Functions
 
 No hacking adventure would be ever complete with pointers to our own functions.
@@ -247,3 +328,4 @@ private static void CSharpFastcallFunction(int a, int b, int c)
     MessageBox.Show($"{a + b + c}");
 }
 ```
+
