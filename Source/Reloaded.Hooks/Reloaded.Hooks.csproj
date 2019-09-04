@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;NET47</TargetFrameworks>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
     <Authors>Sewer56</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
