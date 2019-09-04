@@ -38,26 +38,40 @@ namespace Reloaded.Hooks.Internal
         }
 
         /// <summary>
-        /// Patches the prologue of a function with iced and returns the new address of the prologue.
+        /// Encodes the original bytes for a new address fixing e.g. branches, calls, jumps for execution at a given address.
         /// </summary>
-        /// <returns></returns>
-        public IntPtr GetFunctionAddress()
+        /// <param name="newAddress">The new address to encode the original instructions for.</param>
+        public byte[] EncodeForNewAddress(IntPtr newAddress)
+        {
+            var writer = new CodeWriterImpl(_bytes.Length * 2);
+            var block  = new InstructionBlock(writer, DecodePrologue(), (ulong)newAddress);
+            BlockEncoder.TryEncode(_bitness, block, out _);
+            return writer.ToArray();
+        }
+
+        /// <summary>
+        /// Patches the prologue of a function with iced, writes to <see cref="MemoryBuffer"/>
+        /// and returns the new address of the prologue.
+        /// </summary>
+        /// <returns>
+        ///     Address of the patched function added to a <see cref="MemoryBuffer"/>.
+        ///     If this function has already been executed, returns the address of previously patched function.
+        /// </returns>
+        public IntPtr ToMemoryBuffer()
         {
             if (_newPrologueAddress != IntPtr.Zero)
                 return _newPrologueAddress;
 
+            int alignment       = _bitness / 8;
             var estimateLength  = _bytes.Length * 2; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
-            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength);
+            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength + alignment);
             return buffer.ExecuteWithLock(() =>
             {
                 // Patch prologue
+                buffer.SetAlignment(alignment);
                 var newBaseAddress = buffer.Properties.WritePointer;
-                var writer         = new CodeWriterImpl(estimateLength);
-                var block          = new InstructionBlock((CodeWriter) writer, DecodePrologue(), (ulong) newBaseAddress);
-                BlockEncoder.TryEncode(_bitness, block, out _);
-
-                var data = writer.ToArray();
-                _newPrologueAddress = buffer.Add(data, 1);
+                var data           = EncodeForNewAddress(newBaseAddress);
+                _newPrologueAddress = buffer.Add(data, alignment);
 
                 return _newPrologueAddress;
             });
@@ -94,5 +108,7 @@ namespace Reloaded.Hooks.Internal
                 _allBytes = new List<byte>(capacity);
             }
         }
+
+
     }
 }

@@ -15,6 +15,8 @@ namespace Reloaded.Hooks.Tools
         /// We statically instantiate it here to avoid multiple instantiations.
         /// </summary>
         public static Assembler.Assembler Assembler { get; }
+
+        private static object _lock = new object();
         private static MemoryBufferHelper _bufferHelper;
 
         static Utilities()
@@ -40,7 +42,6 @@ namespace Reloaded.Hooks.Tools
 
             return Assembler.Assemble(assemblyCode);
         }
-
 
         /// <summary>
         /// Assembles a push + return combination to a given target address.

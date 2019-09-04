@@ -104,8 +104,8 @@ namespace Reloaded.Hooks
             var icedPatcher = new IcedPatcher(_is64Bit, functionPatch.NewFunction.ToArray(), (IntPtr)functionAddress);
 
             /* Create Hook instance. */
-            OriginalFunctionAddress = icedPatcher.GetFunctionAddress();
-            OriginalFunction = CreateWrapper((long)icedPatcher.GetFunctionAddress(), out IntPtr originalFunctionWrapperAddress);
+            OriginalFunctionAddress = icedPatcher.ToMemoryBuffer();
+            OriginalFunction = CreateWrapper((long)icedPatcher.ToMemoryBuffer(), out IntPtr originalFunctionWrapperAddress);
             OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
 
             _otherHookPatches = functionPatch.Patches;
