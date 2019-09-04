@@ -16,10 +16,10 @@ namespace Reloaded.Hooks.Tests.X64
         private Calculator.SubtractFunction _subtractFunction;
         private Calculator.AddFunction _addWithBranchFunction;
 
-        private AsmHook _addNoOriginalHook;
-        private AsmHook _addBeforeOriginalHook;
-        private AsmHook _addAfterOriginalHook;
-        private AsmHook _addWithBranchHook;
+        private IAsmHook _addNoOriginalHook;
+        private IAsmHook _addBeforeOriginalHook;
+        private IAsmHook _addAfterOriginalHook;
+        private IAsmHook _addWithBranchHook;
 
         public CalculatorAsmHookTest()
         {
