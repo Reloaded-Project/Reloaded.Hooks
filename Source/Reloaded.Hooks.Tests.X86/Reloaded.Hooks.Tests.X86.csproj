@@ -33,4 +33,8 @@
     <NativeLibs Remove="CalculatorAsmHookTest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="ReloadedHooksTest.cs" />
+  </ItemGroup>
+
 </Project>
