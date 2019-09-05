@@ -17,12 +17,13 @@ In this article, will quickly-ish demonstrate simple usage allowing you to get s
 As this library, part of *Reloaded-Mod-Loader* was originally created to deal with modifying and reverse engineering games; many of the examples in this article will show game functions as opposed to common APIs. That said - nothing changes when hooking arbitrary APIs.
 
 ## Table of Contents
+- [Adding Reloaded.Hooks to your project.](#adding-reloadedhooks-to-your-project)
 - [Prologue: Native Functions](#prologue-native-functions)
   - [Defining Reloaded-Compatible Delegates](#defining-reloaded-compatible-delegates)
-    - [Examples](#examples)
+    - [Examples:](#examples)
   - [Calling Functions](#calling-functions)
   - [Hooking Functions](#hooking-functions)
-    - [Example](#example)
+    - [Example:](#example)
     - [Hooking Functions: Remarks](#hooking-functions-remarks)
   - [Calling Function Pointers](#calling-function-pointers)
     - [Function Pointers: Performance](#function-pointers-performance)
@@ -32,6 +33,9 @@ As this library, part of *Reloaded-Mod-Loader* was originally created to deal wi
       - [Executing Original Code First](#executing-original-code-first)
       - [Executing Original Code Last](#executing-original-code-last)
   - [Function Pointers to C# Functions](#function-pointers-to-c-functions)
+- [Additional/Extra APIs](#additionalextra-apis)
+  - [ReloadedHooks & IReloadedHooks](#reloadedhooks--ireloadedhooks)
+  - [Function<T>](#functiont)
 
 ## Adding Reloaded.Hooks to your project.
 1.  Open/Create project in Visual Studio.
@@ -329,3 +333,46 @@ private static void CSharpFastcallFunction(int a, int b, int c)
 }
 ```
 
+##  Additional/Extra APIs
+
+###  ReloadedHooks & IReloadedHooks
+
+`ReloadedHooks` is a one stop shop for this library, encompassing all main and commonly used functionality inside of a single class.
+
+For example:
+
+```csharp
+_reloadedHooks.CreateWrapper<NtCreateFile>(ntCreateFile, out _);
+```
+
+Would be functionally equivalent to: `new X86.Wrapper.Create<TFunction>(function, out _);` or  `new X64.Wrapper.Create<TFunction>(function, out _);`
+
+Depending on architecture of current process.
+If you are already familiar with `Reloaded.Hooks` as a library, everything inside `IReloadedHooks` should be self explanatory.
+
+###  Function<T>
+
+`Function<T>` is an API that wraps a native function given a pointer and instance of `IReloadedHooks`. 
+
+For example, creating an instance of the class:
+
+```csharp
+// _calculator.Add is a function address
+// _hooks is an instance of ReloadedHooks
+_addFunction = new Function<Calculator.AddFunction>((long)_calculator.Add, _hooks);
+```
+
+Allows you to more easily use common operations of the library.
+
+```csharp
+// Hook Function
+_addHook = _addFunction.Hook(Hookfunction).Activate();
+
+// Call Function
+ _addFunction.GetWrapper()(x, y);
+```
+
+The intended use of this class is to simplify usage when building APIs that can interface with a given process. For example: APIs that allow for hacking specific games.
+
+**Remarks:**
+The return value of `GetWrapper()` is cached, repeated calls will return the same results.

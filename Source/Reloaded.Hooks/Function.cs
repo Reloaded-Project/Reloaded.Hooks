@@ -48,6 +48,7 @@ namespace Reloaded.Hooks
         /// <summary>
         /// Allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
         /// </summary>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         public TFunction GetWrapper()
         {
             if (_wrapper == null)
@@ -66,6 +67,7 @@ namespace Reloaded.Hooks
         ///     Native address of the wrapper used to call the original function.
         ///     If the original function is X86 CDECL/X64 Microsoft, the wrapper address equals the function address.
         /// </param>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         public TFunction GetWrapper(out IntPtr wrapperAddress)
         {
             if (_wrapper == null)
