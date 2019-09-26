@@ -77,4 +77,8 @@
     <NativeLibs Remove="VTableTest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="CSharpFromAssembly.cs" />
+  </ItemGroup>
+
 </Project>

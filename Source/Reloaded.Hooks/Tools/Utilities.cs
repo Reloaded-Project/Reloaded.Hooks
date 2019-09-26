@@ -76,15 +76,49 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <summary>
+        /// Gets the sequence of assembly instructions required to assemble an absolute call to a user specified address.
+        /// </summary>
+        /// <param name="target">The target memory location to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static string GetAbsoluteCallMnemonics(IntPtr target, bool is64bit)
+        {
+            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            IntPtr functionPointer = buffer.Add(ref target);
+
+            if (is64bit) return "call qword [qword 0x" + functionPointer.ToString("X") + "]";
+            else         return "call dword [0x" + functionPointer.ToString("X") + "]";
+        }
+
+        /// <summary>
         /// Gets the sequence of assembly instructions required to assemble an absolute jump to a C# function address.
         /// </summary>
         /// <param name="function">The C# function to create a jump to.</param>
-        /// <param name="reverseWrapper">The native reverse wrapper used to call your function.</param>
+        /// <param name="reverseWrapper">
+        ///     The native reverse wrapper used to call your function.
+        ///     Please keep a reference to this class as long as you are using the generated code.
+        ///     i.e. make it a class/struct member on heap.
+        /// </param>
         public static string GetAbsoluteJumpMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
         {
             var hooks = ReloadedHooks.Instance;
             reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
             return GetAbsoluteJumpMnemonics(reverseWrapper.WrapperPointer, IntPtr.Size == 8);
+        }
+
+        /// <summary>
+        /// Gets the sequence of assembly instructions required to assemble an absolute call to a C# function address.
+        /// </summary>
+        /// <param name="function">The C# function to create a jump to.</param>
+        /// <param name="reverseWrapper">
+        ///     The native reverse wrapper used to call your function.
+        ///     Please keep a reference to this class as long as you are using the generated code.
+        ///     i.e. make it a class/struct member on heap.
+        /// </param>
+        public static string GetAbsoluteCallMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
+        {
+            var hooks = ReloadedHooks.Instance;
+            reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
+            return GetAbsoluteCallMnemonics(reverseWrapper.WrapperPointer, IntPtr.Size == 8);
         }
 
         /// <summary>

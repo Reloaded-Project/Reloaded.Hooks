@@ -6,7 +6,6 @@ using Xunit;
 
 namespace Reloaded.Hooks.Tests.X64
 {
-
     public class CalculatorTest : IDisposable
     {
         private NativeCalculator _nativeCalculator;

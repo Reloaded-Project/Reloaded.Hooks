@@ -34,6 +34,7 @@
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorDoubleHookTest.cs" Link="CalculatorDoubleHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorHookTest.cs" Link="CalculatorHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorTest.cs" Link="CalculatorTest.cs" />
+    <Compile Include="..\Reloaded.Hooks.Tests.X64\CSharpFromAssembly.cs" Link="CSharpFromAssembly.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorDoubleHookTest.cs" Link="FastcallCalculatorDoubleHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorHookTest.cs" Link="FastcallCalculatorHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorTest.cs" Link="FastcallCalculatorTest.cs" />
