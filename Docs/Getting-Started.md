@@ -33,6 +33,7 @@ As this library, part of *Reloaded-Mod-Loader* was originally created to deal wi
       - [Executing Original Code First](#executing-original-code-first)
       - [Executing Original Code Last](#executing-original-code-last)
   - [Function Pointers to C# Functions](#function-pointers-to-c-functions)
+    - [In Assembly Code](#in-assembly-code)
 - [Additional/Extra APIs](#additionalextra-apis)
   - [ReloadedHooks & IReloadedHooks](#reloadedhooks--ireloadedhooks)
   - [Function<T>](#functiont)
@@ -332,6 +333,29 @@ private static void CSharpFastcallFunction(int a, int b, int c)
     MessageBox.Show($"{a + b + c}");
 }
 ```
+
+#### In Assembly Code
+
+If you would like to call managed C# code from assembly code generated at run-time (such as `AsmHook`), consider using the `Utilities.GetAbsoluteCallMnemonics` helper function to generate the appropriate x86/x64 call instruction.
+
+```csharp
+// SomeFunction is a C# function accepting two integers.
+// _reverseWrapAddFunction is a `ReverseWrapper`, it is a class member.
+string[] function = 
+{
+    $"use32",
+    $"push ecx", // Right Parameter
+    $"push edx", // Left Parameter
+    $"{Utilities.GetAbsoluteCallMnemonics(SomeFunction, out _reverseWrapAddFunction)}",
+    $"add esp, 8",
+    $"ret"
+};
+
+// You should reference the ReverseWrapper (out parameter) as long as you plan on using the
+// native/ASM function. Failure to do so will cause issues after Garbage Collection occurs. 
+```
+
+For a more advanced example, consider looking at [CSharpFromAssembly.cs](https://github.com/Reloaded-Project/Reloaded.Hooks/blob/2f58cee30ffc144cd33142ab46f194a4fdf2cdef/Source/Reloaded.Hooks.Tests.X64/CSharpFromAssembly.cs#L102) from Reloaded.Hooks' test code.
 
 ##  Additional/Extra APIs
 
