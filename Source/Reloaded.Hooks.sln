@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.X86", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.Shared", "Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj", "{D5D17EDC-6927-4624-B5AC-A2DA502F607F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reloaded.Hooks.Definitions", "Reloaded.Hooks.Definitions\Reloaded.Hooks.Definitions.csproj", "{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Definitions", "Reloaded.Hooks.Definitions\Reloaded.Hooks.Definitions.csproj", "{F8D4800A-5AC7-4819-8C01-CB4E468D4C48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

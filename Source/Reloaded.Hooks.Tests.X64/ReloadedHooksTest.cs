@@ -1,41 +1,42 @@
 ﻿using System;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
+
+// Watch out!
 
 namespace Reloaded.Hooks.Tests.X64
 {
     public class ReloadedHooksTest : IDisposable
     {
-        private Calculator _calculator;
+        private NativeCalculator _nativeCalculator;
 
-        private IHook<Calculator.AddFunction> _addHook;
-        private IHook<Calculator.SubtractFunction> _subHook;
-        private IHook<Calculator.DivideFunction> _divideHook;
-        private IHook<Calculator.MultiplyFunction> _multiplyHook;
+        private IHook<NativeCalculator.AddFunction> _addHook;
+        private IHook<NativeCalculator.SubtractFunction> _subHook;
+        private IHook<NativeCalculator.DivideFunction> _divideHook;
+        private IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
 
-        private Function<Calculator.AddFunction> _addFunction;
-        private Function<Calculator.SubtractFunction> _subtractFunction;
-        private Function<Calculator.DivideFunction> _divideFunction;
-        private Function<Calculator.MultiplyFunction> _multiplyFunction;
+        private Function<NativeCalculator.AddFunction> _addFunction;
+        private Function<NativeCalculator.SubtractFunction> _subtractFunction;
+        private Function<NativeCalculator.DivideFunction> _divideFunction;
+        private Function<NativeCalculator.MultiplyFunction> _multiplyFunction;
 
         private IReloadedHooks _hooks;
 
         public ReloadedHooksTest()
         {
-            _calculator = new Calculator();
+            _nativeCalculator = new NativeCalculator();
             _hooks = new ReloadedHooks();
 
-            _addFunction = new Function<Calculator.AddFunction>((long)_calculator.Add, _hooks);
-            _subtractFunction = new Function<Calculator.SubtractFunction>((long)_calculator.Subtract, _hooks);
-            _divideFunction = new Function<Calculator.DivideFunction>((long)_calculator.Divide, _hooks);
-            _multiplyFunction = new Function<Calculator.MultiplyFunction>((long)_calculator.Multiply, _hooks);
+            _addFunction = new Function<NativeCalculator.AddFunction>((long)_nativeCalculator.Add, _hooks);
+            _subtractFunction = new Function<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract, _hooks);
+            _divideFunction = new Function<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide, _hooks);
+            _multiplyFunction = new Function<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, _hooks);
         }
 
         public void Dispose()
         {
-            _calculator?.Dispose();
+            _nativeCalculator?.Dispose();
         }
 
         [Fact]

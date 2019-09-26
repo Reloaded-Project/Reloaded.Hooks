@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>NET472</TargetFramework>
+    <TargetFrameworks>NET472</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
 
@@ -15,11 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj" />
-    <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
@@ -30,11 +25,56 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj" />
+    <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <NativeLibs Remove="CalculatorAsmHookTest.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <NativeLibs Remove="CalculatorDoubleHookEnableDisableTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorDoubleHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorDoubleHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FunctionPatcherTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <NativeLibs Remove="ReloadedHooksTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="SuperStackedHooks.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="VTableTest.cs" />
   </ItemGroup>
 
 </Project>

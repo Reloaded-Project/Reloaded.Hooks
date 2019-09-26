@@ -64,7 +64,7 @@ namespace Reloaded.Hooks.Internal
 
             int alignment       = _bitness / 8;
             var estimateLength  = _bytes.Length * 2; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
-            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength + alignment);
+            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength, 1, 0x7FFFFFFF, alignment);
             return buffer.ExecuteWithLock(() =>
             {
                 // Patch prologue

@@ -1,7 +1,8 @@
 ﻿using System;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
+
+// Watch out!
 
 namespace Reloaded.Hooks.Tests.X64
 {
@@ -17,10 +18,10 @@ namespace Reloaded.Hooks.Tests.X64
         public FastcallCalculatorTest()
         {
             _calculator = new FastcallCalculator();
-            _addFunction = Wrapper.Create<FastcallCalculator.AddFunction>((long) _calculator.Add);
-            _subtractFunction = Wrapper.Create<FastcallCalculator.SubtractFunction>((long)_calculator.Subtract);
-            _divideFunction = Wrapper.Create<FastcallCalculator.DivideFunction>((long)_calculator.Divide);
-            _multiplyFunction = Wrapper.Create<FastcallCalculator.MultiplyFunction>((long)_calculator.Multiply);
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.AddFunction>((long) _calculator.Add, out _);
+            _subtractFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.SubtractFunction>((long)_calculator.Subtract, out _);
+            _divideFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.DivideFunction>((long)_calculator.Divide, out _);
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.MultiplyFunction>((long)_calculator.Multiply, out _);
         }
 
         public void Dispose()

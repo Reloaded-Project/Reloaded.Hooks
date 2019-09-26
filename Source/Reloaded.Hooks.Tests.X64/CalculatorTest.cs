@@ -1,31 +1,32 @@
 ﻿using System;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
+
+// Watch out!
 
 namespace Reloaded.Hooks.Tests.X64
 {
 
     public class CalculatorTest : IDisposable
     {
-        private Calculator _calculator;
-        private Calculator.AddFunction _addFunction;
-        private Calculator.SubtractFunction _subtractFunction;
-        private Calculator.DivideFunction _divideFunction;
-        private Calculator.MultiplyFunction _multiplyFunction;
+        private NativeCalculator _nativeCalculator;
+        private NativeCalculator.AddFunction _addFunction;
+        private NativeCalculator.SubtractFunction _subtractFunction;
+        private NativeCalculator.DivideFunction _divideFunction;
+        private NativeCalculator.MultiplyFunction _multiplyFunction;
 
         public CalculatorTest()
         {
-            _calculator = new Calculator();
-            _addFunction = Wrapper.Create<Calculator.AddFunction>((long) _calculator.Add);
-            _subtractFunction = Wrapper.Create<Calculator.SubtractFunction>((long)_calculator.Subtract);
-            _divideFunction = Wrapper.Create<Calculator.DivideFunction>((long)_calculator.Divide);
-            _multiplyFunction = Wrapper.Create<Calculator.MultiplyFunction>((long)_calculator.Multiply);
+            _nativeCalculator = new NativeCalculator();
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out _);
+            _subtractFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract, out _);
+            _divideFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide, out _);
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out _);
         }
 
         public void Dispose()
         {
-            _calculator?.Dispose();
+            _nativeCalculator?.Dispose();
         }
 
         [Fact]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Memory.Buffers;
 using SharpDisasm;
 
@@ -30,47 +31,78 @@ namespace Reloaded.Hooks.Tools
         /// <summary>
         /// Assembles an absolute jump to a user specified address.
         /// </summary>
-        public static byte[] AssembleAbsoluteJump(IntPtr functionAddress, bool is64bit)
+        /// <param name="target">The target memory location to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static byte[] AssembleAbsoluteJump(IntPtr target, bool is64bit) => Assembler.Assemble(new[]
         {
-            List<string> assemblyCode = new List<string>(2) { Architecture(is64bit) };
-
-            var buffer              = FindOrCreateBufferInRange(IntPtr.Size);
-            IntPtr functionPointer  = buffer.Add(ref functionAddress);
-
-            if (is64bit) assemblyCode.Add("jmp qword [qword 0x" + functionPointer.ToString("X") + "]");
-            else         assemblyCode.Add("jmp dword [0x" + functionPointer.ToString("X") + "]");
-
-            return Assembler.Assemble(assemblyCode);
-        }
+            Architecture(is64bit),
+            GetAbsoluteJumpMnemonics(target, is64bit)
+        });
 
         /// <summary>
         /// Assembles a push + return combination to a given target address.
         /// </summary>
-        /// <param name="targetAddress">A 32bit target address.</param>
-        /// <param name="is64bit">32bit or 64bit process?</param>
-        /// <returns></returns>
-        public static byte[] AssemblePushReturn(IntPtr targetAddress, bool is64bit)
+        /// <param name="target">The target memory location to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static byte[] AssemblePushReturn(IntPtr target, bool is64bit) => Assembler.Assemble(new[]
         {
-            List<string> assemblyCode = new List<string>(2) { Architecture(is64bit) };
+            Architecture(is64bit),
+            GetPushReturnMnemonics(target, is64bit)
+        });
 
-            assemblyCode.Add($"push 0x{targetAddress.ToString("X")}");
-            assemblyCode.Add("ret");
-            
-            return Assembler.Assemble(assemblyCode);
+        /// <summary>
+        /// Assembles a relative (to EIP/RIP) jump by a user specified offset.
+        /// </summary>
+        /// <param name="relativeJumpOffset">Offset relative to EIP/RIP to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static byte[] AssembleRelativeJump(IntPtr relativeJumpOffset, bool is64bit) => Assembler.Assemble(new[]
+        {
+            Architecture(is64bit),
+            GetRelativeJumpMnemonics(relativeJumpOffset, is64bit)
+        });
+
+        /// <summary>
+        /// Gets the sequence of assembly instructions required to assemble an absolute jump to a user specified address.
+        /// </summary>
+        /// <param name="target">The target memory location to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static string GetAbsoluteJumpMnemonics(IntPtr target, bool is64bit)
+        {
+            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            IntPtr functionPointer = buffer.Add(ref target);
+
+            if (is64bit) return "jmp qword [qword 0x" + functionPointer.ToString("X") + "]";
+            else         return "jmp dword [0x" + functionPointer.ToString("X") + "]";
         }
 
         /// <summary>
-        /// Assembles a relative jump to by a user specified offset and returns
-        /// the resultant bytes of the assembly process.
+        /// Gets the sequence of assembly instructions required to assemble an absolute jump to a C# function address.
         /// </summary>
-        public static byte[] AssembleRelativeJump(IntPtr relativeJumpOffset, bool is64bit)
+        /// <param name="function">The C# function to create a jump to.</param>
+        /// <param name="reverseWrapper">The native reverse wrapper used to call your function.</param>
+        public static string GetAbsoluteJumpMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
         {
-            List<string> assemblyCode = new List<string> { Architecture(is64bit) };
+            var hooks = ReloadedHooks.Instance;
+            reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
+            return GetAbsoluteJumpMnemonics(reverseWrapper.WrapperPointer, IntPtr.Size == 8);
+        }
 
-            if (is64bit) assemblyCode.Add("jmp qword " + relativeJumpOffset);
-            else         assemblyCode.Add("jmp dword " + relativeJumpOffset);
+        /// <summary>
+        /// Gets the sequence of assembly instructions required to assemble an absolute jump to a user specified address.
+        /// </summary>
+        /// <param name="target">The target memory location to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static string GetPushReturnMnemonics(IntPtr target, bool is64bit) => $"push 0x{target.ToString("X")}\nret";
 
-            return Assembler.Assemble(assemblyCode.ToArray());
+        /// <summary>
+        /// Gets the sequence of assembly instructions required to assemble a relative jump to the current instruction pointer.
+        /// </summary>
+        /// <param name="relativeJumpOffset">Offset relative to EIP/RIP to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static string GetRelativeJumpMnemonics(IntPtr relativeJumpOffset, bool is64bit)
+        {
+            if (is64bit) return "jmp qword " + relativeJumpOffset;
+            else         return "jmp dword " + relativeJumpOffset;
         }
 
         /// <summary>
@@ -186,9 +218,16 @@ namespace Reloaded.Hooks.Tools
             }
         }
 
-        public static MemoryBuffer FindOrCreateBufferInRange(int size, long minimumAddress = 1, long maximumAddress = int.MaxValue)
+        /// <summary>
+        /// Finds an existing <see cref="MemoryBuffer"/> or creates one satisfying the given size.
+        /// </summary>
+        /// <param name="size">The required size of buffer.</param>
+        /// <param name="minimumAddress">Maximum address of the buffer.</param>
+        /// <param name="maximumAddress">Minimum address of the buffer.</param>
+        /// <param name="alignment">Required alignment of the item to add to the buffer.</param>
+        public static MemoryBuffer FindOrCreateBufferInRange(int size, long minimumAddress = 1, long maximumAddress = int.MaxValue, int alignment = 4)
         {
-            var buffers = _bufferHelper.FindBuffers(size, (IntPtr)minimumAddress, (IntPtr)maximumAddress);
+            var buffers = _bufferHelper.FindBuffers(size + alignment, (IntPtr)minimumAddress, (IntPtr)maximumAddress);
             return buffers.Length > 0 ? buffers[0] : _bufferHelper.CreateMemoryBuffer(size, minimumAddress, maximumAddress);
         }
 

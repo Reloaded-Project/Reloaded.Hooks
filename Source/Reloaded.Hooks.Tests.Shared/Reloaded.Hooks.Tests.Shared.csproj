@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,6 +6,18 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ManagedCalculator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Reloaded.Memory" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="NativeCalculator.cs" />
   </ItemGroup>
 
 </Project>

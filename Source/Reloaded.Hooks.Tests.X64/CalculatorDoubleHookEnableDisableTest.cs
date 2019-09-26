@@ -1,7 +1,6 @@
 ﻿using System;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
 
 namespace Reloaded.Hooks.Tests.X64
@@ -13,21 +12,21 @@ namespace Reloaded.Hooks.Tests.X64
     {
         private const int MultiplyConstant = 2;
 
-        private Calculator _calculator;
-        private Calculator.MultiplyFunction _multiplyFunction;
+        private NativeCalculator _nativeCalculator;
+        private NativeCalculator.MultiplyFunction _multiplyFunction;
 
-        private IHook<Calculator.MultiplyFunction>   _multiplyHook01;
-        private IHook<Calculator.MultiplyFunction>   _multiplyHook02;
+        private IHook<NativeCalculator.MultiplyFunction>   _multiplyHook01;
+        private IHook<NativeCalculator.MultiplyFunction>   _multiplyHook02;
 
         public CalculatorDoubleHookEnableDisableTest()
         {
-            _calculator = new Calculator();
-            _multiplyFunction = Wrapper.Create<Calculator.MultiplyFunction>((long)_calculator.Multiply);
+            _nativeCalculator = new NativeCalculator();
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out _);
         }
 
         public void Dispose()
         {
-            _calculator?.Dispose();
+            _nativeCalculator?.Dispose();
         }
 
         [Fact]
@@ -35,8 +34,9 @@ namespace Reloaded.Hooks.Tests.X64
         {
             int Hookfunction01(int a, int b) { return _multiplyHook01.OriginalFunction(a, b) * MultiplyConstant; }
             int Hookfunction02(int a, int b) { return _multiplyHook02.OriginalFunction(a, b) * MultiplyConstant; }
-            _multiplyHook01 = new Hook<Calculator.MultiplyFunction>(Hookfunction01, (long)_calculator.Multiply).Activate();
-            _multiplyHook02 = new Hook<Calculator.MultiplyFunction>(Hookfunction02, (long)_calculator.Multiply).Activate();
+
+            _multiplyHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>(Hookfunction01, (long)_nativeCalculator.Multiply).Activate();
+            _multiplyHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>(Hookfunction02, (long)_nativeCalculator.Multiply).Activate();
 
             // 11, 10, 01, 00 labels below represent hook enable states. First bit is _multiplyHook01, second is _multiplyHook02.
 

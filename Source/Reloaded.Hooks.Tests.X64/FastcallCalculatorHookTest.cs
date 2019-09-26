@@ -1,8 +1,9 @@
 ﻿using System;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
 using Xunit;
+
+// Watch out!
 
 namespace Reloaded.Hooks.Tests.X64
 {
@@ -22,10 +23,10 @@ namespace Reloaded.Hooks.Tests.X64
         public FastcallCalculatorHookTest()
         {
             _calculator = new FastcallCalculator();
-            _addFunction = Wrapper.Create<FastcallCalculator.AddFunction>((long) _calculator.Add);
-            _subtractFunction = Wrapper.Create<FastcallCalculator.SubtractFunction>((long)_calculator.Subtract);
-            _divideFunction = Wrapper.Create<FastcallCalculator.DivideFunction>((long)_calculator.Divide);
-            _multiplyFunction = Wrapper.Create<FastcallCalculator.MultiplyFunction>((long)_calculator.Multiply);
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.AddFunction>((long) _calculator.Add, out _);
+            _subtractFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.SubtractFunction>((long)_calculator.Subtract, out _);
+            _divideFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.DivideFunction>((long)_calculator.Divide, out _);
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.MultiplyFunction>((long)_calculator.Multiply, out _);
         }
 
         public void Dispose()
@@ -37,7 +38,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void TestHookAdd()
         {
             int Hookfunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
-            _addHook = new Hook<FastcallCalculator.AddFunction>(Hookfunction, (long) _calculator.Add).Activate();
+            _addHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.AddFunction>(Hookfunction, (long) _calculator.Add).Activate();
             
             for (int x = 0; x < 100; x++)
             {
@@ -56,7 +57,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void TestHookSub()
         {
             int Hookfunction(int a, int b) { return _subHook.OriginalFunction(a, b) - 1; }
-            _subHook = new Hook<FastcallCalculator.SubtractFunction>(Hookfunction, (long)_calculator.Subtract).Activate();
+            _subHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.SubtractFunction>(Hookfunction, (long)_calculator.Subtract).Activate();
 
             int x = 100;
             for (int y = 100; y >= 0; y--)
@@ -72,7 +73,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void TestHookMul()
         {
             int Hookfunction(int a, int b) { return _multiplyHook.OriginalFunction(a, b) * 2; }
-            _multiplyHook = new Hook<FastcallCalculator.MultiplyFunction>(Hookfunction, (long)_calculator.Multiply).Activate();
+            _multiplyHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.MultiplyFunction>(Hookfunction, (long)_calculator.Multiply).Activate();
 
             int x = 100;
             for (int y = 0; y < 100; y++)
@@ -88,7 +89,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void TestHookDiv()
         {
             int Hookfunction(int a, int b) { return _divideHook.OriginalFunction(a, b) * 2; }
-            _divideHook = new Hook<FastcallCalculator.DivideFunction>(Hookfunction, (long)_calculator.Divide).Activate();
+            _divideHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.DivideFunction>(Hookfunction, (long)_calculator.Divide).Activate();
 
             int x = 100;
             for (int y = 1; y < 100; y++)

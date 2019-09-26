@@ -2,29 +2,30 @@
 using System.Collections.Generic;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X86; // Watch out!
 using Xunit;
 
-namespace Reloaded.Hooks.Tests.X86
+// Watch out!
+
+namespace Reloaded.Hooks.Tests.X64
 {
     public class SuperStackedHooks : IDisposable
     {
-        private int HookCount = 5000;
+        private int HookCount = 1000;
 
-        private Calculator _calculator;
-        private Calculator.AddFunction _addFunction;
+        private NativeCalculator _nativeCalculator;
+        private NativeCalculator.AddFunction _addFunction;
 
-        private List<IHook<Calculator.AddFunction>> manyHooks = new List<IHook<Calculator.AddFunction>>();
+        private List<IHook<NativeCalculator.AddFunction>> manyHooks = new List<IHook<NativeCalculator.AddFunction>>();
 
         public SuperStackedHooks()
         {
-            _calculator = new Calculator();
-            _addFunction = Wrapper.Create<Calculator.AddFunction>((long) _calculator.Add);
+            _nativeCalculator = new NativeCalculator();
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out _);
         }
 
         public void Dispose()
         {
-            _calculator?.Dispose();
+            _nativeCalculator?.Dispose();
         }
 
         [Fact]
@@ -32,8 +33,8 @@ namespace Reloaded.Hooks.Tests.X86
         {
             for (int x = 0; x < HookCount; x++)
             {
-                IHook<Calculator.AddFunction> addHook = null;
-                addHook = new Hook<Calculator.AddFunction>((a, b) => addHook.OriginalFunction(a, b) + 1, (long)_calculator.Add).Activate();
+                IHook<NativeCalculator.AddFunction> addHook = null;
+                addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((a, b) => addHook.OriginalFunction(a, b) + 1, (long)_nativeCalculator.Add).Activate();
                 manyHooks.Add(addHook);
             }
             

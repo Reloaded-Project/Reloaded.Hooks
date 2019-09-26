@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Threading;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Tests.Shared;
-using Reloaded.Hooks.X64; // Watch out!
+using Reloaded.Hooks.Tests.Shared.Macros;
 using Xunit;
-using static Reloaded.Hooks.Tests.Shared.Macros.Macros;
 
 namespace Reloaded.Hooks.Tests.X64
 {
     public class CalculatorAsmHookTest : IDisposable
     {
-        private Calculator _calculator;
-        private Calculator.AddFunction _addFunction;
-        private Calculator.SubtractFunction _subtractFunction;
-        private Calculator.AddFunction _addWithBranchFunction;
+        private NativeCalculator _nativeCalculator;
+        private NativeCalculator.AddFunction _addFunction;
+        private NativeCalculator.SubtractFunction _subtractFunction;
+        private NativeCalculator.AddFunction _addWithBranchFunction;
 
         private IAsmHook _addNoOriginalHook;
         private IAsmHook _addBeforeOriginalHook;
@@ -23,15 +21,15 @@ namespace Reloaded.Hooks.Tests.X64
 
         public CalculatorAsmHookTest()
         {
-            _calculator = new Calculator();
-            _addFunction = Wrapper.Create<Calculator.AddFunction>((long) _calculator.Add);
-            _subtractFunction = Wrapper.Create<Calculator.SubtractFunction>((long)_calculator.Subtract);
-            _addWithBranchFunction = Wrapper.Create<Calculator.AddFunction>((long)_calculator.AddWithBranch);
+            _nativeCalculator = new NativeCalculator();
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out _);
+            _subtractFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract, out _);
+            _addWithBranchFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long)_nativeCalculator.AddWithBranch, out _);
         }
 
         public void Dispose()
         {
-            _calculator?.Dispose();
+            _nativeCalculator?.Dispose();
         }
 
         [Fact]
@@ -40,16 +38,16 @@ namespace Reloaded.Hooks.Tests.X64
             int wordSize = IntPtr.Size;
             string[] addFunction = 
             {
-                $"{_use32}",
-                $"push {_ebp}",
-                $"mov {_ebp}, {_esp}",
+                $"{Macros._use32}",
+                $"push {Macros._ebp}",
+                $"mov {Macros._ebp}, {Macros._esp}",
 
-                $"mov {_eax}, [{_ebp} + {wordSize * 2}]", // Left Parameter
-                $"mov {_ecx}, [{_ebp} + {wordSize * 3}]", // Right Parameter
-                $"add {_eax}, 1",                         // Left Parameter
+                $"mov {Macros._eax}, [{Macros._ebp} + {wordSize * 2}]", // Left Parameter
+                $"mov {Macros._ecx}, [{Macros._ebp} + {wordSize * 3}]", // Right Parameter
+                $"add {Macros._eax}, 1",                         // Left Parameter
             };
 
-            _addNoOriginalHook = new AsmHook(addFunction, (long) _calculator.Add, AsmHookBehaviour.DoNotExecuteOriginal).Activate();
+            _addNoOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long) _nativeCalculator.Add, AsmHookBehaviour.DoNotExecuteOriginal).Activate();
 
             for (int x = 0; x < 100; x++)
             {
@@ -70,11 +68,11 @@ namespace Reloaded.Hooks.Tests.X64
             int wordSize = IntPtr.Size;
             string[] addFunction =
             {
-                $"{_use32}",
-                $"add [{_esp} + {wordSize * 1}], byte 1",      // Left Parameter
+                $"{Macros._use32}",
+                $"add [{Macros._esp} + {wordSize * 1}], byte 1",      // Left Parameter
             };
 
-            _addBeforeOriginalHook = new AsmHook(addFunction, (long)_calculator.Add, AsmHookBehaviour.ExecuteFirst).Activate();
+            _addBeforeOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, AsmHookBehaviour.ExecuteFirst).Activate();
 
             for (int x = 0; x < 100; x++)
             {
@@ -94,11 +92,11 @@ namespace Reloaded.Hooks.Tests.X64
         {
             string[] addFunction =
             {
-                $"{_use32}",
-                $"add {_eax}, 1", // Left Parameter - Should have already been copied from stack.
+                $"{Macros._use32}",
+                $"add {Macros._eax}, 1", // Left Parameter - Should have already been copied from stack.
             };
 
-            _addAfterOriginalHook = new AsmHook(addFunction, (long)_calculator.Add, AsmHookBehaviour.ExecuteAfter).Activate();
+            _addAfterOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, AsmHookBehaviour.ExecuteAfter).Activate();
 
             for (int x = 0; x < 100; x++)
             {
@@ -119,11 +117,11 @@ namespace Reloaded.Hooks.Tests.X64
             int wordSize = IntPtr.Size;
             string[] addFunction =
             {
-                $"{_use32}",
-                $"add [{_esp} + {wordSize * 1}], byte 1",      // Left Parameter
+                $"{Macros._use32}",
+                $"add [{Macros._esp} + {wordSize * 1}], byte 1",      // Left Parameter
             };
 
-            _addWithBranchHook = new AsmHook(addFunction, (long)_calculator.AddWithBranch, AsmHookBehaviour.ExecuteFirst).Activate();
+            _addWithBranchHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.AddWithBranch, AsmHookBehaviour.ExecuteFirst).Activate();
 
             for (int x = 0; x < 100; x++)
             {
