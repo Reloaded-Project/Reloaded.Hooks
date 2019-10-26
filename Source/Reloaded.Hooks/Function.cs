@@ -42,7 +42,7 @@ namespace Reloaded.Hooks
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         public IHook<TFunction> Hook(TFunction function, int minHookLength = -1)
         {
-            return new Hook<TFunction>(function, Address, minHookLength);
+            return Hooks.CreateHook(function, Address, minHookLength);
         }
 
         /// <summary>
@@ -51,11 +51,8 @@ namespace Reloaded.Hooks
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         public TFunction GetWrapper()
         {
-            if (_wrapper == null)
-            {
-                _wrapper = IntPtr.Size == 4 ? X86.Wrapper.Create<TFunction>(Address, out _wrapperAddress)
-                                            : X64.Wrapper.Create<TFunction>(Address, out _wrapperAddress);
-            }
+            if (_wrapper == null) 
+                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
 
             return _wrapper;
         }
@@ -71,11 +68,8 @@ namespace Reloaded.Hooks
         public TFunction GetWrapper(out IntPtr wrapperAddress)
         {
             if (_wrapper == null)
-            {
-                _wrapper = IntPtr.Size == 4 ? X86.Wrapper.Create<TFunction>(Address, out _wrapperAddress) 
-                                            : X64.Wrapper.Create<TFunction>(Address, out _wrapperAddress);
-            }
-            
+                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
+
             wrapperAddress = _wrapperAddress;
             return _wrapper;
         }
@@ -91,7 +85,7 @@ namespace Reloaded.Hooks
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         public IAsmHook MakeAsmHook(string[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1)
         {
-            return new AsmHook(asmCode, Address, behaviour, hookLength);
+            return Hooks.CreateAsmHook(asmCode, Address, behaviour, hookLength);
         }
 
         /// <summary>
@@ -102,7 +96,7 @@ namespace Reloaded.Hooks
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         public IAsmHook MakeAsmHook(byte[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1)
         {
-            return new AsmHook(asmCode, Address, behaviour, hookLength);
+            return Hooks.CreateAsmHook(asmCode, Address, behaviour, hookLength);
         }
     }
 }
