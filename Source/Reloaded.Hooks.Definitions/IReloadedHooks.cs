@@ -7,6 +7,15 @@ namespace Reloaded.Hooks.Definitions
     public interface IReloadedHooks
     {
         /// <summary>
+        /// Constructs an <see cref="IFunction"/>.
+        /// Utility class which allows you to more easily hook or call a native function.
+        /// </summary>
+        /// <param name="address">The address of the function.</param>
+        /// <typeparam name="TFunction">The delegate type of the function.</typeparam>
+        /// <returns>The function.</returns>
+        IFunction<TFunction> CreateFunction<TFunction>(long address);
+
+        /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>

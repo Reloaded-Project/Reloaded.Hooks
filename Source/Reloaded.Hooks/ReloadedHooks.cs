@@ -10,6 +10,7 @@ namespace Reloaded.Hooks
     {
         public static ReloadedHooks Instance { get; } = new ReloadedHooks();
 
+        public IFunction<TFunction> CreateFunction<TFunction>(long address) => new Function<TFunction>(address, this);
         public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(function, functionAddress, minHookLength);
         public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction) => X86.Wrapper.Create<TFunction>(functionAddress, fromFunction);
         public IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention) => X64.Wrapper.Create<TFunction>(functionAddress, fromConvention, toConvention);
