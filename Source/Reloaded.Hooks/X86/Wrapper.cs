@@ -62,9 +62,12 @@ namespace Reloaded.Hooks.X86
             int nonRegisterParameters = numberOfParameters - fromFunction.SourceRegisters.Length;
             List<string> assemblyCode = new List<string> {"use32"};
 
-            // Backup Stack Frame
+            // Callee Saved Registers
             assemblyCode.Add("push ebp");       // Backup old call frame
             assemblyCode.Add("mov ebp, esp");   // Setup new call frame
+            assemblyCode.Add("push ebx");
+            assemblyCode.Add("push esi");
+            assemblyCode.Add("push edi");
 
             // Reserve Extra Stack Space
             if (fromFunction.ReservedStackSpace > 0)
@@ -91,8 +94,12 @@ namespace Reloaded.Hooks.X86
             if (fromFunction.ReservedStackSpace > 0)
                 assemblyCode.Add($"add esp, {fromFunction.ReservedStackSpace}");
 
-            // Restore Stack Frame and Return
+            // Callee Restore Registers
+            assemblyCode.Add("pop edi");
+            assemblyCode.Add("pop esi");
+            assemblyCode.Add("pop ebx");
             assemblyCode.Add("pop ebp");
+
             assemblyCode.Add("ret");
             
             // Write function to buffer and return pointer.

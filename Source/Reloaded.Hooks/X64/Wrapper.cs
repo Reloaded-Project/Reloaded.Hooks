@@ -60,19 +60,30 @@ namespace Reloaded.Hooks.X64
             int numberOfParameters    = Utilities.GetNumberofParametersWithoutFloats(typeof(TFunction));
             List<string> assemblyCode = new List<string> {"use64"};
 
+            // On enter, stack is misaligned by 8.
+            // Callee Backup Registers
             // Backup Stack Frame
             assemblyCode.Add("push rbp");       // Backup old call frame
             assemblyCode.Add("mov rbp, rsp");   // Setup new call frame
 
+            // Stack now realigned, but will misalign here too.
+            assemblyCode.Add("push rbx");
+            assemblyCode.Add("push rsi");
+            assemblyCode.Add("push rdi");
+            assemblyCode.Add("push r12");
+            assemblyCode.Add("push r13");
+            assemblyCode.Add("push r14");
+            assemblyCode.Add("push r15");
+
             // Even my mind gets a bit confused. So here is a reminder:
             // fromConvention is the convention that gets called.
             // toConvention is the convention we are marshalling from.
-            
+
             int targetStackParameters  = numberOfParameters - fromConvention.SourceRegisters.Length;
             targetStackParameters      = targetStackParameters < 0 ? 0 : targetStackParameters;
 
-            int stackParamBytesTotal = (targetStackParameters * 8);
-            int stackMisalignment    = (stackParamBytesTotal) % 16;
+            int stackParamBytesTotal = ((targetStackParameters) * 8);
+            int stackMisalignment    = (stackParamBytesTotal + 8) % 16; // Adding +8 here because we assume that we are starting with a misaligned stack.
             int shadowSpace          = fromConvention.ShadowSpace ? 32 : 0;
 
             // Note: Our stack is already aligned at this point because of `push` above.
@@ -102,8 +113,16 @@ namespace Reloaded.Hooks.X64
             if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
                 assemblyCode.Add($"mov {fromConvention.ReturnRegister}, {toConvention.ReturnRegister}");
 
-            // Restore Stack Frame and Return
+            // Callee Restore Registers
+            assemblyCode.Add("pop r15");
+            assemblyCode.Add("pop r14");
+            assemblyCode.Add("pop r13");
+            assemblyCode.Add("pop r12");
+            assemblyCode.Add("pop rdi");
+            assemblyCode.Add("pop rsi");
+            assemblyCode.Add("pop rbx");
             assemblyCode.Add("pop rbp");
+
             assemblyCode.Add("ret");
 
             // Write function to buffer and return pointer.
