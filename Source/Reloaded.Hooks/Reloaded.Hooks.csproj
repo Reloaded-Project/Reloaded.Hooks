@@ -14,7 +14,7 @@
     <Company />
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
-    <Version>2.3.0</Version>
+    <Version>2.3.1</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
@@ -75,6 +75,10 @@
 
   <ItemGroup>
     <NativeLibs Remove="ReloadedHooks.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ReloadedHooksUtilities.cs" />
   </ItemGroup>
 
 </Project>
