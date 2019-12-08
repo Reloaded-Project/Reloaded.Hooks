@@ -271,9 +271,17 @@ namespace Reloaded.Hooks.Tools
          * -----------------
          */
 
+        /// <summary>
+        /// Gets the minimum and maximum address possible with a relative jump.
+        /// </summary>
+        /// <param name="targetAddress">Address we are jumping from.</param>
+        /// <param name="maxDisplacement">Maximum distance we can jump.</param>
         public static (long min, long max) GetRelativeJumpMinMax(long targetAddress, long maxDisplacement = Int32.MaxValue)
         {
             long minAddress = targetAddress - maxDisplacement;
+            if (minAddress <= 0)
+                minAddress = 1;     // Limitation of Reloaded.Memory.Buffers
+
             long maxAddress;
 
             // long overflow check.
@@ -282,8 +290,7 @@ namespace Reloaded.Hooks.Tools
             else
                 maxAddress = targetAddress + maxDisplacement;
             
-            if (minAddress <= 0)
-                minAddress = 1;     // Limitation of Reloaded.Memory.Buffers
+
 
             if (! Environment.Is64BitProcess)
                 if (maxAddress > Int32.MaxValue)

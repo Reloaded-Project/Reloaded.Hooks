@@ -130,5 +130,10 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1);
+
+        /// <summary>
+        /// Provides access to various useful utilities.
+        /// </summary>
+        IReloadedHooksUtilities Utilities { get; }
     }
 }
