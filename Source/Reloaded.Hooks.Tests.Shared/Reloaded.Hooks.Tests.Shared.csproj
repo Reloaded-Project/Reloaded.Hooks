@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Reloaded.Memory" Version="2.4.0" />
+    <PackageReference Include="Reloaded.Memory" Version="2.*" />
   </ItemGroup>
 
   <ItemGroup>
