@@ -25,5 +25,15 @@ namespace Reloaded.Hooks.Internal
         {
             CurrentProcess.SafeWriteRaw(_address, _bytes);
         }
+
+        /// <summary>
+        /// Applies the patch without changing permissions.
+        /// </summary>
+        public unsafe void ApplyUnsafe()
+        {
+            var addressSpan = new Span<byte>((void*) _address, _bytes.Length);
+            var bytesSpan   = _bytes.AsSpan();
+            bytesSpan.CopyTo(addressSpan);
+        }
     }
 }

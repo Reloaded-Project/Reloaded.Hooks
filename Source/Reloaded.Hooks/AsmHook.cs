@@ -184,7 +184,7 @@ namespace Reloaded.Hooks
             {
                 _activated = true;
                 _activateHookPatch.Apply();
-                _enableHookPatch.Apply();
+                _enableHookPatch.ApplyUnsafe();
             }
 
             return this;
@@ -192,13 +192,13 @@ namespace Reloaded.Hooks
 
         public void Enable()
         {
-            _enableHookPatch.Apply();
+            _enableHookPatch.ApplyUnsafe();
             IsEnabled = true;
         }
 
         public void Disable()
         {
-            _disableHookPatch.Apply();
+            _disableHookPatch.ApplyUnsafe();
             IsEnabled = false;
         }
     }

@@ -157,7 +157,7 @@ namespace Reloaded.Hooks
         {
             if (IsHookActivated)
             {
-                _disableHookPatch.Apply();
+                _disableHookPatch.ApplyUnsafe();
                 IsHookEnabled = false;
             }
         }
@@ -169,7 +169,7 @@ namespace Reloaded.Hooks
         {
             if (IsHookActivated)
             {
-                _enableHookPatch.Apply();
+                _enableHookPatch.ApplyUnsafe();
                 IsHookEnabled = true;
             }
         }
