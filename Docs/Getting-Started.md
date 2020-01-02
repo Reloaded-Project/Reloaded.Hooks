@@ -314,7 +314,7 @@ void FastcallCSharpFunctionPointerTest()
     _reverseFunctionWrapper = new ReverseWrapper<FastcallExample>(CSharpFastcallFunction);
 
     // To prove our "C# fastcall" function works, let's just call it like a native function.
-    _functionWrapper = Wrapper.Create<FastcallExample>((long)reverseFunctionWrapper.Pointer);
+    _functionWrapper = Wrapper.Create<FastcallExample>((long)_reverseFunctionWrapper.WrapperPointer);
     _functionWrapper(1,2,3);
 }
 
