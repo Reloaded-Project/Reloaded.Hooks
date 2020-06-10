@@ -26,6 +26,9 @@ namespace Reloaded.Hooks
 
         public int GetNumberofParameters(Type delegateType) => Utilities.GetNumberofParameters(delegateType);
         public int GetNumberofParametersWithoutFloats(Type delegateType) => Utilities.GetNumberofParametersWithoutFloats(delegateType);
+        public string PushCdeclCallerSavedRegisters() => "push eax\npush ecx\npush edx";
+        public string PopCdeclCallerSavedRegisters() => "pop edx\npop ecx\npop eax";
+        public IntPtr WritePointer(IntPtr target) => Utilities.WritePointer(target);
 
         public (long min, long max) GetRelativeJumpMinMax(long targetAddress, long maxDisplacement = Int32.MaxValue) => Utilities.GetRelativeJumpMinMax(targetAddress, maxDisplacement);
     }

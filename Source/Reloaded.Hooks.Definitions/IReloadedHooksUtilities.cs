@@ -110,6 +110,24 @@ namespace Reloaded.Hooks.Definitions
         /// <returns>Number of parameters for the supplied delegate type, without floats.</returns>
         int GetNumberofParametersWithoutFloats(Type delegateType);
 
+        /// <summary>
+        /// A macro for "push eax\npush ecx\npush edx" that preserves all CDECL caller saved registers before
+        /// a function call.
+        /// </summary>
+        string PushCdeclCallerSavedRegisters();
+
+        /// <summary>
+        /// A macro for "pop edx\npop ecx\npop eax" for safely restoring caller saved registers after a function call.
+        /// </summary>
+        string PopCdeclCallerSavedRegisters();
+
+        /// <summary>
+        /// Allocates a pointer to a given target address in unmanaged, non-reclaimable memory.
+        /// </summary>
+        /// <param name="target">The target address/value the pointer is pointing to</param>
+        /// <returns>Address of the pointer.</returns>
+        IntPtr WritePointer(IntPtr target);
+
         /*
          * -----------------
          * Private Functions

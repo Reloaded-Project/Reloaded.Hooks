@@ -29,6 +29,17 @@ namespace Reloaded.Hooks.Tools
         private static string Architecture(bool is64bit) => is64bit ? "use64" : "use32";
 
         /// <summary>
+        /// Writes a pointer to a given target address in unmanaged, non-reclaimable memory.
+        /// </summary>
+        /// <param name="target">The target address/value the pointer is pointing to.</param>
+        /// <returns>Address of the pointer.</returns>
+        public static IntPtr WritePointer(IntPtr target)
+        {
+            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            return buffer.Add(ref target);
+        }
+
+        /// <summary>
         /// Assembles an absolute jump to a user specified address.
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
