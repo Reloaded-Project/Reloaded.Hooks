@@ -10,6 +10,30 @@ using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
 {
+    #if FEATURE_FUNCTION_POINTERS
+    /// <summary>
+    /// Specialized version of <see cref="Hook{TFunction, TFuncPointer}"/> with support for function pointers.
+    /// </summary>
+    public class Hook<TFunction, TFuncPointer> : Hook<TFunction>, IHook<TFunction, TFuncPointer> where TFuncPointer : unmanaged
+    {
+        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1) : base(function, functionAddress, minHookLength)
+        {
+            OriginalFunction = ((IHook)this).GetFunctionPointer<TFuncPointer>();
+        }
+
+        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1) : base(targetAddress, functionAddress, minHookLength)
+        {
+            OriginalFunction = ((IHook)this).GetFunctionPointer<TFuncPointer>();
+        }
+
+        /// <inheritdoc/>
+        public new TFuncPointer OriginalFunction { get; }
+
+        /// <inheritdoc/>
+        public new IHook<TFunction, TFuncPointer> Activate() => (IHook<TFunction, TFuncPointer>) base.Activate();
+    }
+    #endif
+
     public class Hook<TFunction> : IHook<TFunction>
     {
         /// <summary>
@@ -63,7 +87,29 @@ namespace Reloaded.Hooks
         {
             _is64Bit = IntPtr.Size == 8;
             ReverseWrapper = CreateReverseWrapper(function);
+            CreateHook(functionAddress, minHookLength);
+        }
 
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="targetAddress">Address of the function to detour the original function to.</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1)
+        {
+            _is64Bit = IntPtr.Size == 8;
+            ReverseWrapper = CreateReverseWrapper(targetAddress);
+            CreateHook(functionAddress, minHookLength);
+        }
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        private void CreateHook(long functionAddress, int minHookLength = -1)
+        {
             /*
                === Hook Summary ===
 
@@ -96,7 +142,7 @@ namespace Reloaded.Hooks
 
             var functionPatcher = new FunctionPatcher(_is64Bit);
             var functionPatch = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
-
+            
             IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
             functionPatch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(hookEndAddress, _is64Bit));
 
@@ -149,6 +195,9 @@ namespace Reloaded.Hooks
             return this;
         }
 
+        /// <inheritdoc />
+        IHook IHook.Activate() => Activate();
+
         /// <summary>
         /// Temporarily disables the hook, causing all functions re-routed to your own function to be re-routed back to the original function instead.
         /// </summary>
@@ -174,7 +223,7 @@ namespace Reloaded.Hooks
             }
         }
 
-        private IReverseWrapper<TFunction> CreateReverseWrapper(TFunction function)
+        protected IReverseWrapper<TFunction> CreateReverseWrapper(TFunction function)
         {
             if (_is64Bit)
                 return new X64.ReverseWrapper<TFunction>(function);
@@ -182,7 +231,15 @@ namespace Reloaded.Hooks
             return new ReverseWrapper<TFunction>(function);
         }
 
-        private TFunction CreateWrapper(long functionAddress, out IntPtr wrapperAddress)
+        protected unsafe IReverseWrapper<TFunction> CreateReverseWrapper(void* function)
+        {
+            if (_is64Bit)
+                return new X64.ReverseWrapper<TFunction>((IntPtr) function);
+
+            return new ReverseWrapper<TFunction>((IntPtr) function);
+        }
+
+        protected TFunction CreateWrapper(long functionAddress, out IntPtr wrapperAddress)
         {
             if (_is64Bit)
                 return X64.Wrapper.Create<TFunction>(functionAddress, out wrapperAddress);

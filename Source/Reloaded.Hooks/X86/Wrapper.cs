@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
+
+#if FEATURE_FUNCTION_POINTERS
+using Reloaded.Hooks.Definitions.Structs;
+#endif
 
 namespace Reloaded.Hooks.X86
 {
@@ -36,15 +41,48 @@ namespace Reloaded.Hooks.X86
         /// </param>
         public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(CreatePointer<TFunction>(functionAddress, out wrapperAddress));
+        }
+
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a CDECL function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function is CDECL, the wrapper address equals the function address.
+        /// </param>
+        /// <returns>Address of the wrapper in native memory.</returns>
+        public static IntPtr CreatePointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
             wrapperAddress = (IntPtr)functionAddress;
 
             // Hot path: CDECL functions require no wrapping.
-            if (! attribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
+            if (!attribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
                 wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute);
 
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
+            return wrapperAddress;
         }
+
+
+#if FEATURE_FUNCTION_POINTERS
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a CDECL function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function is CDECL, the wrapper address equals the function address.
+        /// </param>
+        public static TFunction CreateFunctionPointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
+            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
+            return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
+        }
+#endif
 
         /// <summary>
         /// Creates the <see cref="Wrapper"/> in memory allowing you to call a function
@@ -58,7 +96,7 @@ namespace Reloaded.Hooks.X86
             Mutex.MakeWrapperMutex.WaitOne();
 
             // toFunction (target) is CDECL
-            int numberOfParameters = Utilities.GetNumberofParameters(typeof(TFunction));
+            int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
             int nonRegisterParameters = numberOfParameters - fromFunction.SourceRegisters.Length;
             List<string> assemblyCode = new List<string> {"use32"};
 

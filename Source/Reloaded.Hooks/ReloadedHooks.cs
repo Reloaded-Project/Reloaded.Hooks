@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X86;
@@ -12,6 +13,8 @@ namespace Reloaded.Hooks
 
         public IFunction<TFunction> CreateFunction<TFunction>(long address) => new Function<TFunction>(address, this);
         public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(function, functionAddress, minHookLength);
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(targetAddress, functionAddress, minHookLength);
+
         public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction) => X86.Wrapper.Create<TFunction>(functionAddress, fromFunction);
         public IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention) => X64.Wrapper.Create<TFunction>(functionAddress, fromConvention, toConvention);
 
@@ -45,6 +48,23 @@ namespace Reloaded.Hooks
 
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
+
+        #if FEATURE_FUNCTION_POINTERS
+        public unsafe IHook<TFunction, TFunctionPointer> CreateHook<TFunction, TFunctionPointer>(void* targetAddress, long functionAddress, int minHookLength = -1) where TFunctionPointer : unmanaged => new Hook<TFunction, TFunctionPointer>(targetAddress, functionAddress, minHookLength);
+
+        public IntPtr CreateWrapperPtr<TFunction>(long functionAddress)
+        {
+            var wrapper = CreateWrapper<TFunction>(functionAddress, out var wrapperAddress);
+            return wrapperAddress;
+        }
+
+        public TFunctionPointer CreateWrapperPtr<TFunction, TFunctionPointer>(long functionAddress)
+        {
+            var ptr = CreateWrapperPtr<TFunction>(functionAddress);
+            return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
+        }
+        #endif
+
         public IReloadedHooksUtilities Utilities { get; } = new ReloadedHooksUtilities();
     }
 }

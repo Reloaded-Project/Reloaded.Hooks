@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
 
@@ -16,26 +18,69 @@ namespace Reloaded.Hooks.Tests.X64
         private NativeCalculator.MultiplyFunction _multiplyFunction;
         private NativeCalculator.AddFunction _addWithBranchFunction;
 
-        private IHook<NativeCalculator.AddFunction> _addHook;
-        private IHook<NativeCalculator.SubtractFunction> _subHook;
-        private IHook<NativeCalculator.DivideFunction> _divideHook;
-        private IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
+        private static IHook<NativeCalculator.AddFunction> _addHook;
+        private static IHook<NativeCalculator.SubtractFunction> _subHook;
+        private static IHook<NativeCalculator.DivideFunction> _divideHook;
+        private static IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
+        private static IHook<NativeCalculator.AddFunction> _addWithBranchHook;
 
-        private IHook<NativeCalculator.AddFunction> _addWithBranchHook;
+        private Definitions.Structs.FuncPtr<int, int, int> _addFunctionPointer;
+        private Definitions.Structs.FuncPtr<int, int, int> _multiplyFunctionPointer;
 
         public CalculatorHookTest()
         {
             _nativeCalculator = new NativeCalculator();
-            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out _);
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out var addWrapper);
             _subtractFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract, out _);
-            _divideFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide, out _);
-            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out _);
+            _divideFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide, out var divWrapper);
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out var mulWrapper);
             _addWithBranchFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long)_nativeCalculator.AddWithBranch, out _);
+            _addFunctionPointer = addWrapper;
+            _multiplyFunctionPointer = mulWrapper;
         }
 
         public void Dispose()
         {
             _nativeCalculator?.Dispose();
+        }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int AddHookFunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int MulHookfunction(int a, int b) { return _multiplyHook.OriginalFunction(a, b) * 2; }
+
+        [Fact]
+        public unsafe void TestFunctionPointerHookAdd()
+        {
+            _addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result = _addFunctionPointer.Invoke(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+        [Fact]
+        public unsafe void TestFunctionPointerHookMul()
+        {
+            _multiplyHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*<int, int, int>)&MulHookfunction, (long)_nativeCalculator.Multiply).Activate();
+
+            int x = 100;
+            for (int y = 0; y < 100; y++)
+            {
+                int expected = (x * y) * 2;
+                int result = _multiplyFunctionPointer.Invoke(x, y);
+
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]

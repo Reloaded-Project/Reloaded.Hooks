@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Tools;
@@ -24,11 +25,23 @@ namespace Reloaded.Hooks.Tests.Shared
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();
         
-        public DummyFunctions()
+        public unsafe DummyFunctions()
         {
             BuildReturnFive();
             BuildReturnSix();
+
+            #if FEATURE_FUNCTION_POINTERS
+            delegate* cdecl<void> fn = (delegate* cdecl<void>)(delegate* <void>)&Awoo;
+            #endif
         }
+
+        #if FEATURE_FUNCTION_POINTERS
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        public static void Awoo()
+        {
+
+        }
+        #endif
 
         public void Dispose()
         {

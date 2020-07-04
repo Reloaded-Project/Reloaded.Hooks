@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
@@ -98,5 +99,37 @@ namespace Reloaded.Hooks
         {
             return Hooks.CreateAsmHook(asmCode, Address, behaviour, hookLength);
         }
+
+        #if FEATURE_FUNCTION_POINTERS
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="functionPtr">Pointer to the function to detour the original to.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        public unsafe IHook<TFunction, TFunctionPointer> Hook<TFunctionPointer>(void* functionPtr, int minHookLength = -1) where TFunctionPointer : unmanaged 
+        {
+            return Hooks.CreateHook<TFunction, TFunctionPointer>(functionPtr, Address, minHookLength);
+        }
+
+        /// <summary>
+        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// </summary>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        public IntPtr GetWrapperPtr() 
+        {
+            GetWrapper(out var address);
+            return address;
+        }
+
+        /// <summary>
+        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// </summary>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        public TFunctionPointer GetWrapperPtr<TFunctionPointer>()
+        {
+            var ptr = GetWrapperPtr();
+            return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
+        }
+        #endif
     }
 }

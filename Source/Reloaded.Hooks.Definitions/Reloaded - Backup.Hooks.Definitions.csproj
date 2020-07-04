@@ -24,11 +24,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-    <None Include="Structs\Funcptr.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Funcptr.tt</DependentUpon>
-    </None>
   </ItemGroup>
 	
   <ItemGroup>
@@ -36,27 +31,8 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Compile Update="Structs\Func.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Func.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Structs\Funcptr.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Funcptr.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Structs\FunctionPointer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>FunctionPointer.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-	
-  <ItemGroup>
-    <None Update="Structs\FuncPtr.tt">
+    <None Update="Structs\FunctionPointer.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>Funcptr.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

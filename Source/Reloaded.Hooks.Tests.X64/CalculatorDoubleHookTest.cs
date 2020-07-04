@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
@@ -16,33 +17,85 @@ namespace Reloaded.Hooks.Tests.X64
         private NativeCalculator.MultiplyFunction _multiplyFunction;
         private NativeCalculator.AddFunction _addWithBranchFunction;
 
-        private IHook<NativeCalculator.AddFunction>        _addHook01;
-        private IHook<NativeCalculator.SubtractFunction>   _subHook01;
-        private IHook<NativeCalculator.DivideFunction>     _divideHook01;
-        private IHook<NativeCalculator.MultiplyFunction>   _multiplyHook01;
+        private static IHook<NativeCalculator.AddFunction>        _addHook01;
+        private static IHook<NativeCalculator.SubtractFunction>   _subHook01;
+        private static IHook<NativeCalculator.DivideFunction>     _divideHook01;
+        private static IHook<NativeCalculator.MultiplyFunction>   _multiplyHook01;
 
-        private IHook<NativeCalculator.AddFunction>        _addHook02;
-        private IHook<NativeCalculator.SubtractFunction>   _subHook02;
-        private IHook<NativeCalculator.DivideFunction>     _divideHook02;
-        private IHook<NativeCalculator.MultiplyFunction>   _multiplyHook02;
+        private static IHook<NativeCalculator.AddFunction>        _addHook02;
+        private static IHook<NativeCalculator.SubtractFunction>   _subHook02;
+        private static IHook<NativeCalculator.DivideFunction>     _divideHook02;
+        private static IHook<NativeCalculator.MultiplyFunction>   _multiplyHook02;
 
-        private IHook<NativeCalculator.AddFunction> _addWithBranchHook01;
-        private IHook<NativeCalculator.AddFunction> _addWithBranchHook02;
+        private static IHook<NativeCalculator.AddFunction> _addWithBranchHook01;
+        private static IHook<NativeCalculator.AddFunction> _addWithBranchHook02;
+
+        private Definitions.Structs.FuncPtr<int, int, int> _addFunctionPointer;
+        private Definitions.Structs.FuncPtr<int, int, int> _mulFunctionPointer;
 
         public CalculatorDoubleHookTest()
         {
             _nativeCalculator = new NativeCalculator();
             
-            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out _);
+            _addFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long) _nativeCalculator.Add, out var addPointer);
             _subtractFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract, out _);
             _divideFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide, out _);
-            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out _);
+            _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply, out var mulPointer);
             _addWithBranchFunction = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long)_nativeCalculator.AddWithBranch, out _);
+            _addFunctionPointer = addPointer;
+            _mulFunctionPointer = mulPointer;
         }
 
         public void Dispose()
         {
             _nativeCalculator?.Dispose();
+        }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int AddHookfunction01(int a, int b) { return _addHook01.OriginalFunction(a, b) + 1; }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int AddHookfunction02(int a, int b) { return _addHook02.OriginalFunction(a, b) + 1; }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int MulHookfunction01(int a, int b) { return _multiplyHook01.OriginalFunction(a, b) * 2; }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int MulHookfunction02(int a, int b) { return _multiplyHook02.OriginalFunction(a, b) * 2; }
+
+        [Fact]
+        public unsafe void TestFunctionPointerHookAdd()
+        {
+            _addHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*<int,int,int>)&AddHookfunction01, (long)_nativeCalculator.Add).Activate();
+            _addHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*<int,int,int>)&AddHookfunction02, (long)_nativeCalculator.Add).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = ((x + y) + 1) + 1;
+                    int result = _addFunctionPointer.Invoke(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+        [Fact]
+        public unsafe void TestFunctionPointerHookMul()
+        {
+            _multiplyHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*<int,int,int>)&MulHookfunction01, (long)_nativeCalculator.Multiply).Activate();
+            _multiplyHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*<int,int,int>)&MulHookfunction02, (long)_nativeCalculator.Multiply).Activate();
+
+            int x = 100;
+            for (int y = 0; y < 100; y++)
+            {
+                int expected = ((x * y) * 2) * 2;
+                int result = _mulFunctionPointer.Invoke(x, y);
+
+                Assert.Equal(expected, result);
+            }
         }
 
         [Fact]

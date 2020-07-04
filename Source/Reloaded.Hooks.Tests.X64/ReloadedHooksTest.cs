@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
+using FuncPtr = Reloaded.Hooks.Definitions.Structs.FuncPtr<int, int, int>;
 
 // Watch out!
 
@@ -11,10 +13,10 @@ namespace Reloaded.Hooks.Tests.X64
     {
         private NativeCalculator _nativeCalculator;
 
-        private IHook<NativeCalculator.AddFunction> _addHook;
-        private IHook<NativeCalculator.SubtractFunction> _subHook;
-        private IHook<NativeCalculator.DivideFunction> _divideHook;
-        private IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
+        private static IHook<NativeCalculator.AddFunction> _addHook;
+        private static IHook<NativeCalculator.SubtractFunction> _subHook;
+        private static IHook<NativeCalculator.DivideFunction> _divideHook;
+        private static IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
 
         private IFunction<NativeCalculator.AddFunction> _addFunction;
         private IFunction<NativeCalculator.SubtractFunction> _subtractFunction;
@@ -37,6 +39,27 @@ namespace Reloaded.Hooks.Tests.X64
         public void Dispose()
         {
             _nativeCalculator?.Dispose();
+        }
+
+        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        static int AddHookFunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
+
+        [Fact]
+        public unsafe void TestFunctionPointerHookAdd()
+        {
+            _addHook = _addFunction.Hook<FuncPtr>((delegate*<int,int,int>)&AddHookFunction).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result   = _addFunction.GetWrapperPtr<FuncPtr>().Invoke(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
         }
 
         [Fact]

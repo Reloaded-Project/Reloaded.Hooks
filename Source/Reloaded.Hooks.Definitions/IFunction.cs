@@ -58,5 +58,27 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         IAsmHook MakeAsmHook(byte[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1);
+
+
+#if FEATURE_FUNCTION_POINTERS
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="functionPtr">Pointer to the function to detour the original to.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        unsafe IHook<TFunction, TFunctionPointer> Hook<TFunctionPointer>(void* functionPtr, int minHookLength = -1) where TFunctionPointer : unmanaged;
+
+        /// <summary>
+        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// </summary>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        IntPtr GetWrapperPtr();
+
+        /// <summary>
+        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// </summary>
+        /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        TFunctionPointer GetWrapperPtr<TFunctionPointer>();
+#endif
     }
 }

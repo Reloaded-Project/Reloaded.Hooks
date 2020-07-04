@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
+
+#if FEATURE_FUNCTION_POINTERS
+using Reloaded.Hooks.Definitions.Structs;
+#endif
 
 namespace Reloaded.Hooks.X64
 {
@@ -35,6 +40,21 @@ namespace Reloaded.Hooks.X64
         /// </param>
         public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(CreatePointer<TFunction>(functionAddress, out wrapperAddress));
+        }
+
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a Microsoft X64 calling convention function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to wrap.</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
+        /// </param>
+        /// <returns>Address of the wrapper in native memory.</returns>
+        public static IntPtr CreatePointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
             wrapperAddress = (IntPtr)functionAddress;
 
@@ -42,8 +62,25 @@ namespace Reloaded.Hooks.X64
             if (!attribute.Equals(new FunctionAttribute(CallingConventions.Microsoft)))
                 wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, new FunctionAttribute(CallingConventions.Microsoft));
 
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
+            return wrapperAddress;
         }
+
+#if FEATURE_FUNCTION_POINTERS
+        /// <summary>
+        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
+        /// convention as if it were a Microsoft X64 calling convention function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to wrap.</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
+        /// </param>
+        public static TFunction CreateFunctionPointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        {
+            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
+            return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
+        }
+#endif
 
         /// <summary>
         /// Creates a wrapper converting a call to a source calling convention to a given target calling convention.
