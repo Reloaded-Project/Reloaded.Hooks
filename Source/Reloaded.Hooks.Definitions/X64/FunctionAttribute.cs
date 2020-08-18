@@ -123,9 +123,8 @@ namespace Reloaded.Hooks.Definitions.X64
                 if (attribute is IFunctionAttribute reloadedFunction)
                     return reloadedFunction;
             }
-
-            throw new Exception($"ReloadedFunctionAttribute is missing in the {typeof(TFunction).Name} delegate declaration." +
-                                    $"Please mark the {typeof(TFunction).Name} with an appropriate ReloadedFunctionAttribute");
+            
+            return new FunctionAttribute(CallingConventions.Microsoft);
         }
 
         /* Override Equals & GetHashCode: ReSharper Generated */
