@@ -10,17 +10,6 @@ namespace Reloaded.Hooks.Definitions
 
         /// <summary> A pointer to our wrapper, which calls the internal method as if it were to be of another convention. </summary>
         IntPtr WrapperPointer { get; }
-
-        #if FEATURE_FUNCTION_POINTERS
-        /// <summary>
-        /// Gets the pointer to call our wrapper, which will 
-        /// </summary>
-        unsafe TPointer GetFunctionPointer<TPointer>() where TPointer : unmanaged
-        {
-            var address = WrapperPointer;
-            return System.Runtime.CompilerServices.Unsafe.As<IntPtr, TPointer>(ref address);
-        }
-        #endif
     }
 
     public interface IReverseWrapper<TFunction> : IReverseWrapper

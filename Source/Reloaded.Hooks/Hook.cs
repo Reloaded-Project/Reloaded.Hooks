@@ -18,12 +18,12 @@ namespace Reloaded.Hooks
     {
         public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1) : base(function, functionAddress, minHookLength)
         {
-            OriginalFunction = ((IHook)this).GetFunctionPointer<TFuncPointer>();
+            OriginalFunction = UnsafeCastPointer<TFuncPointer>(OriginalFunctionWrapperAddress);
         }
 
         public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1) : base(targetAddress, functionAddress, minHookLength)
         {
-            OriginalFunction = ((IHook)this).GetFunctionPointer<TFuncPointer>();
+            OriginalFunction = UnsafeCastPointer<TFuncPointer>(OriginalFunctionWrapperAddress);
         }
 
         /// <inheritdoc/>
@@ -31,6 +31,12 @@ namespace Reloaded.Hooks
 
         /// <inheritdoc/>
         public new IHook<TFunction, TFuncPointer> Activate() => (IHook<TFunction, TFuncPointer>) base.Activate();
+
+        private static unsafe TPointer UnsafeCastPointer<TPointer>(IntPtr value) where TPointer : unmanaged
+        {
+            var address = value;
+            return System.Runtime.CompilerServices.Unsafe.As<IntPtr, TPointer>(ref address);
+        }
     }
     #endif
 

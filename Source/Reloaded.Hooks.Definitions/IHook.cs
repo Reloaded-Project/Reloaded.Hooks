@@ -53,18 +53,6 @@ namespace Reloaded.Hooks.Definitions
         /// Re-enables the hook if it has been disabled, causing all functions to be once again re-routed to your own function.
         /// </summary>
         void Enable();
-
-        #if FEATURE_FUNCTION_POINTERS
-        /// <summary>
-        /// Gets the pointer used to call the original function.
-        /// Please cast this to the appropriate function pointer with cdecl calling convention. (e.g. delegate*cdecl&lt;void&gt;)
-        /// </summary>
-        unsafe TPointer GetFunctionPointer<TPointer>() where TPointer : unmanaged
-        {
-            var address = OriginalFunctionWrapperAddress;
-            return System.Runtime.CompilerServices.Unsafe.As<IntPtr, TPointer>(ref address);
-        }
-        #endif
     }
 
     public interface IHook<TFunction> : IHook
