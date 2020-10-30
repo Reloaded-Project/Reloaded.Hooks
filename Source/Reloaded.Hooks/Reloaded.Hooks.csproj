@@ -11,30 +11,13 @@
     <PackageIconUrl></PackageIconUrl>
     <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Company />
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
-    <Version>2.4.0</Version>
+    <Version>2.4.1</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>Icon.png</PackageIcon>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -45,10 +28,6 @@
     </PackageReference>
     <PackageReference Include="Reloaded.Memory.Buffers" Version="1.*" />
     <PackageReference Include="SharpDisasm" Version="1.1.11" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="HookException.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -67,23 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NativeLibs Remove="Hook.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="AsmHook.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="Function.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="ReloadedHooks.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <NativeLibs Remove="ReloadedHooksUtilities.cs" />
+    <NativeLibs Remove="*.cs" />
   </ItemGroup>
 
 </Project>
