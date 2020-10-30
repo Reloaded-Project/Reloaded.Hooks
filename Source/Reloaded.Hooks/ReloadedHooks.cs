@@ -18,6 +18,14 @@ namespace Reloaded.Hooks
         public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction) => X86.Wrapper.Create<TFunction>(functionAddress, fromFunction);
         public IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention) => X64.Wrapper.Create<TFunction>(functionAddress, fromConvention, toConvention);
 
+        public IntPtr CreateWrapper<TFunction>(long functionAddress)
+        {
+            if (IntPtr.Size == 4)
+                return X86.Wrapper.CreatePointer<TFunction>(functionAddress, out _);
+
+            return X64.Wrapper.CreatePointer<TFunction>(functionAddress, out _);
+        }
+
         public TFunction CreateWrapper<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
             if (IntPtr.Size == 4)
@@ -52,15 +60,9 @@ namespace Reloaded.Hooks
         #if FEATURE_FUNCTION_POINTERS
         public unsafe IHook<TFunction, TFunctionPointer> CreateHook<TFunction, TFunctionPointer>(void* targetAddress, long functionAddress, int minHookLength = -1) where TFunctionPointer : unmanaged => new Hook<TFunction, TFunctionPointer>(targetAddress, functionAddress, minHookLength);
 
-        public IntPtr CreateWrapperPtr<TFunction>(long functionAddress)
-        {
-            var wrapper = CreateWrapper<TFunction>(functionAddress, out var wrapperAddress);
-            return wrapperAddress;
-        }
-
         public TFunctionPointer CreateWrapperPtr<TFunction, TFunctionPointer>(long functionAddress)
         {
-            var ptr = CreateWrapperPtr<TFunction>(functionAddress);
+            var ptr = CreateWrapper<TFunction>(functionAddress);
             return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
         }
         #endif

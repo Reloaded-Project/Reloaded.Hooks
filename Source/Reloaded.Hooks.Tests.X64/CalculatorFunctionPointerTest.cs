@@ -23,8 +23,8 @@ namespace Reloaded.Hooks.Tests.X64
         public CalculatorFunctionPointerTest()
         {
             _nativeCalculator = new NativeCalculator();
-            _addFunctionPointer = ReloadedHooks.Instance.CreateWrapperPtr<NativeCalculator.AddFunction>((long)_nativeCalculator.Add);
-            _multiplyFunctionPointer = ReloadedHooks.Instance.CreateWrapperPtr<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply);
+            _addFunctionPointer = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.AddFunction>((long)_nativeCalculator.Add);
+            _multiplyFunctionPointer = ReloadedHooks.Instance.CreateWrapper<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply);
         }
 
         public void Dispose()

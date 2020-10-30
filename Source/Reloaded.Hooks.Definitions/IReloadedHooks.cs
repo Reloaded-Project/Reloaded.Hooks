@@ -43,6 +43,14 @@ namespace Reloaded.Hooks.Definitions
         TFunction CreateWrapper<TFunction>(long functionAddress, out IntPtr wrapperAddress);
 
         /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention as if it were a X86 CDECL/X64 Microsoft function.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
+        /// <returns>A native pointer to the wrapper; or the original address if the convention was already correct.</returns>
+        IntPtr CreateWrapper<TFunction>(long functionAddress);
+
+        /// <summary>
         /// Creates a wrapper in memory (for a native function) allowing you to call a function
         /// at functionAddress as if it was a X86 CDECL function.
         /// </summary>
@@ -152,15 +160,6 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Minimum hook length.</param>
         unsafe IHook<TFunction, TFunctionPointer> CreateHook<TFunction, TFunctionPointer>(void* targetAddress, long functionAddress, int minHookLength = -1) where TFunctionPointer : unmanaged;
-
-        /// <summary>
-        /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention as if it were a X86 CDECL/X64 Microsoft function.
-        /// This function returns a C#9 function pointer to the wrapper.
-        /// </summary>
-        /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
-        IntPtr CreateWrapperPtr<TFunction>(long functionAddress);
-
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
