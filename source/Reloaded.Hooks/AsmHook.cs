@@ -94,11 +94,14 @@ namespace Reloaded.Hooks
             int numberOfStubs          = 3;  // Also number of allocations.
             int alignmentRequiredBytes = (codeAlignment * numberOfStubs);
 
+            int pointerSize            = (_is64Bit ? 8 : 4);
+
+            int pointerRequiredBytes   = pointerSize * 2; // 2 calls to AssembleAbsoluteJump
             int stubEntrySize          = MaxJmpSize;
             int stubHookSize           = asmCode.Length + hookLength + MaxJmpSize;
-            int stubOriginalSize       = hookLength + MaxJmpSize;
+            int stubOriginalSize       = hookLength + MaxJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
 
-            int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes;
+            int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes;
             var buffer                 = Utilities.FindOrCreateBufferInRange(requiredSizeOfBuffer);
 
             buffer.ExecuteWithLock(() =>
