@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
@@ -51,23 +52,23 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator?.Dispose();
         }
 
-        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         static int AddHookfunction01(int a, int b) { return _addHook01.OriginalFunction(a, b) + 1; }
 
-        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         static int AddHookfunction02(int a, int b) { return _addHook02.OriginalFunction(a, b) + 1; }
 
-        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         static int MulHookfunction01(int a, int b) { return _multiplyHook01.OriginalFunction(a, b) * 2; }
 
-        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         static int MulHookfunction02(int a, int b) { return _multiplyHook02.OriginalFunction(a, b) * 2; }
 
         [Fact]
         public unsafe void TestFunctionPointerHookAdd()
         {
-            _addHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*<int,int,int>)&AddHookfunction01, (long)_nativeCalculator.Add).Activate();
-            _addHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*<int,int,int>)&AddHookfunction02, (long)_nativeCalculator.Add).Activate();
+            _addHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&AddHookfunction01, (long)_nativeCalculator.Add).Activate();
+            _addHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&AddHookfunction02, (long)_nativeCalculator.Add).Activate();
 
             for (int x = 0; x < 100; x++)
             {
@@ -85,8 +86,8 @@ namespace Reloaded.Hooks.Tests.X64
         [Fact]
         public unsafe void TestFunctionPointerHookMul()
         {
-            _multiplyHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*<int,int,int>)&MulHookfunction01, (long)_nativeCalculator.Multiply).Activate();
-            _multiplyHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*<int,int,int>)&MulHookfunction02, (long)_nativeCalculator.Multiply).Activate();
+            _multiplyHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&MulHookfunction01, (long)_nativeCalculator.Multiply).Activate();
+            _multiplyHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.MultiplyFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&MulHookfunction02, (long)_nativeCalculator.Multiply).Activate();
 
             int x = 100;
             for (int y = 0; y < 100; y++)

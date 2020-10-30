@@ -29,19 +29,7 @@ namespace Reloaded.Hooks.Tests.Shared
         {
             BuildReturnFive();
             BuildReturnSix();
-
-            #if FEATURE_FUNCTION_POINTERS
-            delegate* cdecl<void> fn = (delegate* cdecl<void>)(delegate* <void>)&Awoo;
-            #endif
         }
-
-        #if FEATURE_FUNCTION_POINTERS
-        [UnmanagedCallersOnly(CallingConvention = CallingConvention.Cdecl)]
-        public static void Awoo()
-        {
-
-        }
-        #endif
 
         public void Dispose()
         {

@@ -1,9 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net5.0</TargetFrameworks>
     <IsPackable>false</IsPackable>
-	<UseWindowsForms>true</UseWindowsForms>
 	<LangVersion>preview</LangVersion>
 	<PlatformTarget>x64</PlatformTarget>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>

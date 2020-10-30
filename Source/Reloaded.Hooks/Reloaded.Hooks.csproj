@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;NET472;net5.0</TargetFrameworks>
+    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Authors>Sewer56</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>

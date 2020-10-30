@@ -48,16 +48,16 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <summary>
         /// Calls the underlying function.
         /// </summary>
-        public delegate*cdecl<<#= template #>> Invoke;
+        public delegate*unmanaged[Cdecl]<<#= template #>> Invoke;
 
-        public FuncPtr(delegate*cdecl<<#= template #>> ptr) { Invoke = ptr; }
-        public FuncPtr(void* ptr) { Invoke = (delegate*cdecl<<#= template #>>) ptr; }
+        public FuncPtr(delegate*unmanaged[Cdecl]<<#= template #>> ptr) { Invoke = ptr; }
+        public FuncPtr(void* ptr) { Invoke = (delegate*unmanaged[Cdecl]<<#= template #>>) ptr; }
 
         public static implicit operator void*(FuncPtr<<#= template #>> func) => func.Invoke;
-        public static implicit operator delegate*cdecl<<#= template #>>(FuncPtr<<#= template #>> func) => func.Invoke;
+        public static implicit operator delegate*unmanaged[Cdecl]<<#= template #>>(FuncPtr<<#= template #>> func) => func.Invoke;
         public static implicit operator FuncPtr<<#= template #>>(void* ptr) => new FuncPtr<<#= template #>>(ptr);
         public static implicit operator FuncPtr<<#= template #>>(IntPtr ptr) => new FuncPtr<<#= template #>>((void*)ptr);
-        public static implicit operator FuncPtr<<#= template #>>(delegate*cdecl<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
+        public static implicit operator FuncPtr<<#= template #>>(delegate*unmanaged[Cdecl]<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
         public static implicit operator FuncPtr<<#= template #>>(delegate*<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
     }
 #endif
