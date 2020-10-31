@@ -146,7 +146,7 @@ namespace Reloaded.Hooks.X64
 
             // Marshal return register back from target to source.
             if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
-                assemblyCode.Add($"mov {fromConvention.ReturnRegister}, {toConvention.ReturnRegister}");
+                assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
             // Callee Restore Registers
             assemblyCode.Add("pop r15");
