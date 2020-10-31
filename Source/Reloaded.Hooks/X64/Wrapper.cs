@@ -171,15 +171,24 @@ namespace Reloaded.Hooks.X64
             List<string> assemblyCode = new List<string>();
 
             // At the current moment in time, our register contents and parameters are as follows: RCX, RDX, R8, R9.
-            // The base address of old call stack (EBP) is at [ebp + 0]
-            // The return address of the calling function is at [ebp + 8], last parameter is therefore at [ebp + 16].
+            // The base address of old call stack (RBP) is at [rbp + 0]
+            // The return address of the calling function is at [rbp + 8]
+            // Last stack parameter is at [rbp + 16] (+ "Shadow Space").
 
-            // Note: Reason return address is not at [ebp + 0] is because we pushed rbp and mov'd rsp to it.
+            // Note: Reason return address is not at [rbp + 0] is because we pushed rbp and mov'd rsp to it.
             // Reminder: The stack grows by DECREMENTING THE STACK POINTER.
-            
+
+            // Example (Parameters passed right to left)
+            // Stack 1st Param: [rbp + 16]
+            // Stack 2nd Param: [rbp + 24]
+
+            // Parameter Count == 1:
+            // baseStackOffset = 8
+            // lastParameter = baseStackOffset + (toStackParams * 8) == 16
+
             int toStackParams     = parameterCount - toConvention.SourceRegisters.Length;
-            int baseStackOffset   = toConvention.ShadowSpace ? 32 : 0;
-            baseStackOffset       = (toStackParams + 1) * 8;
+            int baseStackOffset   = (toConvention.ShadowSpace ? 32 : 0) + 8; // + 8
+            baseStackOffset      += (toStackParams) * 8;
 
             // Re-push all source call convention stack params, then register parameters. (Right to Left)
             for (int x = 0; x < toStackParams; x++)
@@ -189,11 +198,11 @@ namespace Reloaded.Hooks.X64
             }
             
             for (int x = Math.Min(toConvention.SourceRegisters.Length, parameterCount) - 1; x >= 0; x--) 
-                assemblyCode.Add($"push {toConvention.SourceRegisters[x].ToString()}");
+                assemblyCode.Add($"push {toConvention.SourceRegisters[x]}");
 
             // Pop all necessary registers to target. (Left to Right)
             for (int x = 0; x < fromConvention.SourceRegisters.Length && x < parameterCount; x++)
-                assemblyCode.Add($"pop {fromConvention.SourceRegisters[x].ToString()}");                
+                assemblyCode.Add($"pop {fromConvention.SourceRegisters[x]}");                
 
             return assemblyCode.ToArray();
         }
