@@ -59,8 +59,8 @@ namespace Reloaded.Hooks.X64
             wrapperAddress = (IntPtr)functionAddress;
 
             // Hot path: Microsoft X64 functions require no wrapping.
-            if (!attribute.Equals(new FunctionAttribute(CallingConventions.Microsoft)))
-                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, new FunctionAttribute(CallingConventions.Microsoft));
+            if (!attribute.Equals(FunctionAttribute.Microsoft))
+                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, FunctionAttribute.Microsoft);
 
             return wrapperAddress;
         }

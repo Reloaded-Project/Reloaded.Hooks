@@ -10,6 +10,9 @@ namespace Reloaded.Hooks.Definitions.X64
     /// </summary>
     public class FunctionAttribute : Attribute, IFunctionAttribute
     {
+        public static FunctionAttribute Microsoft = new FunctionAttribute(CallingConventions.Microsoft);
+        public static FunctionAttribute SystemV = new FunctionAttribute(CallingConventions.SystemV);
+
         /// <summary>
         /// Registers in left to right parameter order passed to the custom function.
         /// </summary>

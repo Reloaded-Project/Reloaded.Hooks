@@ -10,6 +10,12 @@ namespace Reloaded.Hooks.Definitions.X86
     /// </summary>
     public class FunctionAttribute : Attribute, IFunctionAttribute
     {
+        public static FunctionAttribute Cdecl = new FunctionAttribute(CallingConventions.Cdecl);
+        public static FunctionAttribute StdCall = new FunctionAttribute(CallingConventions.Stdcall);
+        public static FunctionAttribute Fastcall = new FunctionAttribute(CallingConventions.Fastcall);
+        public static FunctionAttribute GccThiscall = new FunctionAttribute(CallingConventions.GCCThiscall);
+        public static FunctionAttribute MicrosoftThiscall = new FunctionAttribute(CallingConventions.MicrosoftThiscall);
+
         /// <summary>
         /// Registers in left to right parameter order passed to the custom function.
         /// </summary>

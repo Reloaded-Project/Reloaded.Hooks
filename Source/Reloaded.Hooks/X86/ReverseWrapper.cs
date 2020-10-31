@@ -61,21 +61,16 @@ namespace Reloaded.Hooks.X86
 
         private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, IntPtr functionPtr)
         {
-            Mutex.MakeReverseWrapperMutex.WaitOne();
             var reloadedFunctionAttribute = FunctionAttribute.GetAttribute<TFunction>();
 
             // CDECL is hot path, as our TFunction will already be CDECL, we marshal if it's anything else.
-            if (! reloadedFunctionAttribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
+            if (! reloadedFunctionAttribute.Equals(FunctionAttribute.Cdecl))
                 reverseFunctionWrapper.WrapperPointer = Create(functionPtr, reloadedFunctionAttribute);
-
-            Mutex.MakeReverseWrapperMutex.ReleaseMutex();
         }
         
         private static IntPtr Create(IntPtr functionAddress, IFunctionAttribute fromFunction)
         {
-            // CDECL is hot path, as our TFunction will already be CDECL, we marshal if it's anything else.
-            if (fromFunction.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
-                return functionAddress;
+            Mutex.MakeReverseWrapperMutex.WaitOne();
 
             // Retrieve number of parameters and setup list of ASM instructions to be compiled.
             int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
@@ -112,7 +107,10 @@ namespace Reloaded.Hooks.X86
 
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            return wrapperBuffer.Add(assembledMnemonics);
+            var result = wrapperBuffer.Add(assembledMnemonics);
+
+            Mutex.MakeReverseWrapperMutex.ReleaseMutex();
+            return result;
         }
 
         /// <summary>

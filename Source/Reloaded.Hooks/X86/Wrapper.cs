@@ -60,7 +60,7 @@ namespace Reloaded.Hooks.X86
             wrapperAddress = (IntPtr)functionAddress;
 
             // Hot path: CDECL functions require no wrapping.
-            if (!attribute.Equals(new FunctionAttribute(CallingConventions.Cdecl)))
+            if (!attribute.Equals(FunctionAttribute.Cdecl))
                 wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute);
 
             return wrapperAddress;
@@ -143,9 +143,10 @@ namespace Reloaded.Hooks.X86
             // Write function to buffer and return pointer.
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-
+            var result = wrapperBuffer.Add(assembledMnemonics);
+            
             Mutex.MakeWrapperMutex.ReleaseMutex();
-            return wrapperBuffer.Add(assembledMnemonics);
+            return result;
         }
 
         /// <summary>
