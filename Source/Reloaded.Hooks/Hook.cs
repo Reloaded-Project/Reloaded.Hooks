@@ -130,8 +130,6 @@ namespace Reloaded.Hooks
                Note: For X64 the same principles apply, just replace CDECL with Microsoft calling convention.  
             */
 
-            Mutex.MakeHookMutex.WaitOne();
-
             /* Create Convention => CDECL Wrapper. */
             List<byte> jumpOpcodes = Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer, _is64Bit).ToList();
 
@@ -162,8 +160,6 @@ namespace Reloaded.Hooks
 
             _otherHookPatches = functionPatch.Patches;
             _hookPatch = new Patch((IntPtr)functionAddress, jumpOpcodes.ToArray());
-
-            Mutex.MakeHookMutex.ReleaseMutex();
         }
 
         /// <summary>

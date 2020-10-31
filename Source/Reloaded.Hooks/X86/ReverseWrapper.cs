@@ -70,8 +70,6 @@ namespace Reloaded.Hooks.X86
         
         private static IntPtr Create(IntPtr functionAddress, IFunctionAttribute fromFunction)
         {
-            Mutex.MakeReverseWrapperMutex.WaitOne();
-
             // Retrieve number of parameters and setup list of ASM instructions to be compiled.
             int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
             int nonRegisterParameters = numberOfParameters - fromFunction.SourceRegisters.Length;
@@ -107,10 +105,7 @@ namespace Reloaded.Hooks.X86
 
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            var result = wrapperBuffer.Add(assembledMnemonics);
-
-            Mutex.MakeReverseWrapperMutex.ReleaseMutex();
-            return result;
+            return wrapperBuffer.Add(assembledMnemonics);
         }
 
         /// <summary>

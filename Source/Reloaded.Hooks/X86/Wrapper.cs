@@ -93,8 +93,6 @@ namespace Reloaded.Hooks.X86
         /// <returns>Address of the wrapper in memory you can call like a CDECL function.</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction)
         {
-            Mutex.MakeWrapperMutex.WaitOne();
-
             // toFunction (target) is CDECL
             int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
             int nonRegisterParameters = numberOfParameters - fromFunction.SourceRegisters.Length;
@@ -143,10 +141,7 @@ namespace Reloaded.Hooks.X86
             // Write function to buffer and return pointer.
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            var result = wrapperBuffer.Add(assembledMnemonics);
-            
-            Mutex.MakeWrapperMutex.ReleaseMutex();
-            return result;
+            return wrapperBuffer.Add(assembledMnemonics); ;
         }
 
         /// <summary>

@@ -58,14 +58,11 @@ namespace Reloaded.Hooks.X64
         
         private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, IntPtr functionPtr)
         {
-            Mutex.MakeReverseWrapperMutex.WaitOne();
             var reloadedFunctionAttribute = FunctionAttribute.GetAttribute<TFunction>();
 
             // Microsoft X64 is hot path, as our TFunction will already be Microsoft X64, we marshal if it's anything else.
             if (!reloadedFunctionAttribute.Equals(FunctionAttribute.Microsoft))
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, FunctionAttribute.Microsoft, reloadedFunctionAttribute);
-
-            Mutex.MakeReverseWrapperMutex.ReleaseMutex();
         }
     }
 }
