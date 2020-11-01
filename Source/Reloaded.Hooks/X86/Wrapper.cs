@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
+using static Reloaded.Hooks.Definitions.X86.FunctionAttribute;
 
 #if FEATURE_FUNCTION_POINTERS
 using Reloaded.Hooks.Definitions.Structs;
@@ -14,15 +16,13 @@ using Reloaded.Hooks.Definitions.Structs;
 namespace Reloaded.Hooks.X86
 {
     /// <summary>
-    /// The <see cref="Wrapper"/> is a marshaller which converts a CDECL function call
-    /// to Custom Calling Convention call.
-    /// This means that you can call Custom Calling Convention functions as if it was a CDECL function.
+    /// Allows for creating wrapper functions allow you to call functions with custom calling conventions using the calling convention of a given delegate.
     /// </summary>
     public static class Wrapper
     {
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a CDECL function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// using the calling convention of <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         public static TFunction Create<TFunction>(long functionAddress)
@@ -31,8 +31,8 @@ namespace Reloaded.Hooks.X86
         }
 
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a CDECL function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         /// <param name="wrapperAddress">
@@ -45,8 +45,8 @@ namespace Reloaded.Hooks.X86
         }
 
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a CDECL function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         /// <param name="wrapperAddress">
@@ -56,12 +56,13 @@ namespace Reloaded.Hooks.X86
         /// <returns>Address of the wrapper in native memory.</returns>
         public static IntPtr CreatePointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
-            var attribute = FunctionAttribute.GetAttribute<TFunction>();
+            var attribute = GetAttribute<TFunction>();
             wrapperAddress = (IntPtr)functionAddress;
 
-            // Hot path: CDECL functions require no wrapping.
-            if (!attribute.Equals(FunctionAttribute.Cdecl))
-                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute);
+            // Hot path: Don't create wrapper if both conventions are already compatible.
+            var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
+            if (!attribute.IsEquivalent(funcPtrAttribute))
+                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, attribute.GetEquivalent(funcPtrAttribute));
 
             return wrapperAddress;
         }
@@ -69,14 +70,11 @@ namespace Reloaded.Hooks.X86
 
 #if FEATURE_FUNCTION_POINTERS
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a CDECL function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
-        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
-        /// <param name="wrapperAddress">
-        ///     Address of the wrapper used to call the original function.
-        ///     If the original function is CDECL, the wrapper address equals the function address.
-        /// </param>
+        /// <param name="functionAddress">Address of the function to wrap.</param>
+        /// <param name="wrapperAddress">Address of the wrapper used to call the original function.</param>
         public static TFunction CreateFunctionPointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
             CreatePointer<TFunction>(functionAddress, out wrapperAddress);
@@ -85,33 +83,37 @@ namespace Reloaded.Hooks.X86
 #endif
 
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> in memory allowing you to call a function
-        /// at functionAddress as if it was a CDECL function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
-        /// <param name="functionAddress">The address of the function.</param>
-        /// <param name="fromFunction">Describes the properties of the function to wrap.</param>
-        /// <returns>Address of the wrapper in memory you can call like a CDECL function.</returns>
-        public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction)
+        /// <param name="functionAddress">The address of the function using <see cref="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <see cref="toConvention"/>. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <see cref="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <returns>Address of the wrapper in memory.</returns>
+        public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
             // toFunction (target) is CDECL
             int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
-            int nonRegisterParameters = numberOfParameters - fromFunction.SourceRegisters.Length;
             List<string> assemblyCode = new List<string> {"use32"};
+
+            // Calculate some stack stuff.
+            int fromStackParamBytesTotal = (fromConvention.Cleanup == StackCleanup.Caller) ? (numberOfParameters - fromConvention.SourceRegisters.Length) * 4 : 0;
+            int toStackParamBytesTotal   = (toConvention.Cleanup == StackCleanup.Callee)   ? (numberOfParameters - toConvention.SourceRegisters.Length) * 4 : 0;
+            int stackCleanupBytesTotal   = fromStackParamBytesTotal + fromConvention.ReservedStackSpace;
 
             // Callee Saved Registers
             assemblyCode.Add("push ebp");       // Backup old call frame
             assemblyCode.Add("mov ebp, esp");   // Setup new call frame
-            assemblyCode.Add("push ebx");
-            assemblyCode.Add("push esi");
-            assemblyCode.Add("push edi");
+            foreach (var register in toConvention.CalleeSavedRegisters)
+                assemblyCode.Add($"push {register}");
 
             // Reserve Extra Stack Space
-            if (fromFunction.ReservedStackSpace > 0)
-                assemblyCode.Add($"sub esp, {fromFunction.ReservedStackSpace}");
+            if (fromConvention.ReservedStackSpace > 0)
+                assemblyCode.Add($"sub esp, {fromConvention.ReservedStackSpace}");
 
             // Setup Function Parameters
             if (numberOfParameters > 0)
-                assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, fromFunction.SourceRegisters));
+                assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, fromConvention.SourceRegisters, toConvention.SourceRegisters));
 
             // Call target function
             var pointerBuffer = Utilities.FindOrCreateBufferInRange(IntPtr.Size);
@@ -119,67 +121,59 @@ namespace Reloaded.Hooks.X86
             assemblyCode.Add("call dword [0x" + targetFunctionPtr.ToString("X") + "]"); 
 
             // Stack cleanup if necessary 
-            if (nonRegisterParameters > 0 && fromFunction.Cleanup == FunctionAttribute.StackCleanup.Caller)
-                assemblyCode.Add($"add esp, {nonRegisterParameters * 4}");
+            if (stackCleanupBytesTotal > 0)
+                assemblyCode.Add($"add esp, {stackCleanupBytesTotal}");
 
             // Setup return register
-            if (fromFunction.ReturnRegister != FunctionAttribute.Register.eax)
-                assemblyCode.Add("mov eax, " + fromFunction.ReturnRegister);
-
-            // Unreserve Extra Stack Space
-            if (fromFunction.ReservedStackSpace > 0)
-                assemblyCode.Add($"add esp, {fromFunction.ReservedStackSpace}");
+            if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
+                assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
             // Callee Restore Registers
-            assemblyCode.Add("pop edi");
-            assemblyCode.Add("pop esi");
-            assemblyCode.Add("pop ebx");
-            assemblyCode.Add("pop ebp");
+            foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
+                assemblyCode.Add($"pop {register}");
 
-            assemblyCode.Add("ret");
+            assemblyCode.Add("pop ebp");
+            assemblyCode.Add($"ret {toStackParamBytesTotal}"); // FASM optimizes `ret 0` as `ret`
             
             // Write function to buffer and return pointer.
             byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
             var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            return wrapperBuffer.Add(assembledMnemonics); ;
+            return wrapperBuffer.Add(assembledMnemonics);
         }
 
-        /// <summary>
-        /// Generates the assembly code for passing to the wrapped
-        /// custom calling convention function.
-        /// </summary>
-        /// <param name="parameterCount">The total amount of parameters that the target function accepts.</param>
-        /// <param name="registers">The registers in left to right order to be passed onto the method.</param>
-        /// <returns>A string array of compatible x86 mnemonics to be assembled.</returns>
-        private static string[] AssembleFunctionParameters(int parameterCount, FunctionAttribute.Register[] registers)
+        private static string[] AssembleFunctionParameters(int parameterCount, Register[] fromRegisters, Register[] toRegisters)
         {
             List<string> assemblyCode = new List<string>();
 
-            // At the current moment in time, the base address of old call stack (EBP) is at [ebp + 0]
-            // the return address of the calling function is at [ebp + 4], last parameter is therefore at [ebp + 8].
-            // Note: Reason return address is not at [ebp + 0] is because we pushed ebp and mov'd esp to it.
-            // Reminder: The stack grows by DECREMENTING THE STACK POINTER.
+            /*
+               At the current moment in time,
+               The base address of old call stack (EBP) is at [ebp + 0]
+               The return address of the calling function is at [ebp + 4]
+               Last parameter is therefore at [ebp + 8].
+
+               Note: Reason return address is not at [ebp + 0] is because we pushed ebp and mov'd esp to it.
+               Reminder: The stack grows by DECREMENTING THE STACK POINTER.
+            
+               Note 2: Don't need to account for reserved stack space in toConvention because we reserve it before pushing the parameters.
+             */
 
             // The initial offset from EBP (Stack Base Pointer) for the rightmost parameter (right to left passing):
-            int currentBaseStackOffset = ((parameterCount + 1) * 4);
-            int nonRegisterParameters = parameterCount - registers.Length;
-            
-            // Re-push our non-register parameters passed onto the method onto the stack.
-            // (Right to left order)
-            for (int x = 0; x < nonRegisterParameters; x++)
+            int toStackParams   = parameterCount - toRegisters.Length;          // Stack parameter count in toConvention
+            int baseStackOffset = ((toStackParams) * 4) + 4;                    // + 4 because base address of old call stack is currently at ebp + 0
+
+            // Re-push all toConvention stack params, then register parameters. (Right to Left)
+            for (int x = 0; x < toStackParams; x++)
             {
-                assemblyCode.Add($"push dword [ebp + {currentBaseStackOffset}]");
-                currentBaseStackOffset -= 4;
+                assemblyCode.Add($"push dword [ebp + {baseStackOffset}]");
+                baseStackOffset -= 4;
             }
 
-            // Now move the remaining parameters into the target registers.
-            // We reverse the left to right register order to right to left however.
-            FunctionAttribute.Register[] newRegisters = registers.Reverse().ToArray();
-            foreach (FunctionAttribute.Register registerParameter in newRegisters)
-            {
-                assemblyCode.Add($"mov {registerParameter}, [ebp + {currentBaseStackOffset}]");
-                currentBaseStackOffset -= 4;
-            }
+            for (int x = Math.Min(toRegisters.Length, parameterCount) - 1; x >= 0; x--)
+                assemblyCode.Add($"push {toRegisters[x]}");
+
+            // Now pop all necessary registers to target. (Left to Right)
+            for (int x = 0; x < fromRegisters.Length && x < parameterCount; x++)
+                assemblyCode.Add($"pop {fromRegisters[x]}");
 
             return assemblyCode.ToArray();
         }

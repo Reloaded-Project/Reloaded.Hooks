@@ -12,17 +12,10 @@ namespace Reloaded.Hooks.Tools
     /// </summary>
     public class VirtualFunctionTable : IVirtualFunctionTable
     {
-        /// <summary>
-        /// Stores a list of the individual table addresses for this Virtual Function Table.
-        /// </summary>
+        /// <inheritdoc />
         public List<TableEntry> TableEntries { get; set; }
 
-        /// <summary>
-        /// An indexer override allowing for individual Virtual Function Table
-        /// entries to be easier accessed.
-        /// </summary>
-        /// <param name="i">The individual entry in the virtual function table.</param>
-        /// <returns>The individual corresponding virtual function table entry.</returns>
+        /// <inheritdoc />
         public TableEntry this[int i]
         {
             get => TableEntries[i];
@@ -71,22 +64,18 @@ namespace Reloaded.Hooks.Tools
             return table;
         }
 
-        /// <summary>
-        /// Generates a wrapper function for an individual virtual function table entry.
-        /// </summary>
-        public TFunction CreateWrapperFunction<TFunction>(int index)
+        /// <inheritdoc />
+        public unsafe TFunction CreateWrapperFunction<TFunction>(int index)
         {
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 return X86.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
-            if (IntPtr.Size == 8)
+            if (sizeof(IntPtr) == 8)
                 return Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
 
             throw new Exception("Machine does not appear to be of a 32 or 64bit architecture.");
         }
 
-        /// <summary>
-        /// Hooks an individual virtual function table entry in a virtual function table.
-        /// </summary>
+        /// <inheritdoc />
         public IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType)
         {
             return new Hook<TFunction>(delegateType, (long)TableEntries[index].FunctionPointer);

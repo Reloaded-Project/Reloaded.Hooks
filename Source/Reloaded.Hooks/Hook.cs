@@ -42,37 +42,22 @@ namespace Reloaded.Hooks
 
     public class Hook<TFunction> : IHook<TFunction>
     {
-        /// <summary>
-        /// Returns true if the hook is enabled and currently functional, else false.
-        /// </summary>
+        /// <inheritdoc />
         public bool IsHookEnabled { get; private set; } = false;
 
-        /// <summary>
-        /// Returns true if the hook has been activated.
-        /// The hook may only be activated once.
-        /// </summary>
+        /// <inheritdoc />
         public bool IsHookActivated { get; private set; } = false;
 
-        /// <summary>
-        /// Allows you to call the original function that was hooked.
-        /// </summary>
+        /// <inheritdoc />
         public TFunction OriginalFunction { get; private set; }
 
-        /// <summary>
-        /// The address to call if you wish to call the <see cref="OriginalFunction"/>.
-        /// </summary>
+        /// <inheritdoc />
         public IntPtr OriginalFunctionAddress { get; private set; }
 
-        /// <summary>
-        /// The address of the wrapper used to call the <see cref="OriginalFunction"/>.
-        /// If the <see cref="OriginalFunction"/> is CDECL, this is equal to <see cref="OriginalFunctionAddress"/>.
-        /// </summary>
+        /// <inheritdoc />
         public IntPtr OriginalFunctionWrapperAddress { get; private set; }
 
-        /// <summary>
-        /// The reverse function wrapper that allows us to call the C# function
-        /// as if it were to be of another calling convention.
-        /// </summary>
+        /// <inheritdoc />
         public IReverseWrapper<TFunction> ReverseWrapper { get; private set; }
 
         /* Patch which activates the current hook & rewrites other hooks' return addresses. */
@@ -89,9 +74,9 @@ namespace Reloaded.Hooks
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public Hook(TFunction function, long functionAddress, int minHookLength = -1)
+        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1)
         {
-            _is64Bit = IntPtr.Size == 8;
+            _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(function);
             CreateHook(functionAddress, minHookLength);
         }
@@ -104,7 +89,7 @@ namespace Reloaded.Hooks
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1)
         {
-            _is64Bit = IntPtr.Size == 8;
+            _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(targetAddress);
             CreateHook(functionAddress, minHookLength);
         }
@@ -162,20 +147,7 @@ namespace Reloaded.Hooks
             _hookPatch = new Patch((IntPtr)functionAddress, jumpOpcodes.ToArray());
         }
 
-        /// <summary>
-        /// Performs a one time activation of the hook, making the necessary memory writes to permanently commit the hook.
-        /// </summary>
-        /// <remarks>
-        ///     This function should be called after instantiation as soon as possible,
-        ///     preferably in the same line as instantiation.
-        ///
-        ///     This class exists such that we don't run into concurrency issues on
-        ///     attaching to other processes whereby the following happens:
-        ///
-        ///     A. Original process calls a function that was just hooked.
-        ///     B. Create function has not yet returned, and OriginalFunction is unassigned.
-        ///     C. Hook tried to call OriginalFunction. NullReferenceException.
-        /// </remarks>
+        /// <inheritdoc />
         public IHook<TFunction> Activate()
         {
             /* Create enable/disable patch. */
@@ -200,10 +172,7 @@ namespace Reloaded.Hooks
         /// <inheritdoc />
         IHook IHook.Activate() => Activate();
 
-        /// <summary>
-        /// Temporarily disables the hook, causing all functions re-routed to your own function to be re-routed back to the original function instead.
-        /// </summary>
-        /// <remarks>This is implemented in such a fashion that the hook shall never touch C# code.</remarks>
+        /// <inheritdoc />
         public void Disable()
         {
             if (IsHookActivated)
@@ -213,9 +182,7 @@ namespace Reloaded.Hooks
             }
         }
 
-        /// <summary>
-        /// Re-enables the hook if it has been disabled, causing all functions to be once again re-routed to your own function.
-        /// </summary>
+        /// <inheritdoc />
         public void Enable()
         {
             if (IsHookActivated)

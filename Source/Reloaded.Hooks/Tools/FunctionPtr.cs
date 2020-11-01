@@ -9,9 +9,7 @@ namespace Reloaded.Hooks.Tools
     /// </summary>
     public unsafe class FunctionPtr<TDelegate> : IFunctionPtr<TDelegate> where TDelegate : Delegate
     {
-        /// <summary>
-        /// The address of the pointer in memory with which this class was instantiated with.
-        /// </summary>
+        /// <inheritdoc />
         public ulong FunctionPointer { get; }
         
         /// <summary> Cache of already created function wrappers for functions at address. </summary>
@@ -23,11 +21,7 @@ namespace Reloaded.Hooks.Tools
         /// <summary> Contains the address of the last called function. </summary>
         private IntPtr _lastFunctionPointer;
 
-        /// <summary>
-        /// Returns a delegate instance for a function at a specified index of the pointer array.
-        /// Only use this if all functions in VTable use same delegate instance.
-        /// </summary>
-        /// <param name="index">Array index of pointer to function.</param>
+        /// <inheritdoc />
         public TDelegate this[int index] => GetDelegate(index);
 
         /// <summary>
@@ -39,20 +33,14 @@ namespace Reloaded.Hooks.Tools
             _methodCache = new Dictionary<IntPtr, TDelegate>();
         }
 
-        /// <summary>
-        /// Address of the function to which the pointer is currently pointing to.
-        /// </summary>
-        /// <param name="index"></param>
+        /// <inheritdoc />
         public IntPtr GetFunctionAddress(int index)
         {
             IntPtr* functionPtr = (IntPtr*) FunctionPointer;
             return functionPtr[index];
         }
 
-        /// <summary>
-        /// Retrieves an delegate instance which can be used to call the function behind the function pointer.
-        /// </summary>
-        /// <returns>Null if the pointer is zero; else a callable delegate.</returns>
+        /// <inheritdoc />
         public TDelegate GetDelegate(int index = 0)
         {
             IntPtr functionPointer = GetFunctionAddress(index);
@@ -66,7 +54,7 @@ namespace Reloaded.Hooks.Tools
                 return cachedDelegate;
             }
 
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 _delegate = X86.Wrapper.Create<TDelegate>((long) functionPointer, out var wrapperAddress);
             else
                 _delegate = X64.Wrapper.Create<TDelegate>((long)functionPointer, out var wrapperAddress);

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
+using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Tools;
 
@@ -15,36 +17,40 @@ namespace Reloaded.Hooks
         public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(function, functionAddress, minHookLength);
         public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(targetAddress, functionAddress, minHookLength);
 
-        public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromFunction) => X86.Wrapper.Create<TFunction>(functionAddress, fromFunction);
+        public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention) => X86.Wrapper.Create<TFunction>(functionAddress, fromConvention, FunctionAttribute.GetAttribute<TFunction>().GetEquivalent(Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>()));
+
+        public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention,
+            IFunctionAttribute toConvention) => X86.Wrapper.Create<TFunction>(functionAddress, fromConvention, toConvention);
+
         public IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention) => X64.Wrapper.Create<TFunction>(functionAddress, fromConvention, toConvention);
 
-        public IntPtr CreateWrapper<TFunction>(long functionAddress)
+        public unsafe IntPtr CreateWrapper<TFunction>(long functionAddress)
         {
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 return X86.Wrapper.CreatePointer<TFunction>(functionAddress, out _);
 
             return X64.Wrapper.CreatePointer<TFunction>(functionAddress, out _);
         }
 
-        public TFunction CreateWrapper<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        public unsafe TFunction CreateWrapper<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 return X86.Wrapper.Create<TFunction>(functionAddress, out wrapperAddress);
 
             return X64.Wrapper.Create<TFunction>(functionAddress, out wrapperAddress);
         }
 
-        public IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(TFunction function)
+        public unsafe IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(TFunction function)
         {
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 return new X86.ReverseWrapper<TFunction>(function);
 
             return new X64.ReverseWrapper<TFunction>(function);
         }
 
-        public IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(IntPtr function)
+        public unsafe IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(IntPtr function)
         {
-            if (IntPtr.Size == 4)
+            if (sizeof(IntPtr) == 4)
                 return new X86.ReverseWrapper<TFunction>(function);
 
             return new X64.ReverseWrapper<TFunction>(function);
@@ -67,6 +73,6 @@ namespace Reloaded.Hooks
         }
         #endif
 
-        public IReloadedHooksUtilities Utilities { get; } = new ReloadedHooksUtilities();
+        public IReloadedHooksUtilities Utilities { get; } = ReloadedHooksUtilities.Instance;
     }
 }

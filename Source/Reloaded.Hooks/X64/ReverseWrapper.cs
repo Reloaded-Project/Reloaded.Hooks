@@ -7,24 +7,21 @@ using Reloaded.Hooks.Internal;
 namespace Reloaded.Hooks.X64
 {
     /// <summary>
-    /// The <see cref="ReverseWrapper{TFunction}"/> is a marshaller which converts a Custom Convention function call
-    /// to Microsoft X64 call.
-    /// This means that you can call Microsoft x64 functions as if it they were Custom Convention calls.
+    /// Allows for the creation of functions with a custom calling convention which internally call functions using the conventions specified by <see cref="TFunction"/>.
     /// </summary>
     public class ReverseWrapper<TFunction> : IReverseWrapper<TFunction>
     {
-        /// <summary> Copy of C# function behind the pointer. </summary>
+        /// <inheritdoc />
         public TFunction CSharpFunction { get; }
 
-        /// <summary> Pointer to the function that gets executed inside the wrapper, either native or C#. </summary>
+        /// <inheritdoc />
         public IntPtr NativeFunctionPtr { get; }
 
-        /// <summary> A pointer to our wrapper, which calls the internal method as if it were to be of another convention. </summary>
+        /// <inheritdoc />
         public IntPtr WrapperPointer { get; private set; }
 
         /// <summary>
-        /// Creates the <see cref="ReverseWrapper{TFunction}"/> which allows you to call
-        /// a Microsoft X64 C# function, via a pointer as if it was a function of another calling convention.
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
         ///     Please keep a reference to this class as long as you are using it.
@@ -43,8 +40,7 @@ namespace Reloaded.Hooks.X64
         }
 
         /// <summary>
-        /// Creates the <see cref="ReverseWrapper{TFunction}"/> which allows you to call
-        /// a native Microsoft X64 function, via a pointer as if it was a function of another calling convention.
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <param name="function">Pointer of native function to wrap.</param>
         public ReverseWrapper(IntPtr function)

@@ -9,6 +9,8 @@ namespace Reloaded.Hooks
 {
     public class ReloadedHooksUtilities : IReloadedHooksUtilities
     {
+        public static ReloadedHooksUtilities Instance { get; } = new ReloadedHooksUtilities();
+
         public byte[] AssembleAbsoluteJump(IntPtr target, bool is64bit) => Utilities.AssembleAbsoluteJump(target, is64bit);
         public byte[] AssemblePushReturn(IntPtr target, bool is64bit) => Utilities.AssemblePushReturn(target, is64bit);
         public byte[] AssembleRelativeJump(IntPtr relativeJumpOffset, bool is64bit) => Utilities.AssembleRelativeJump(relativeJumpOffset, is64bit);

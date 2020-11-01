@@ -301,8 +301,6 @@ namespace Reloaded.Hooks.Tools
             else
                 maxAddress = targetAddress + maxDisplacement;
             
-
-
             if (! Environment.Is64BitProcess)
                 if (maxAddress > Int32.MaxValue)
                     maxAddress = Int32.MaxValue;

@@ -21,8 +21,8 @@ namespace Reloaded.Hooks.Definitions
         /// <summary>
         /// Address of the function to which the pointer is currently pointing to.
         /// </summary>
-        /// <param name="index"></param>
-        IntPtr GetFunctionAddress(int index);
+        /// <param name="index">Index of the function.</param>
+        IntPtr GetFunctionAddress(int index = 0);
 
         /// <summary>
         /// Retrieves an delegate instance which can be used to call the function behind the function pointer.

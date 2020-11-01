@@ -44,17 +44,17 @@ namespace Reloaded.Hooks.Tests.X64
             _calculator?.Dispose();
         }
 
-        [UnmanagedCallersOnly(CallConvs = new [] { typeof(CallConvCdecl) })]
+        [UnmanagedCallersOnly(CallConvs = new [] { typeof(CallConvStdcall) })]
         static int AddHookfunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
 
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
         static int MulHookfunction(int a, int b) { return _multiplyHook.OriginalFunction(a, b) * 2; }
 
         [Fact]
         public unsafe void TestFunctionPointerHookAdd()
         {
-            _addHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.AddFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&AddHookfunction, (long)_calculator.Add).Activate();
-
+            _addHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.AddFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookfunction, (long)_calculator.Add).Activate();
+            
             for (int x = 0; x < 100; x++)
             {
                 for (int y = 1; y < 100;)
@@ -71,7 +71,7 @@ namespace Reloaded.Hooks.Tests.X64
         [Fact]
         public unsafe void TestFunctionPointerHookMul()
         {
-            _multiplyHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.MultiplyFunction>((delegate*unmanaged[Cdecl]<int, int, int>)&MulHookfunction, (long)_calculator.Multiply).Activate();
+            _multiplyHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.MultiplyFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&MulHookfunction, (long)_calculator.Multiply).Activate();
 
             int x = 100;
             for (int y = 0; y < 100; y++)

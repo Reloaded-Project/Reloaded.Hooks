@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.X64;
@@ -20,8 +21,8 @@ namespace Reloaded.Hooks.X64
     public static class Wrapper
     {
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a Microsoft X64 calling convention function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
         public static TFunction Create<TFunction>(long functionAddress)
@@ -30,8 +31,8 @@ namespace Reloaded.Hooks.X64
         }
 
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a Microsoft X64 calling convention function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
         /// <param name="wrapperAddress">
@@ -44,8 +45,8 @@ namespace Reloaded.Hooks.X64
         }
 
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a Microsoft X64 calling convention function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
         /// <param name="wrapperAddress">
@@ -67,8 +68,8 @@ namespace Reloaded.Hooks.X64
 
 #if FEATURE_FUNCTION_POINTERS
         /// <summary>
-        /// Creates the <see cref="Wrapper"/> which allows you to call a function with a custom calling
-        /// convention as if it were a Microsoft X64 calling convention function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <see cref="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
         /// <param name="wrapperAddress">
@@ -86,7 +87,7 @@ namespace Reloaded.Hooks.X64
         /// Creates a wrapper converting a call to a source calling convention to a given target calling convention.
         /// </summary>
         /// <param name="functionAddress">Address of the function in fromConvention to execute.</param>
-        /// <param name="fromConvention">The calling convention to convert to toConvention. This is the convention of the function called.</param>
+        /// <param name="fromConvention">The calling convention to convert to toConvention. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to fromConvention. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call .</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
@@ -100,20 +101,12 @@ namespace Reloaded.Hooks.X64
             // Backup Stack Frame
             assemblyCode.Add("push rbp");       // Backup old call frame
             assemblyCode.Add("mov rbp, rsp");   // Setup new call frame
-
-            // Stack now realigned, but will misalign here too.
-            assemblyCode.Add("push rbx");
-            assemblyCode.Add("push rsi");
-            assemblyCode.Add("push rdi");
-            assemblyCode.Add("push r12");
-            assemblyCode.Add("push r13");
-            assemblyCode.Add("push r14");
-            assemblyCode.Add("push r15");
+            foreach (var register in toConvention.CalleeSavedRegisters)
+                assemblyCode.Add($"push {register}");
 
             // Even my mind gets a bit confused. So here is a reminder:
             // fromConvention is the convention that gets called.
             // toConvention is the convention we are marshalling from.
-
             int targetStackParameters  = numberOfParameters - fromConvention.SourceRegisters.Length;
             targetStackParameters      = targetStackParameters < 0 ? 0 : targetStackParameters;
 
@@ -149,15 +142,10 @@ namespace Reloaded.Hooks.X64
                 assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
             // Callee Restore Registers
-            assemblyCode.Add("pop r15");
-            assemblyCode.Add("pop r14");
-            assemblyCode.Add("pop r13");
-            assemblyCode.Add("pop r12");
-            assemblyCode.Add("pop rdi");
-            assemblyCode.Add("pop rsi");
-            assemblyCode.Add("pop rbx");
-            assemblyCode.Add("pop rbp");
+            foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
+                assemblyCode.Add($"pop {register}");
 
+            assemblyCode.Add("pop rbp");
             assemblyCode.Add("ret");
 
             // Write function to buffer and return pointer.
@@ -170,27 +158,29 @@ namespace Reloaded.Hooks.X64
         {
             List<string> assemblyCode = new List<string>();
 
-            // At the current moment in time, our register contents and parameters are as follows: RCX, RDX, R8, R9.
-            // The base address of old call stack (RBP) is at [rbp + 0]
-            // The return address of the calling function is at [rbp + 8]
-            // Last stack parameter is at [rbp + 16] (+ "Shadow Space").
+            /*
+               At the current moment in time, our register contents and parameters are as follows: RCX, RDX, R8, R9.
+               The base address of old call stack (RBP) is at [rbp + 0]
+               The return address of the calling function is at [rbp + 8]
+               Last stack parameter is at [rbp + 16] (+ "Shadow Space").
 
-            // Note: Reason return address is not at [rbp + 0] is because we pushed rbp and mov'd rsp to it.
-            // Reminder: The stack grows by DECREMENTING THE STACK POINTER.
+               Note: Reason return address is not at [rbp + 0] is because we pushed rbp and mov'd rsp to it.
+               Reminder: The stack grows by DECREMENTING THE STACK POINTER.
 
-            // Example (Parameters passed right to left)
-            // Stack 1st Param: [rbp + 16]
-            // Stack 2nd Param: [rbp + 24]
+               Example (Parameters passed right to left)
+               Stack 1st Param: [rbp + 16]
+               Stack 2nd Param: [rbp + 24]
 
-            // Parameter Count == 1:
-            // baseStackOffset = 8
-            // lastParameter = baseStackOffset + (toStackParams * 8) == 16
+               Parameter Count == 1:
+               baseStackOffset = 8
+               lastParameter = baseStackOffset + (toStackParams * 8) == 16
+            */
 
             int toStackParams     = parameterCount - toConvention.SourceRegisters.Length;
             int baseStackOffset   = (toConvention.ShadowSpace ? 32 : 0) + 8; // + 8
             baseStackOffset      += (toStackParams) * 8;
 
-            // Re-push all source call convention stack params, then register parameters. (Right to Left)
+            // Re-push all toConvention stack params, then register parameters. (Right to Left)
             for (int x = 0; x < toStackParams; x++)
             {
                 assemblyCode.Add($"push qword [rbp + {baseStackOffset}]");

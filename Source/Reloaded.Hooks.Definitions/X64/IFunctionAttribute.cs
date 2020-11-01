@@ -25,5 +25,10 @@ namespace Reloaded.Hooks.Definitions.X64
         /// False: SystemV-based calling conventions.
         /// </summary>
         bool ShadowSpace { get; }
+
+        /// <summary>
+        /// Specifies all the registers whose values are expected to be preserved by the function.
+        /// </summary>
+        FunctionAttribute.Register[] CalleeSavedRegisters { get; }
     }
 }

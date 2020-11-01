@@ -19,25 +19,21 @@ namespace Reloaded.Hooks.Tests.Shared
         /// <summary> Performs A + B</summary>
         [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
         [Definitions.X86.Function(CallingConventions.Fastcall)]
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int AddFunction(int a, int b);
 
         /// <summary> Performs A - B. </summary>
         [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
         [Definitions.X86.Function(CallingConventions.Fastcall)]
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int SubtractFunction(int a, int b);
 
         /// <summary> Multiply A by B. </summary>
         [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
         [Definitions.X86.Function(CallingConventions.Fastcall)]
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int MultiplyFunction(int a, int b);
 
         /// <summary> Divide A by B. </summary>
         [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
         [Definitions.X86.Function(CallingConventions.Fastcall)]
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int DivideFunction(int a, int b);
 
         public IntPtr Divide   { get; private set; }

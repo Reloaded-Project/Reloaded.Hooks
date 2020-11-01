@@ -20,9 +20,7 @@ namespace Reloaded.Hooks
         private static Memory.Sources.Memory _memory = CurrentProcess;
         private const int MaxJmpSize = 7; // Maximum size of jmp opcode.
 
-        /// <summary>
-        /// True if the hook is enabled, else false.
-        /// </summary>
+        /// <inheritdoc />
         public bool IsEnabled { get; private set; } = false;
 
         private Patch _activateHookPatch;
@@ -35,7 +33,7 @@ namespace Reloaded.Hooks
 
         private AsmHook()
         {
-            _is64Bit = IntPtr.Size == 8;
+            _is64Bit = sizeof(IntPtr) == 8;
         }
 
         /// <summary>
@@ -174,10 +172,7 @@ namespace Reloaded.Hooks
 
         /* User Functionality */
 
-        /// <summary>
-        /// Performs a one time activation of the hook.
-        /// This function should only ever be called once.
-        /// </summary>
+        /// <inheritdoc />
         public IAsmHook Activate()
         {
             if (!_activated)
@@ -190,12 +185,14 @@ namespace Reloaded.Hooks
             return this;
         }
 
+        /// <inheritdoc />
         public void Enable()
         {
             _enableHookPatch.ApplyUnsafe();
             IsEnabled = true;
         }
 
+        /// <inheritdoc />
         public void Disable()
         {
             _disableHookPatch.ApplyUnsafe();

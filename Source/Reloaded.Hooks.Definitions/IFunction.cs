@@ -25,19 +25,20 @@ namespace Reloaded.Hooks.Definitions
         IHook<TFunction> Hook(TFunction function, int minHookLength = -1);
 
         /// <summary>
-        /// Allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention using the convention of <see cref="TFunction"/>.
         /// </summary>
-        /// <param name="wrapperAddress">
-        ///     Native address of the wrapper used to call the original function.
-        ///     If the original function is X86 CDECL/X64 Microsoft, the wrapper address equals the function address.
-        /// </param>
+        /// <param name="wrapperAddress">Native address of the wrapper used to call the original function.</param>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        /// <returns>A delegate for the function, ready to be called.</returns>
         TFunction GetWrapper(out IntPtr wrapperAddress);
 
         /// <summary>
-        /// Allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention using the convention of <see cref="TFunction"/>.
         /// </summary>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
+        /// <returns>A delegate for this function, ready to be called.</returns>
         TFunction GetWrapper();
 
         /// <summary>
@@ -60,7 +61,7 @@ namespace Reloaded.Hooks.Definitions
         IAsmHook MakeAsmHook(byte[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1);
 
 
-#if FEATURE_FUNCTION_POINTERS
+        #if FEATURE_FUNCTION_POINTERS
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
@@ -69,16 +70,16 @@ namespace Reloaded.Hooks.Definitions
         unsafe IHook<TFunction, TFunctionPointer> Hook<TFunctionPointer>(void* functionPtr, int minHookLength = -1) where TFunctionPointer : unmanaged;
 
         /// <summary>
-        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// Gets the address of a wrapper function in memory that allows you to call this function using the calling convention of <see cref="TFunction"/>.
         /// </summary>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         IntPtr GetWrapperPtr();
 
         /// <summary>
-        /// Gets the address of a wrapper function in memory that allows you to call this function as if it were a X86 CDECL/X64 Microsoft function.
+        /// Gets the address of a wrapper function in memory that allows you to call this function using the calling convention of <see cref="TFunction"/>.
         /// </summary>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         TFunctionPointer GetWrapperPtr<TFunctionPointer>();
-#endif
+        #endif
     }
 }
