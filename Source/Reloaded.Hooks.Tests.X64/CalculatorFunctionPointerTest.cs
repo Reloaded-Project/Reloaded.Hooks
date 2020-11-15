@@ -5,7 +5,7 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.FuncPtr<int,int,int>;
+using FuncPtr = Reloaded.Hooks.Definitions.Structs.StdcallFuncPtr<int,int,int>;
 
 // Watch out!
 

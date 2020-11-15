@@ -31,8 +31,8 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<NativeCalculator.AddFunction> _addWithBranchHook01;
         private static IHook<NativeCalculator.AddFunction> _addWithBranchHook02;
 
-        private Definitions.Structs.FuncPtr<int, int, int> _addFunctionPointer;
-        private Definitions.Structs.FuncPtr<int, int, int> _mulFunctionPointer;
+        private Definitions.Structs.StdcallFuncPtr<int, int, int> _addFunctionPointer;
+        private Definitions.Structs.StdcallFuncPtr<int, int, int> _mulFunctionPointer;
 
         public CalculatorDoubleHookTest()
         {

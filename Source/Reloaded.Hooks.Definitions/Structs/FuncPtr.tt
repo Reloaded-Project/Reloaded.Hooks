@@ -17,14 +17,15 @@
         "T1, T2, T3, T4, T5, TReturn",
         "T1, T2, T3, T4, T5, T6, TReturn",
         "T1, T2, T3, T4, T5, T6, T7, TReturn",  
-        "T1, T2, T3, T4, T5, T6, T7, T8, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn",
-        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, TReturn"
+    };
+
+    string[] conventions = 
+    { 
+        "Cdecl", 
+        "Stdcall", 
+        "Thiscall", 
+        "Fastcall"
     };
 #>
 
@@ -36,32 +37,32 @@ namespace Reloaded.Hooks.Definitions.Structs
 <#
 			foreach (var template in templates)
 			{
+
+                foreach (var convention in conventions)
+			    { 
 #>        
 #if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
-    [X64.Function(X64.CallingConventions.Microsoft)]
-    [X86.Function(X86.CallingConventions.Cdecl)]
-    public unsafe struct FuncPtr<<#= template #>>
+    public unsafe struct <#= convention #>FuncPtr<<#= template #>>
     {
         /// <summary>
         /// Calls the underlying function.
         /// </summary>
-        public delegate*unmanaged[Cdecl]<<#= template #>> Invoke;
+        public delegate*unmanaged[<#= convention #>]<<#= template #>> Invoke;
 
-        public FuncPtr(delegate*unmanaged[Cdecl]<<#= template #>> ptr) { Invoke = ptr; }
-        public FuncPtr(void* ptr) { Invoke = (delegate*unmanaged[Cdecl]<<#= template #>>) ptr; }
+        public <#= convention #>FuncPtr(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) { Invoke = ptr; }
+        public <#= convention #>FuncPtr(void* ptr) { Invoke = (delegate*unmanaged[<#= convention #>]<<#= template #>>) ptr; }
 
-        public static implicit operator void*(FuncPtr<<#= template #>> func) => func.Invoke;
-        public static implicit operator delegate*unmanaged[Cdecl]<<#= template #>>(FuncPtr<<#= template #>> func) => func.Invoke;
-        public static implicit operator FuncPtr<<#= template #>>(void* ptr) => new FuncPtr<<#= template #>>(ptr);
-        public static implicit operator FuncPtr<<#= template #>>(IntPtr ptr) => new FuncPtr<<#= template #>>((void*)ptr);
-        public static implicit operator FuncPtr<<#= template #>>(delegate*unmanaged[Cdecl]<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
-        public static implicit operator FuncPtr<<#= template #>>(delegate*<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
+        public static implicit operator void*(<#= convention #>FuncPtr<<#= template #>> func) => func.Invoke;
+        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(void* ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
+        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(IntPtr ptr) => new <#= convention #>FuncPtr<<#= template #>>((void*)ptr);
+        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
     }
 #endif
 <#
+                }
             } 
 #>
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

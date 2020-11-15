@@ -25,8 +25,8 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<FastcallCalculator.DivideFunction> _divideHook;
         private static IHook<FastcallCalculator.MultiplyFunction> _multiplyHook;
 
-        private Definitions.Structs.FuncPtr<int, int, int> _addFunctionPointer;
-        private Definitions.Structs.FuncPtr<int, int, int> _multiplyFunctionPointer;
+        private StdcallFuncPtr<int, int, int> _addFunctionPointer;
+        private StdcallFuncPtr<int, int, int> _multiplyFunctionPointer;
 
         public FastcallCalculatorHookTest()
         {

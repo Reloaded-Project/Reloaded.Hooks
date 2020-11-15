@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.FuncPtr<int, int, int>;
+using FuncPtr = Reloaded.Hooks.Definitions.Structs.StdcallFuncPtr<int, int, int>;
 
 // Watch out!
 
@@ -42,13 +42,13 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator?.Dispose();
         }
 
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
         static int AddHookFunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
 
         [Fact]
         public unsafe void TestFunctionPointerHookAdd()
         {
-            _addHook = _addFunction.Hook<FuncPtr>((delegate*unmanaged[Cdecl]<int, int, int>)&AddHookFunction).Activate();
+            _addHook = _addFunction.Hook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction).Activate();
 
             for (int x = 0; x < 100; x++)
             {

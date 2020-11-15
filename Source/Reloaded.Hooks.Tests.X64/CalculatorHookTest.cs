@@ -25,8 +25,8 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
         private static IHook<NativeCalculator.AddFunction> _addWithBranchHook;
 
-        private Definitions.Structs.FuncPtr<int, int, int> _addFunctionPointer;
-        private Definitions.Structs.FuncPtr<int, int, int> _multiplyFunctionPointer;
+        private StdcallFuncPtr<int, int, int> _addFunctionPointer;
+        private StdcallFuncPtr<int, int, int> _multiplyFunctionPointer;
 
         public unsafe CalculatorHookTest()
         {
