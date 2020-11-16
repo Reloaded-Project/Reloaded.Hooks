@@ -85,7 +85,6 @@ namespace Reloaded.Hooks.Definitions
         new IHook<TFunction> Activate();
     }
 
-    #if FEATURE_FUNCTION_POINTERS
     public interface IHook<TFunction, TFuncPointer> : IHook<TFunction> where TFuncPointer : unmanaged
     {
         /// <summary>
@@ -109,5 +108,4 @@ namespace Reloaded.Hooks.Definitions
         /// </remarks>
         new IHook<TFunction, TFuncPointer> Activate();
     }
-    #endif
 }

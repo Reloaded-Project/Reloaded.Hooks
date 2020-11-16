@@ -60,8 +60,6 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         IAsmHook MakeAsmHook(byte[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1);
 
-
-        #if FEATURE_FUNCTION_POINTERS
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
@@ -80,6 +78,5 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         TFunctionPointer GetWrapperPtr<TFunctionPointer>();
-        #endif
     }
 }

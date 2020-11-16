@@ -69,7 +69,6 @@ namespace Reloaded.Hooks
             return Hooks.CreateAsmHook(asmCode, Address, behaviour, hookLength);
         }
 
-        #if FEATURE_FUNCTION_POINTERS
         /// <inheritdoc />
         public unsafe IHook<TFunction, TFunctionPointer> Hook<TFunctionPointer>(void* functionPtr, int minHookLength = -1) where TFunctionPointer : unmanaged 
         {
@@ -89,6 +88,5 @@ namespace Reloaded.Hooks
             var ptr = GetWrapperPtr();
             return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
         }
-        #endif
     }
 }

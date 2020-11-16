@@ -20,7 +20,6 @@
 
 	<LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_FUNCTION_POINTERS</DefineConstants>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 

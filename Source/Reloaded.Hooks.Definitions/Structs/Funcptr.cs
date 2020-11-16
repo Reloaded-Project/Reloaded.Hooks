@@ -7,7 +7,6 @@ namespace Reloaded.Hooks.Definitions.Structs
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -26,9 +25,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<TReturn>(IntPtr ptr) => new CdeclFuncPtr<TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<TReturn>(delegate*unmanaged[Cdecl]<TReturn> ptr) => new CdeclFuncPtr<TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -47,9 +44,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<TReturn>(IntPtr ptr) => new StdcallFuncPtr<TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<TReturn>(delegate*unmanaged[Stdcall]<TReturn> ptr) => new StdcallFuncPtr<TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -68,9 +63,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<TReturn>(IntPtr ptr) => new ThiscallFuncPtr<TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<TReturn>(delegate*unmanaged[Thiscall]<TReturn> ptr) => new ThiscallFuncPtr<TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -89,9 +82,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<TReturn>(IntPtr ptr) => new FastcallFuncPtr<TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<TReturn>(delegate*unmanaged[Fastcall]<TReturn> ptr) => new FastcallFuncPtr<TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -110,9 +101,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, TReturn>(delegate*unmanaged[Cdecl]<T1, TReturn> ptr) => new CdeclFuncPtr<T1, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -131,9 +120,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, TReturn>(delegate*unmanaged[Stdcall]<T1, TReturn> ptr) => new StdcallFuncPtr<T1, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -152,9 +139,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, TReturn>(delegate*unmanaged[Thiscall]<T1, TReturn> ptr) => new ThiscallFuncPtr<T1, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -173,9 +158,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, TReturn>(delegate*unmanaged[Fastcall]<T1, TReturn> ptr) => new FastcallFuncPtr<T1, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -194,9 +177,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, TReturn> ptr) => new CdeclFuncPtr<T1, T2, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -215,9 +196,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, TReturn> ptr) => new StdcallFuncPtr<T1, T2, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -236,9 +215,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -257,9 +234,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, TReturn> ptr) => new FastcallFuncPtr<T1, T2, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -278,9 +253,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -299,9 +272,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -320,9 +291,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -341,9 +310,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -362,9 +329,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, T4, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, T4, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -383,9 +348,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, T4, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, T4, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -404,9 +367,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -425,9 +386,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, T4, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, T4, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, T4, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -446,9 +405,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -467,9 +424,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -488,9 +443,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -509,9 +462,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, T4, T5, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -530,9 +481,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -551,9 +500,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -572,9 +519,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -593,9 +538,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -614,9 +557,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -635,9 +576,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -656,9 +595,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -677,9 +614,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -698,9 +633,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(IntPtr ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>((void*)ptr);
         public static implicit operator CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) => new CdeclFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -719,9 +652,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(IntPtr ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>((void*)ptr);
         public static implicit operator StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) => new StdcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -740,9 +671,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(IntPtr ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>((void*)ptr);
         public static implicit operator ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) => new ThiscallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(ptr);
     }
-#endif
         
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -761,6 +690,5 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(IntPtr ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>((void*)ptr);
         public static implicit operator FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate*unmanaged[Fastcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) => new FastcallFuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(ptr);
     }
-#endif
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

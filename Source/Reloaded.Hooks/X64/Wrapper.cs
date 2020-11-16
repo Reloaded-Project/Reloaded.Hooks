@@ -7,9 +7,7 @@ using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 
-#if FEATURE_FUNCTION_POINTERS
 using Reloaded.Hooks.Definitions.Structs;
-#endif
 
 namespace Reloaded.Hooks.X64
 {
@@ -66,7 +64,6 @@ namespace Reloaded.Hooks.X64
             return wrapperAddress;
         }
 
-#if FEATURE_FUNCTION_POINTERS
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
         /// <see cref="TFunction"/>.
@@ -81,7 +78,6 @@ namespace Reloaded.Hooks.X64
             CreatePointer<TFunction>(functionAddress, out wrapperAddress);
             return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
         }
-#endif
 
         /// <summary>
         /// Creates a wrapper converting a call to a source calling convention to a given target calling convention.

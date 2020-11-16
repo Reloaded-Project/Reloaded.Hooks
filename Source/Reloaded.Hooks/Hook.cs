@@ -10,7 +10,6 @@ using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
 {
-    #if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Specialized version of <see cref="Hook{TFunction, TFuncPointer}"/> with support for function pointers.
     /// </summary>
@@ -38,7 +37,6 @@ namespace Reloaded.Hooks
             return System.Runtime.CompilerServices.Unsafe.As<IntPtr, TPointer>(ref address);
         }
     }
-    #endif
 
     public class Hook<TFunction> : IHook<TFunction>
     {

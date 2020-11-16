@@ -41,7 +41,6 @@ namespace Reloaded.Hooks.Definitions.Structs
                 foreach (var convention in conventions)
 			    { 
 #>        
-#if FEATURE_FUNCTION_POINTERS
     /// <summary>
     /// Wraps a CDECL compatible function pointer.
     /// </summary>
@@ -60,7 +59,6 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(IntPtr ptr) => new <#= convention #>FuncPtr<<#= template #>>((void*)ptr);
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
     }
-#endif
 <#
                 }
             } 

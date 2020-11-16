@@ -52,6 +52,7 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator?.Dispose();
         }
 
+#if FEATURE_UNMANAGED_CALLERS_ONLY
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvCdecl) })]
         static int AddHookfunction01(int a, int b) { return _addHook01.OriginalFunction(a, b) + 1; }
 
@@ -98,6 +99,7 @@ namespace Reloaded.Hooks.Tests.X64
                 Assert.Equal(expected, result);
             }
         }
+#endif
 
         [Fact]
         public void TestHookAdd()

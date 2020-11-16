@@ -159,7 +159,6 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         IReloadedHooksUtilities Utilities { get; }
 
-        #if FEATURE_FUNCTION_POINTERS
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
@@ -175,6 +174,5 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
         TFunctionPointer CreateWrapperPtr<TFunction, TFunctionPointer>(long functionAddress);
-        #endif
     }
 }
