@@ -145,7 +145,7 @@ namespace Reloaded.Hooks.X86
                 assemblyCode.Add($"ret {toStackParamBytesTotal}"); // FASM optimizes `ret 0` as `ret`
 
                 // Write function to buffer and return pointer.
-                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()));
+                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()), 1);
             });
         }
 

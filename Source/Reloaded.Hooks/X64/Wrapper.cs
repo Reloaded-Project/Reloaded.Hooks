@@ -158,7 +158,7 @@ namespace Reloaded.Hooks.X64
                 assemblyCode.Add("ret");
 
                 // Write function to buffer and return pointer.
-                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()));
+                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()), 1);
             });
         }
 
