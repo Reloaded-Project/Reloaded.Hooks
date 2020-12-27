@@ -32,6 +32,14 @@ namespace Reloaded.Hooks.Definitions
         byte[] AssembleRelativeJump(IntPtr relativeJumpOffset, bool is64bit);
 
         /// <summary>
+        /// Assembles a relative (to EIP/RIP) jump by a user specified offset.
+        /// </summary>
+        /// <param name="currentAddress">Address of the current instruction.</param>
+        /// <param name="targetAddress">The address to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        byte[] AssembleRelativeJump(IntPtr currentAddress, IntPtr targetAddress, bool is64bit);
+
+        /// <summary>
         /// Gets the sequence of assembly instructions required to assemble an absolute jump to a user specified address.
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>

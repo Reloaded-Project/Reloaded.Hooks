@@ -230,9 +230,7 @@ namespace Reloaded.Hooks.Internal
             long jumpTargetAddress = (long)instruction.PC + GetOperandOffset(instruction.Operands[0]);
             if (originalJmpTarget.Contains(jumpTargetAddress))
             {
-                // Edit: It's actually correct because FASM automatically adjusts for instruction length.
-                IntPtr newRelativeOffset = (IntPtr)(newJmpTarget - (long)instruction.Offset);
-                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump(newRelativeOffset, Is64Bit());
+                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((IntPtr) instruction.Offset, (IntPtr) newJmpTarget, Is64Bit());
                 patches.Add(new Patch((IntPtr) instruction.Offset, relativeJumpBytes));
             }
         }
@@ -249,8 +247,7 @@ namespace Reloaded.Hooks.Internal
             {
                 // newJmpTarget is guaranteed to be in range.
                 // Relative jump uses less bytes, so using it is also safe.
-                IntPtr newRelativeOffset = (IntPtr)(newJmpTarget - (long)instruction.Offset);
-                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump(newRelativeOffset, Is64Bit());
+                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((IntPtr) instruction.Offset, (IntPtr) newJmpTarget, Is64Bit());
                 patches.Add(new Patch((IntPtr)instruction.Offset, relativeJumpBytes));
             }
         }

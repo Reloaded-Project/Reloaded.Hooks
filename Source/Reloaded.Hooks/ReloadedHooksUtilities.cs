@@ -14,7 +14,8 @@ namespace Reloaded.Hooks
         public byte[] AssembleAbsoluteJump(IntPtr target, bool is64bit) => Utilities.AssembleAbsoluteJump(target, is64bit);
         public byte[] AssemblePushReturn(IntPtr target, bool is64bit) => Utilities.AssemblePushReturn(target, is64bit);
         public byte[] AssembleRelativeJump(IntPtr relativeJumpOffset, bool is64bit) => Utilities.AssembleRelativeJump(relativeJumpOffset, is64bit);
-
+        public byte[] AssembleRelativeJump(IntPtr currentAddress, IntPtr targetAddress, bool is64bit) => Utilities.AssembleRelativeJump(currentAddress, targetAddress, is64bit);
+        
         public string GetAbsoluteJumpMnemonics(IntPtr target, bool is64bit) => Utilities.GetAbsoluteJumpMnemonics(target, is64bit);
         public string GetAbsoluteCallMnemonics(IntPtr target, bool is64bit) => Utilities.GetAbsoluteCallMnemonics(target, is64bit);
 

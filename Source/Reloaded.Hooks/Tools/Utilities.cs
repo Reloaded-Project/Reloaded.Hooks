@@ -28,6 +28,8 @@ namespace Reloaded.Hooks.Tools
 
         private static string Architecture(bool is64bit) => is64bit ? "use64" : "use32";
 
+        private static string SetAddress(IntPtr address) => $"org {address}";
+
         /// <summary>
         /// Writes a pointer to a given target address in unmanaged, non-reclaimable memory.
         /// </summary>
@@ -70,6 +72,19 @@ namespace Reloaded.Hooks.Tools
         {
             Architecture(is64bit),
             GetRelativeJumpMnemonics(relativeJumpOffset, is64bit)
+        });
+
+        /// <summary>
+        /// Assembles a relative (to EIP/RIP) jump by a user specified offset.
+        /// </summary>
+        /// <param name="currentAddress">Address of the current instruction.</param>
+        /// <param name="targetAddress">The address to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        public static byte[] AssembleRelativeJump(IntPtr currentAddress, IntPtr targetAddress, bool is64bit) => Assembler.Assemble(new[]
+        {
+            Architecture(is64bit),
+            SetAddress(currentAddress),
+            GetRelativeJumpMnemonics(targetAddress, is64bit)
         });
 
         /// <summary>
