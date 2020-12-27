@@ -53,25 +53,29 @@ namespace Reloaded.Hooks.Internal
         /// Patches the prologue of a function with iced, writes to <see cref="MemoryBuffer"/>
         /// and returns the new address of the prologue.
         /// </summary>
+        /// <param name="jumpTarget">Appends a relative jump to this address at the end of the patched code. Set null to not add a jump.</param>
         /// <returns>
         ///     Address of the patched function added to a <see cref="MemoryBuffer"/>.
         ///     If this function has already been executed, returns the address of previously patched function.
         /// </returns>
-        public IntPtr ToMemoryBuffer()
+        public IntPtr ToMemoryBuffer(IntPtr? jumpTarget)
         {
             if (_newPrologueAddress != IntPtr.Zero)
                 return _newPrologueAddress;
 
             int alignment       = _bitness / 8;
-            var estimateLength  = _bytes.Length * 2; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
-            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength, 1, 0x7FFFFFFF, alignment);
+            var estimateLength  = (_bytes.Length * 2) + 4; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
+            var minMax          = Utilities.GetRelativeJumpMinMax(jumpTarget.HasValue ? (long) jumpTarget.Value : 0);
+            var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength, minMax.min, minMax.max, alignment);
             return buffer.ExecuteWithLock(() =>
             {
                 // Patch prologue
                 buffer.SetAlignment(alignment);
                 var newBaseAddress = buffer.Properties.WritePointer;
                 var data           = EncodeForNewAddress(newBaseAddress);
-                _newPrologueAddress = buffer.Add(data, alignment);
+                _newPrologueAddress = buffer.Add(data, 1);
+                if (jumpTarget != null)
+                    buffer.Add(Utilities.AssembleRelativeJump(buffer.Properties.WritePointer, jumpTarget.Value, _bitness == 64), 1);
 
                 return _newPrologueAddress;
             });

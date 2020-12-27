@@ -127,18 +127,16 @@ namespace Reloaded.Hooks
             /* Get bytes from original function prologue and patch them. */
             CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, minHookLength);
 
-            var functionPatcher = new FunctionPatcher(_is64Bit);
-            var functionPatch = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
-            
+            var functionPatcher   = new FunctionPatcher(_is64Bit);
+            var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
             IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
-            functionPatch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(hookEndAddress, _is64Bit));
 
             /* Second wave of patching. */
             var icedPatcher = new IcedPatcher(_is64Bit, functionPatch.NewFunction.ToArray(), (IntPtr)functionAddress);
 
             /* Create Hook instance. */
-            OriginalFunctionAddress = icedPatcher.ToMemoryBuffer();
-            OriginalFunction = CreateWrapper((long)icedPatcher.ToMemoryBuffer(), out IntPtr originalFunctionWrapperAddress);
+            OriginalFunctionAddress = icedPatcher.ToMemoryBuffer(hookEndAddress);
+            OriginalFunction = CreateWrapper((long)icedPatcher.ToMemoryBuffer(null), out IntPtr originalFunctionWrapperAddress);
             OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
 
             _otherHookPatches = functionPatch.Patches;
