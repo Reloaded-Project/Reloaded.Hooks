@@ -85,4 +85,8 @@
     <NativeLibs Remove="CalculatorFunctionPointerTest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorFunctionPointerTest.cs" />
+  </ItemGroup>
+
 </Project>

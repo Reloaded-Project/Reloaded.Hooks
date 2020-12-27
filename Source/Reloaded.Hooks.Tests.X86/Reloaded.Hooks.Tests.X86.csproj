@@ -37,6 +37,7 @@
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorTest.cs" Link="CalculatorTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CSharpFromAssembly.cs" Link="CSharpFromAssembly.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorDoubleHookTest.cs" Link="FastcallCalculatorDoubleHookTest.cs" />
+    <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorFunctionPointerTest.cs" Link="FastcallCalculatorFunctionPointerTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorHookTest.cs" Link="FastcallCalculatorHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorTest.cs" Link="FastcallCalculatorTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FunctionPatcherTest.cs" Link="FunctionPatcherTest.cs" />

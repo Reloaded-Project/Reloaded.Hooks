@@ -25,9 +25,6 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<FastcallCalculator.DivideFunction> _divideHook;
         private static IHook<FastcallCalculator.MultiplyFunction> _multiplyHook;
 
-        private StdcallFuncPtr<int, int, int> _addFunctionPointer;
-        private StdcallFuncPtr<int, int, int> _multiplyFunctionPointer;
-
         public FastcallCalculatorHookTest()
         {
             _calculator = new FastcallCalculator();
@@ -35,55 +32,12 @@ namespace Reloaded.Hooks.Tests.X64
             _subtractFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.SubtractFunction>((long)_calculator.Subtract, out _);
             _divideFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.DivideFunction>((long)_calculator.Divide, out _);
             _multiplyFunction = ReloadedHooks.Instance.CreateWrapper<FastcallCalculator.MultiplyFunction>((long)_calculator.Multiply, out var mulFunction);
-            _addFunctionPointer = addFunction;
-            _multiplyFunctionPointer = mulFunction;
         }
 
         public void Dispose()
         {
             _calculator?.Dispose();
         }
-
-#if FEATURE_UNMANAGED_CALLERS_ONLY
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        static int AddHookfunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
-
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        static int MulHookfunction(int a, int b) { return _multiplyHook.OriginalFunction(a, b) * 2; }
-
-        [Fact]
-        public unsafe void TestFunctionPointerHookAdd()
-        {
-            _addHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.AddFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookfunction, (long)_calculator.Add).Activate();
-            
-            for (int x = 0; x < 100; x++)
-            {
-                for (int y = 1; y < 100;)
-                {
-                    int expected = (x + y) + 1;
-                    int result = _addFunctionPointer.Invoke(x, y);
-
-                    Assert.Equal(expected, result);
-                    y += 2;
-                }
-            }
-        }
-
-        [Fact]
-        public unsafe void TestFunctionPointerHookMul()
-        {
-            _multiplyHook = ReloadedHooks.Instance.CreateHook<FastcallCalculator.MultiplyFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&MulHookfunction, (long)_calculator.Multiply).Activate();
-
-            int x = 100;
-            for (int y = 0; y < 100; y++)
-            {
-                int expected = (x * y) * 2;
-                int result = _multiplyFunctionPointer.Invoke(x, y);
-
-                Assert.Equal(expected, result);
-            }
-        }
-#endif
 
         [Fact]
         public void TestHookAdd()

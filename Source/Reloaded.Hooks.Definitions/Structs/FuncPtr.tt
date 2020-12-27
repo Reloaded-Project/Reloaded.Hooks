@@ -24,8 +24,7 @@
     { 
         "Cdecl", 
         "Stdcall", 
-        "Thiscall", 
-        "Fastcall"
+        "Thiscall"
     };
 #>
 
@@ -41,9 +40,6 @@ namespace Reloaded.Hooks.Definitions.Structs
                 foreach (var convention in conventions)
 			    { 
 #>        
-    /// <summary>
-    /// Wraps a CDECL compatible function pointer.
-    /// </summary>
     public unsafe struct <#= convention #>FuncPtr<<#= template #>>
     {
         /// <summary>

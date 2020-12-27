@@ -42,29 +42,6 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator?.Dispose();
         }
 
-#if FEATURE_UNMANAGED_CALLERS_ONLY
-        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        static int AddHookFunction(int a, int b) { return _addHook.OriginalFunction(a, b) + 1; }
-
-        [Fact]
-        public unsafe void TestFunctionPointerHookAdd()
-        {
-            _addHook = _addFunction.Hook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction).Activate();
-
-            for (int x = 0; x < 100; x++)
-            {
-                for (int y = 1; y < 100;)
-                {
-                    int expected = (x + y) + 1;
-                    int result   = _addFunction.GetWrapperPtr<FuncPtr>().Invoke(x, y);
-
-                    Assert.Equal(expected, result);
-                    y += 2;
-                }
-            }
-        }
-#endif
-
         [Fact]
         public void TestHookAdd()
         {
