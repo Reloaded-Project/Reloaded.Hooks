@@ -113,7 +113,7 @@ namespace Reloaded.Hooks
                Note: For X64 the same principles apply, just replace CDECL with Microsoft calling convention.  
             */
 
-            /* Create Convention => CDECL Wrapper. */
+            /* Create Target Convention => TFunction Wrapper. */
             List<byte> jumpOpcodes = Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer, _is64Bit).ToList();
 
             /* Calculate Hook Length (Unless Explicit) */

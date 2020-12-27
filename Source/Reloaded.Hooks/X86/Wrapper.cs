@@ -87,53 +87,66 @@ namespace Reloaded.Hooks.X86
         /// <returns>Address of the wrapper in memory.</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
-            // toFunction (target) is CDECL
-            int numberOfParameters    = Utilities.GetNumberofParameters(typeof(TFunction));
-            List<string> assemblyCode = new List<string> {"use32"};
+            // 256 Bytes should allow for around 60-70 parameters in worst case scenario.
+            // If you need more than that, then... I don't know what you're doing with your life.
+            // Please do a pull request though and we can stick some code to predict the size.
+            var minMax = Utilities.GetRelativeJumpMinMax((long) functionAddress);
+            var buffer = Utilities.FindOrCreateBufferInRange(256, minMax.min, minMax.max);
+            return buffer.ExecuteWithLock(() =>
+            {
+                // Align the code.
+                buffer.SetAlignment(4);
+                var codeAddress = buffer.Properties.WritePointer;
 
-            // Calculate some stack stuff.
-            int fromStackParamBytesTotal = (fromConvention.Cleanup == StackCleanup.Caller) ? (numberOfParameters - fromConvention.SourceRegisters.Length) * 4 : 0;
-            int toStackParamBytesTotal   = (toConvention.Cleanup == StackCleanup.Callee)   ? (numberOfParameters - toConvention.SourceRegisters.Length) * 4 : 0;
-            int stackCleanupBytesTotal   = fromStackParamBytesTotal + fromConvention.ReservedStackSpace;
+                // Write pointer.
+                // toFunction (target) is CDECL
+                int numberOfParameters = Utilities.GetNumberofParameters(typeof(TFunction));
+                List<string> assemblyCode = new List<string>
+                {
+                    "use32",
+                    $"org {codeAddress}" // Tells FASM where code should be located.
+                };
 
-            // Callee Saved Registers
-            assemblyCode.Add("push ebp");       // Backup old call frame
-            assemblyCode.Add("mov ebp, esp");   // Setup new call frame
-            foreach (var register in toConvention.CalleeSavedRegisters)
-                assemblyCode.Add($"push {register}");
+                // Calculate some stack stuff.
+                int fromStackParamBytesTotal = (fromConvention.Cleanup == StackCleanup.Caller) ? (numberOfParameters - fromConvention.SourceRegisters.Length) * 4 : 0;
+                int toStackParamBytesTotal = (toConvention.Cleanup == StackCleanup.Callee) ? (numberOfParameters - toConvention.SourceRegisters.Length) * 4 : 0;
+                int stackCleanupBytesTotal = fromStackParamBytesTotal + fromConvention.ReservedStackSpace;
 
-            // Reserve Extra Stack Space
-            if (fromConvention.ReservedStackSpace > 0)
-                assemblyCode.Add($"sub esp, {fromConvention.ReservedStackSpace}");
+                // Callee Saved Registers
+                assemblyCode.Add("push ebp");       // Backup old call frame
+                assemblyCode.Add("mov ebp, esp");   // Setup new call frame
+                foreach (var register in toConvention.CalleeSavedRegisters)
+                    assemblyCode.Add($"push {register}");
 
-            // Setup Function Parameters
-            if (numberOfParameters > 0)
-                assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, fromConvention.SourceRegisters, toConvention.SourceRegisters));
+                // Reserve Extra Stack Space
+                if (fromConvention.ReservedStackSpace > 0)
+                    assemblyCode.Add($"sub esp, {fromConvention.ReservedStackSpace}");
 
-            // Call target function
-            var pointerBuffer = Utilities.FindOrCreateBufferInRange(IntPtr.Size);
-            IntPtr targetFunctionPtr = pointerBuffer.Add(ref functionAddress);
-            assemblyCode.Add("call dword [0x" + targetFunctionPtr.ToString("X") + "]"); 
+                // Setup Function Parameters
+                if (numberOfParameters > 0)
+                    assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, fromConvention.SourceRegisters, toConvention.SourceRegisters));
 
-            // Stack cleanup if necessary 
-            if (stackCleanupBytesTotal > 0)
-                assemblyCode.Add($"add esp, {stackCleanupBytesTotal}");
+                // Call target function
+                assemblyCode.Add($"call {functionAddress}");
 
-            // Setup return register
-            if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
-                assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
+                // Stack cleanup if necessary 
+                if (stackCleanupBytesTotal > 0)
+                    assemblyCode.Add($"add esp, {stackCleanupBytesTotal}");
 
-            // Callee Restore Registers
-            foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
-                assemblyCode.Add($"pop {register}");
+                // Setup return register
+                if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
+                    assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
-            assemblyCode.Add("pop ebp");
-            assemblyCode.Add($"ret {toStackParamBytesTotal}"); // FASM optimizes `ret 0` as `ret`
-            
-            // Write function to buffer and return pointer.
-            byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
-            var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length);
-            return wrapperBuffer.Add(assembledMnemonics);
+                // Callee Restore Registers
+                foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
+                    assemblyCode.Add($"pop {register}");
+
+                assemblyCode.Add("pop ebp");
+                assemblyCode.Add($"ret {toStackParamBytesTotal}"); // FASM optimizes `ret 0` as `ret`
+
+                // Write function to buffer and return pointer.
+                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()));
+            });
         }
 
         private static string[] AssembleFunctionParameters(int parameterCount, Register[] fromRegisters, Register[] toRegisters)

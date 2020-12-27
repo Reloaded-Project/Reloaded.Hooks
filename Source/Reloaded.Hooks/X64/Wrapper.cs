@@ -88,66 +88,78 @@ namespace Reloaded.Hooks.X64
         /// <returns>Address of the wrapper in memory you can call .</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
-            // Retrieve number of parameters.
-            int numberOfParameters    = Utilities.GetNumberofParametersWithoutFloats(typeof(TFunction));
-            List<string> assemblyCode = new List<string> {"use64"};
+            // 384 Bytes should allow for around 100 parameters in worst case scenario.
+            // If you need more than that, then... I don't know what you're doing with your life.
+            // Please do a pull request though and we can stick some code to predict the size.
+            var minMax = Utilities.GetRelativeJumpMinMax((long) functionAddress);
+            var buffer = Utilities.FindOrCreateBufferInRange(384, minMax.min, minMax.max);
+            return buffer.ExecuteWithLock(() =>
+            {
+                // Align the code.
+                buffer.SetAlignment(8);
+                var codeAddress = buffer.Properties.WritePointer;
 
-            // On enter, stack is misaligned by 8.
-            // Callee Backup Registers
-            // Backup Stack Frame
-            assemblyCode.Add("push rbp");       // Backup old call frame
-            assemblyCode.Add("mov rbp, rsp");   // Setup new call frame
-            foreach (var register in toConvention.CalleeSavedRegisters)
-                assemblyCode.Add($"push {register}");
+                // Retrieve number of parameters.
+                int numberOfParameters = Utilities.GetNumberofParametersWithoutFloats(typeof(TFunction));
+                List<string> assemblyCode = new List<string>
+                {
+                    "use64", 
+                    $"org {codeAddress}"
+                };
 
-            // Even my mind gets a bit confused. So here is a reminder:
-            // fromConvention is the convention that gets called.
-            // toConvention is the convention we are marshalling from.
-            int targetStackParameters  = numberOfParameters - fromConvention.SourceRegisters.Length;
-            targetStackParameters      = targetStackParameters < 0 ? 0 : targetStackParameters;
+                // On enter, stack is misaligned by 8.
+                // Callee Backup Registers
+                // Backup Stack Frame
+                assemblyCode.Add("push rbp");       // Backup old call frame
+                assemblyCode.Add("mov rbp, rsp");   // Setup new call frame
+                foreach (var register in toConvention.CalleeSavedRegisters)
+                    assemblyCode.Add($"push {register}");
 
-            int stackParamBytesTotal = ((targetStackParameters) * 8);
-            int stackMisalignment    = (stackParamBytesTotal + 8) % 16; // Adding +8 here because we assume that we are starting with a misaligned stack.
-            int shadowSpace          = fromConvention.ShadowSpace ? 32 : 0;
+                // Even my mind gets a bit confused. So here is a reminder:
+                // fromConvention is the convention that gets called.
+                // toConvention is the convention we are marshalling from.
+                int targetStackParameters = numberOfParameters - fromConvention.SourceRegisters.Length;
+                targetStackParameters = targetStackParameters < 0 ? 0 : targetStackParameters;
 
-            // Note: Our stack is already aligned at this point because of `push` above.
-            // stackBytesTotal % 16 represent the amount of bytes away from alignment after pushing parameters up the stack.
-            // Setup stack alignment.
-            if (stackMisalignment != 0)
-                assemblyCode.Add($"sub rsp, {stackMisalignment}"); 
+                int stackParamBytesTotal = ((targetStackParameters) * 8);
+                int stackMisalignment = (stackParamBytesTotal + 8) % 16; // Adding +8 here because we assume that we are starting with a misaligned stack.
+                int shadowSpace = fromConvention.ShadowSpace ? 32 : 0;
 
-            // Setup parameters for target.
-            if (numberOfParameters > 0)
-                assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, ref fromConvention, ref toConvention));
+                // Note: Our stack is already aligned at this point because of `push` above.
+                // stackBytesTotal % 16 represent the amount of bytes away from alignment after pushing parameters up the stack.
+                // Setup stack alignment.
+                if (stackMisalignment != 0)
+                    assemblyCode.Add($"sub rsp, {stackMisalignment}");
 
-            // Make shadow space if target requires it.
-            if (fromConvention.ShadowSpace)
-                assemblyCode.Add($"sub rsp, {shadowSpace}");
+                // Setup parameters for target.
+                if (numberOfParameters > 0)
+                    assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, ref fromConvention, ref toConvention));
 
-            // Call target.
-            var pointerBuffer = Utilities.FindOrCreateBufferInRange(IntPtr.Size, 1, UInt32.MaxValue);
-            IntPtr targetFunctionPtr = pointerBuffer.Add(ref functionAddress);
-            assemblyCode.Add("call qword [qword 0x" + targetFunctionPtr.ToString("X") + "]");
+                // Make shadow space if target requires it.
+                if (fromConvention.ShadowSpace)
+                    assemblyCode.Add($"sub rsp, {shadowSpace}");
 
-            // Restore the stack pointer after function call.
-            if (stackParamBytesTotal + shadowSpace + stackMisalignment != 0)
-                assemblyCode.Add($"add rsp, {stackParamBytesTotal + shadowSpace + stackMisalignment}" );
+                // Call target.
+                assemblyCode.Add($"call {functionAddress}");
 
-            // Marshal return register back from target to source.
-            if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
-                assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
+                // Restore the stack pointer after function call.
+                if (stackParamBytesTotal + shadowSpace + stackMisalignment != 0)
+                    assemblyCode.Add($"add rsp, {stackParamBytesTotal + shadowSpace + stackMisalignment}");
 
-            // Callee Restore Registers
-            foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
-                assemblyCode.Add($"pop {register}");
+                // Marshal return register back from target to source.
+                if (fromConvention.ReturnRegister != toConvention.ReturnRegister)
+                    assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
-            assemblyCode.Add("pop rbp");
-            assemblyCode.Add("ret");
+                // Callee Restore Registers
+                foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
+                    assemblyCode.Add($"pop {register}");
 
-            // Write function to buffer and return pointer.
-            byte[] assembledMnemonics = Utilities.Assembler.Assemble(assemblyCode.ToArray());
-            var wrapperBuffer = Utilities.FindOrCreateBufferInRange(assembledMnemonics.Length, 1, long.MaxValue);
-            return wrapperBuffer.Add(assembledMnemonics);
+                assemblyCode.Add("pop rbp");
+                assemblyCode.Add("ret");
+
+                // Write function to buffer and return pointer.
+                return buffer.Add(Utilities.Assembler.Assemble(assemblyCode.ToArray()));
+            });
         }
 
         private static string[] AssembleFunctionParameters(int parameterCount, ref IFunctionAttribute fromConvention, ref IFunctionAttribute toConvention)
