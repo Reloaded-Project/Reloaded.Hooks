@@ -25,7 +25,7 @@ namespace Reloaded.Hooks.Tests.X64
         private FuncPtr _divideFunctionPointer;
 
 
-        public CalculatorFunctionPointerTest()
+        public unsafe CalculatorFunctionPointerTest()
         {
             _nativeCalculator = new NativeCalculator();
             // We can assign directly because convention matches.

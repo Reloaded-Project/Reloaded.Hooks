@@ -1,6 +1,7 @@
+
 <div align="center">
 	<h1>Project Reloaded: Hooking</h1>
-	<img src="https://i.imgur.com/BjPn7rU.png" width="150" align="center" />
+	<img src="./Images/ReloadedLogo.png" width="150" align="center" />
 	<br/> <br/>
 	<strong><i>WTF You can unit test function hooks!?</i></strong>
 	<br/> <br/>
@@ -19,22 +20,22 @@
 </div>
 
 # Introduction
-The purpose of this project is to support extending (hooking) u̷nma͘na̕g̡ed͡ ͞cod҉e (͟A̸P͡Is)́ w͟͡i͠t̴͠h̨͢͡ ̸́͟p̢҉u̢͟r̷̀è͢ ̡mąń̨͜a͏̨g͢e̴d... wait... *you've heard this before many times, haven't you?*
+Reloaded.Hooks is a library for intercepting and modifying existing binary functions on `x86` and `x64` machines. It is most often used to either intercept Win32 API calls (e.g. `NtCreateFile` to find out what files the current process is loading) or to patch existing functions within a program; e.g. patching software at runtime.
 
-Why stop at APIs? What if we could work with *"something more"*?
+If this concept is unfamiliar to you; I would suggest to research the term `Hooking` while reading the documentation.
 
-Well, that's about the goal of this library.
-
+Reloaded.Hooks is a managed alternative to native libraries such as `MinHook` and `Detours`, targeted at tackling more advanced/difficult use cases; such as when functions do not use standard *[calling conventions](https://en.wikipedia.org/wiki/Calling_convention)*.
 
 ## Feature Highlights
 + Support for x86 and x64 architectures.
-+ Call & Hook unmanaged functions with *custom calling conventions*.
-+ Stack function hooks. Double, Triple, Quadruple, n-tuple hook functions.
-+ Generate native functions that convert CDECL/Microsoft x64 function calls to *custom calling convention* calls, and vice versa.
-+ Detects & Patches common variations of existing function hooks when hooking. Hook functions hooked by other libraries; this feature is unique to Reloaded.Hooks.  
-+ Utility functions allowing you to deal with aspects such as *function pointers* and *Virtual Function Tables*. 
++ Call & hook unmanaged functions with *custom calling conventions*.
++ Stack function hooks. You can hook already hooked functions as many times as you like.
++ Mid function x86/x64 assembly hooks; similar to the likes of `Cheat Engine`.
++ Highly compatible. Detects & patches common variations of existing function hooks when hooking. Hook functions hooked by other libraries; this feature is unique to Reloaded.Hooks. 
++ Generate native wrapper functions for converting between custom calling conventions. e.g. Stdcall to Fastcall converter.
++ Many lower level utility functions allowing you to deal with things like *Virtual Function Tables*. 
 
-## Documentation
+### Documentation
 
 As advanced as the library may sound, in reality using the library is super simple.
 The following links below should help you get started with the library:
@@ -44,13 +45,17 @@ The following links below should help you get started with the library:
 
 In addition, feel free to look through `Reloaded.Hooks.Tests` for some ideas 😉.
 
-## Contributions
+### Contributions
 As with the standard for all of the `Reloaded-Project`, repositories; contributions are very welcome and encouraged.
 
 Feel free to implement new features, make bug fixes or suggestions so long as they are accompanied by an issue with a clear description of the pull request.
 
 If you are implementing new features, please do provide the appropriate unit tests to cover the new features you have implemented; try to keep the coverage high 😊.
 
-## Authors & Contributions
+### Authors & Contributions
 
-Reloaded.Hooks uses the `SharpDisasm` library by *Justin Stenning (spazzarama)*, a partial port of Udis86 by *Vivek Thampi*. Both of these libraries are originally distributed under the under the 2-clause "Simplified BSD License". 
+- Reloaded.Hooks uses the `SharpDisasm` library by *Justin Stenning (spazzarama)*, a partial port of Udis86 by *Vivek Thampi*. Both of these libraries are originally distributed under the under the 2-clause "Simplified BSD License". 
+
+- Reloaded.Hooks uses the `Flat Assembler` (FASM) by Tomasz Grysztar.
+
+- Reloaded.Hooks uses the `Iced` library by 0xd4d.
