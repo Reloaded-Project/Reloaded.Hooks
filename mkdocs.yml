@@ -1,0 +1,24 @@
+site_name: Reloaded.Hooks Documentation
+site_url: https://reloaded-project.github.io/Reloaded.Hooks/
+
+repo_name: Reloaded-Project/Reloaded.Hooks
+repo_url: https://github.com/Reloaded-Project/Reloaded.Hooks
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Sewer56
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/TheSewer56
+
+theme:
+  name: material
+  palette:
+    primary: red
+    accent: red
+    scheme: slate
+    
+pages:
+  - Home: index.md
+  - What's This?: https://github.com/Reloaded-Project/Reloaded.Hooks/issues/1
+  - Getting Started: GettingStarted.md
