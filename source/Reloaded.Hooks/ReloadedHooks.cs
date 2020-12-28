@@ -63,14 +63,6 @@ namespace Reloaded.Hooks
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
 
-        public unsafe IHook<TFunction, TFunctionPointer> CreateHook<TFunction, TFunctionPointer>(void* targetAddress, long functionAddress, int minHookLength = -1) where TFunctionPointer : unmanaged => new Hook<TFunction, TFunctionPointer>(targetAddress, functionAddress, minHookLength);
-
-        public TFunctionPointer CreateWrapperPtr<TFunction, TFunctionPointer>(long functionAddress)
-        {
-            var ptr = CreateWrapper<TFunction>(functionAddress);
-            return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
-        }
-
         public IReloadedHooksUtilities Utilities { get; } = ReloadedHooksUtilities.Instance;
     }
 }

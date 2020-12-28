@@ -9,35 +9,7 @@ using Reloaded.Memory.Sources;
 using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
-{
-    /// <summary>
-    /// Specialized version of <see cref="Hook{TFunction, TFuncPointer}"/> with support for function pointers.
-    /// </summary>
-    public class Hook<TFunction, TFuncPointer> : Hook<TFunction>, IHook<TFunction, TFuncPointer> where TFuncPointer : unmanaged
-    {
-        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1) : base(function, functionAddress, minHookLength)
-        {
-            OriginalFunction = UnsafeCastPointer<TFuncPointer>(OriginalFunctionWrapperAddress);
-        }
-
-        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1) : base(targetAddress, functionAddress, minHookLength)
-        {
-            OriginalFunction = UnsafeCastPointer<TFuncPointer>(OriginalFunctionWrapperAddress);
-        }
-
-        /// <inheritdoc/>
-        public new TFuncPointer OriginalFunction { get; }
-
-        /// <inheritdoc/>
-        public new IHook<TFunction, TFuncPointer> Activate() => (IHook<TFunction, TFuncPointer>) base.Activate();
-
-        private static unsafe TPointer UnsafeCastPointer<TPointer>(IntPtr value) where TPointer : unmanaged
-        {
-            var address = value;
-            return System.Runtime.CompilerServices.Unsafe.As<IntPtr, TPointer>(ref address);
-        }
-    }
-
+{ 
     public class Hook<TFunction> : IHook<TFunction>
     {
         /// <inheritdoc />

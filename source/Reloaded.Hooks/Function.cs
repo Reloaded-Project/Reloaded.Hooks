@@ -68,25 +68,5 @@ namespace Reloaded.Hooks
         {
             return Hooks.CreateAsmHook(asmCode, Address, behaviour, hookLength);
         }
-
-        /// <inheritdoc />
-        public unsafe IHook<TFunction, TFunctionPointer> Hook<TFunctionPointer>(void* functionPtr, int minHookLength = -1) where TFunctionPointer : unmanaged 
-        {
-            return Hooks.CreateHook<TFunction, TFunctionPointer>(functionPtr, Address, minHookLength);
-        }
-
-        /// <inheritdoc />
-        public IntPtr GetWrapperPtr() 
-        {
-            GetWrapper(out var address);
-            return address;
-        }
-
-        /// <inheritdoc />
-        public TFunctionPointer GetWrapperPtr<TFunctionPointer>()
-        {
-            var ptr = GetWrapperPtr();
-            return Unsafe.As<IntPtr, TFunctionPointer>(ref ptr);
-        }
     }
 }

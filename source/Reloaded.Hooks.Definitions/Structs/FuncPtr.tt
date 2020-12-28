@@ -50,7 +50,7 @@ namespace Reloaded.Hooks.Definitions.Structs
         public <#= convention #>FuncPtr(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) { Invoke = ptr; }
         public <#= convention #>FuncPtr(void* ptr) { Invoke = (delegate*unmanaged[<#= convention #>]<<#= template #>>) ptr; }
 
-        public static implicit operator void*(<#= convention #>FuncPtr<<#= template #>> func) => func.Invoke;
+        public static explicit operator void*(<#= convention #>FuncPtr<<#= template #>> func) => func.Invoke;
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(void* ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(IntPtr ptr) => new <#= convention #>FuncPtr<<#= template #>>((void*)ptr);
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);

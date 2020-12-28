@@ -84,28 +84,4 @@ namespace Reloaded.Hooks.Definitions
         /// </remarks>
         new IHook<TFunction> Activate();
     }
-
-    public interface IHook<TFunction, TFuncPointer> : IHook<TFunction> where TFuncPointer : unmanaged
-    {
-        /// <summary>
-        /// Allows you to call the original function that was hooked.
-        /// </summary>
-        new TFuncPointer OriginalFunction { get; }
-
-        /// <summary>
-        /// Performs a one time activation of the hook, making the necessary memory writes to permanently commit the hook.
-        /// </summary>
-        /// <remarks>
-        ///     This function should be called after instantiation as soon as possible,
-        ///     preferably in the same line as instantiation.
-        ///
-        ///     This class exists such that we don't run into concurrency issues on
-        ///     attaching to other processes whereby the following happens:
-        ///
-        ///     A. Original process calls a function that was just hooked.
-        ///     B. Create function has not yet returned, and OriginalFunction is unassigned.
-        ///     C. Hook tried to call OriginalFunction. NullReferenceException.
-        /// </remarks>
-        new IHook<TFunction, TFuncPointer> Activate();
-    }
 }
