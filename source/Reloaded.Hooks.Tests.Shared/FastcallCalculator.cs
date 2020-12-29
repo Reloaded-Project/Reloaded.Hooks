@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Security;
+using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Tools;
 using static Reloaded.Hooks.Tests.Shared.Macros.Macros;
@@ -35,6 +36,10 @@ namespace Reloaded.Hooks.Tests.Shared
         [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
         [Definitions.X86.Function(CallingConventions.Fastcall)]
         public delegate int DivideFunction(int a, int b);
+
+        [Function(new[] { FunctionAttribute.Register.rcx, FunctionAttribute.Register.rdx }, FunctionAttribute.Register.rax, false)]
+        [Definitions.X86.Function(CallingConventions.Fastcall)]
+        public struct CalculatorFunction { public FuncPtr<int, int, int> Value; }
 
         public IntPtr Divide   { get; private set; }
         public IntPtr Multiply { get; private set; }

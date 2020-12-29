@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Memory.Buffers;
@@ -254,14 +255,13 @@ namespace Reloaded.Hooks.Tools
         /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// </summary>
-        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        /// <param name="value">Any non-null value.</param>>
-        public static int GetNumberofParameters<TFunction>(TFunction value)
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        public static int GetNumberofParameters<TFunction>()
         {
-            if (value is IFuncPtr funcPtr)
-                return funcPtr.NumberOfParameters;
+            if (TryGetIFuncPtrFromType<TFunction>(out IFuncPtr ptr))
+                return ptr.NumberOfParameters;
 
-            return GetNumberofParametersWithoutFloats(typeof(TFunction));
+            return GetNumberofParameters(typeof(TFunction));
         }
 
 
@@ -270,14 +270,40 @@ namespace Reloaded.Hooks.Tools
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// Ignores float and double parameters.
         /// </summary>
-        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        /// <param name="value">Any non-null value.</param>
-        public static int GetNumberofParametersWithoutFloats<TFunction>(TFunction value)
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        public static int GetNumberofParametersWithoutFloats<TFunction>()
         {
-            if (value is IFuncPtr funcPtr)
-                return funcPtr.NumberOfParametersWithoutFloats;
+            if (TryGetIFuncPtrFromType<TFunction>(out IFuncPtr ptr))
+                return ptr.NumberOfParametersWithoutFloats;
 
             return GetNumberofParametersWithoutFloats(typeof(TFunction));
+        }
+
+        /// <summary>
+        /// Tries to instantiate <see cref="IFuncPtr"/> from a <see cref="TType"/> or and of the type's fields.
+        /// </summary>
+        private static bool TryGetIFuncPtrFromType<TType>(out IFuncPtr value)
+        {
+            value = null;
+
+            // Search type directly.
+            if (typeof(IFuncPtr).IsAssignableFrom(typeof(TType)))
+            {
+                value = (IFuncPtr) Activator.CreateInstance(typeof(TType));
+                return true;
+            }
+
+            // Search all fields
+            foreach (var field in typeof(TType).GetFields())
+            {
+                if (typeof(IFuncPtr).IsAssignableFrom(field.FieldType))
+                {
+                    value = (IFuncPtr)Activator.CreateInstance(field.FieldType);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>

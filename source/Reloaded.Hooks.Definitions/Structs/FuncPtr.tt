@@ -17,7 +17,13 @@
         "T1, T2, T3, T4, T5, TReturn",
         "T1, T2, T3, T4, T5, T6, TReturn",
         "T1, T2, T3, T4, T5, T6, T7, TReturn",  
-        "T1, T2, T3, T4, T5, T6, T7, T8, TReturn"
+        "T1, T2, T3, T4, T5, T6, T7, T8, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn",
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn",   
+        "T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn"
     };
 
     string[] conventions = 
@@ -35,36 +41,63 @@ namespace Reloaded.Hooks.Definitions.Structs
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 <#
-			foreach (var template in templates)
-			{
-
-                foreach (var convention in conventions)
-			    { 
+foreach (var template in templates)
+{
 #>        
-    public unsafe struct <#= convention #>FuncPtr<<#= template #>> : IFuncPtr
+    public unsafe struct FuncPtr<<#= template #>> : IFuncPtr
     {
         /// <summary>
-        /// Calls the underlying function.
+        /// Raw pointer to the function.
         /// </summary>
-        public delegate*unmanaged[<#= convention #>]<<#= template #>> Invoke;
+        public void* funcPtr;
 
-        public <#= convention #>FuncPtr(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) { Invoke = ptr; }
-        public <#= convention #>FuncPtr(void* ptr) { Invoke = (delegate*unmanaged[<#= convention #>]<<#= template #>>) ptr; }
+    
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<<#= template #>> Invoke => (delegate*unmanaged[Stdcall]<<#= template #>>)funcPtr;
 
-        public static explicit operator void*(<#= convention #>FuncPtr<<#= template #>> func) => func.Invoke;
-        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(void* ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
-        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(IntPtr ptr) => new <#= convention #>FuncPtr<<#= template #>>((void*)ptr);
-        public static implicit operator <#= convention #>FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
-           
+<#
+    foreach (var convention in conventions)
+	{ 
+#>
+        /// <summary>
+        /// Calls the underlying function using the <#= convention #> convention.
+        /// </summary>
+        public delegate*unmanaged[<#= convention #>]<<#= template #>> InvokeAs<#= convention #> => (delegate*unmanaged[<#= convention #>]<<#= template #>>)funcPtr;
+<#
+    } 
+#>
+        public FuncPtr(void* ptr) { funcPtr = ptr; }
+<#
+    foreach (var convention in conventions)
+	{ 
+#>
+        public FuncPtr(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) { funcPtr = ptr; }
+<#
+    } 
+#>
+
+        public static explicit operator void*(FuncPtr<<#= template #>> func) => func.funcPtr;
+        public static implicit operator FuncPtr<<#= template #>>(void* ptr) => new FuncPtr<<#= template #>>(ptr);
+        public static implicit operator FuncPtr<<#= template #>>(IntPtr ptr) => new FuncPtr<<#= template #>>((void*)ptr);
+<#
+    foreach (var convention in conventions)
+	{ 
+#>
+        public static implicit operator FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
+<#
+    } 
+#>
+
         /// <inheritdoc />
-        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(<#= convention #>FuncPtr<<#= template #>>));
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(FuncPtr<<#= template #>>));
 
         /// <inheritdoc />
-        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(<#= convention #>FuncPtr<<#= template #>>));
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<<#= template #>>));
     }
 <#
-                }
-            } 
+} 
 #>
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

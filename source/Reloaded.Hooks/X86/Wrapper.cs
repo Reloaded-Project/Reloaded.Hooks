@@ -35,11 +35,15 @@ namespace Reloaded.Hooks.X86
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         /// <param name="wrapperAddress">
         ///     Address of the wrapper used to call the original function.
-        ///     If the original function is CDECL, the wrapper address equals the function address.
+        ///     If the source and target calling conventions match, this is the same as <see cref="functionAddress"/>
         /// </param>
         public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(CreatePointer<TFunction>(functionAddress, out wrapperAddress));
+            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
+            if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
+                return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
+
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
         }
 
         /// <summary>
@@ -69,18 +73,6 @@ namespace Reloaded.Hooks.X86
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
         /// <see cref="TFunction"/>.
         /// </summary>
-        /// <param name="functionAddress">Address of the function to wrap.</param>
-        /// <param name="wrapperAddress">Address of the wrapper used to call the original function.</param>
-        public static TFunction CreateFunctionPointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
-        {
-            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
-            return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
-        }
-
-        /// <summary>
-        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
-        /// </summary>
         /// <param name="functionAddress">The address of the function using <see cref="fromConvention"/>.</param>
         /// <param name="fromConvention">The calling convention to convert to <see cref="toConvention"/>. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to <see cref="fromConvention"/>. This is the convention of the function returned.</param>
@@ -100,7 +92,7 @@ namespace Reloaded.Hooks.X86
 
                 // Write pointer.
                 // toFunction (target) is CDECL
-                int numberOfParameters = Utilities.GetNumberofParameters(typeof(TFunction));
+                int numberOfParameters = Utilities.GetNumberofParameters<TFunction>();
                 List<string> assemblyCode = new List<string>
                 {
                     "use32",

@@ -31,8 +31,8 @@ namespace Reloaded.Hooks
         public int GetNumberofParametersWithoutFloats(Type delegateType) => Utilities.GetNumberofParametersWithoutFloats(delegateType);
 
 
-        public int GetNumberofParameters<TFunction>(TFunction value) => Utilities.GetNumberofParameters(value);
-        public int GetNumberofParametersWithoutFloats<TFunction>(TFunction value) => Utilities.GetNumberofParametersWithoutFloats(value);
+        public int GetNumberofParameters<TFunction>() => Utilities.GetNumberofParameters<TFunction>();
+        public int GetNumberofParametersWithoutFloats<TFunction>() => Utilities.GetNumberofParametersWithoutFloats<TFunction>();
 
         public string PushCdeclCallerSavedRegisters() => "push eax\npush ecx\npush edx";
         public string PopCdeclCallerSavedRegisters() => "pop edx\npop ecx\npop eax";

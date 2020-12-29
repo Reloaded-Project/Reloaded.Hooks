@@ -81,7 +81,7 @@ namespace Reloaded.Hooks.Definitions
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
-        ///     Please keep a reference to this class as long as you are using it.
+        ///     Please keep a reference to this class as long as you are using it (if <see cref="TFunction"/> is a delegate type).
         ///     Otherwise Garbage Collection will break the native function pointer to your C# function
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
@@ -92,7 +92,7 @@ namespace Reloaded.Hooks.Definitions
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
-        ///     Please keep a reference to this class as long as you are using it.
+        ///     Please keep a reference to this class as long as you are using it (if <see cref="TFunction"/> is a delegate type).
         ///     Otherwise Garbage Collection will break the native function pointer to your C# function
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>

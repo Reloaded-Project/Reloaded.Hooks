@@ -127,18 +127,16 @@ namespace Reloaded.Hooks.Definitions
         /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// </summary>
-        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        /// <param name="value">Any non-null value.</param>
-        int GetNumberofParameters<TFunction>(TFunction value);
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        int GetNumberofParameters<TFunction>();
 
         /// <summary>
         /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// Ignores float and double parameters.
         /// </summary>
-        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        /// <param name="value">Any non-null value.</param>
-        int GetNumberofParametersWithoutFloats<TFunction>(TFunction value);
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        int GetNumberofParametersWithoutFloats<TFunction>();
 
         /// <summary>
         /// A macro for "push eax\npush ecx\npush edx" that preserves all CDECL caller saved registers before

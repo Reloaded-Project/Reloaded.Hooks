@@ -5,7 +5,7 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.CdeclFuncPtr<int,int,int>;
+using CalculatorFunction = Reloaded.Hooks.Tests.Shared.NativeCalculator.CalculatorFunction;
 
 // Watch out!
 
@@ -14,25 +14,26 @@ namespace Reloaded.Hooks.Tests.X64
     public class CalculatorFunctionPointerTest : IDisposable
     {
         private NativeCalculator _nativeCalculator;
-        private static IHook<FuncPtr> _addHook;
-        private static IHook<FuncPtr> _subHook;
-        private static IHook<FuncPtr> _multiplyHook;
-        private static IHook<FuncPtr> _divideHook;
 
-        private FuncPtr _addFunctionPointer;
-        private FuncPtr _subFunctionPointer;
-        private FuncPtr _multiplyFunctionPointer;
-        private FuncPtr _divideFunctionPointer;
+        private static IHook<CalculatorFunction> _addHook;
+        private static IHook<CalculatorFunction> _subHook;
+        private static IHook<CalculatorFunction> _multiplyHook;
+        private static IHook<CalculatorFunction> _divideHook;
+
+        private CalculatorFunction _addFunctionPointer;
+        private CalculatorFunction _subFunctionPointer;
+        private CalculatorFunction _multiplyFunctionPointer;
+        private CalculatorFunction _divideFunctionPointer;
 
         public unsafe CalculatorFunctionPointerTest()
         {
             _nativeCalculator = new NativeCalculator();
             // We can assign directly because convention matches.
             // The pointers are CDECL and the type is CdeclFuncPtr
-            _addFunctionPointer = ReloadedHooks.Instance.CreateWrapper<FuncPtr>((long)_nativeCalculator.Add);
-            _subFunctionPointer = ReloadedHooks.Instance.CreateWrapper<FuncPtr>((long)_nativeCalculator.Subtract);
-            _multiplyFunctionPointer = ReloadedHooks.Instance.CreateWrapper<FuncPtr>((long)_nativeCalculator.Multiply);
-            _divideFunctionPointer = ReloadedHooks.Instance.CreateWrapper<FuncPtr>((long)_nativeCalculator.Divide);
+            _addFunctionPointer = ReloadedHooks.Instance.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Add, out var _);
+            _subFunctionPointer = ReloadedHooks.Instance.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Subtract, out var _);
+            _multiplyFunctionPointer = ReloadedHooks.Instance.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Multiply, out var _);
+            _divideFunctionPointer = ReloadedHooks.Instance.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Divide, out var _);
         }
 
         public void Dispose()
@@ -45,16 +46,16 @@ namespace Reloaded.Hooks.Tests.X64
         public unsafe void TestHookAdd()
         {
             [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-            static int AddHookFunction(int a, int b) => _addHook.OriginalFunction.Invoke(a, b) + 1;
+            static int AddHookFunction(int a, int b) => _addHook.OriginalFunction.Value.Invoke(a, b) + 1;
 
-            _addHook = ReloadedHooks.Instance.CreateHook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
+            _addHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
 
             for (int x = 0; x < 100; x++)
             {
                 for (int y = 1; y < 100;)
                 {
                     int expected = (x + y) + 1;
-                    int result = _addFunctionPointer.Invoke(x, y);
+                    int result = _addFunctionPointer.Value.Invoke(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;
@@ -66,16 +67,16 @@ namespace Reloaded.Hooks.Tests.X64
         public unsafe void TestHookSub()
         {
             [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-            static int SubHookFunction(int a, int b) => _subHook.OriginalFunction.Invoke(a, b) + 1;
+            static int SubHookFunction(int a, int b) => _subHook.OriginalFunction.Value.Invoke(a, b) + 1;
 
-            _subHook = ReloadedHooks.Instance.CreateHook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&SubHookFunction, (long)_nativeCalculator.Subtract).Activate();
+            _subHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&SubHookFunction, (long)_nativeCalculator.Subtract).Activate();
 
             for (int x = 0; x < 100; x++)
             {
                 for (int y = 1; y < 100;)
                 {
                     int expected = (x - y) + 1;
-                    int result = _subFunctionPointer.Invoke(x, y);
+                    int result = _subFunctionPointer.Value.Invoke(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;
@@ -87,15 +88,15 @@ namespace Reloaded.Hooks.Tests.X64
         public unsafe void TestHookMul()
         {
             [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-            static int MulHookfunction(int a, int b) => _multiplyHook.OriginalFunction.Invoke(a, b) * 2;
+            static int MulHookfunction(int a, int b) => _multiplyHook.OriginalFunction.Value.Invoke(a, b) * 2;
 
-            _multiplyHook = ReloadedHooks.Instance.CreateHook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&MulHookfunction, (long)_nativeCalculator.Multiply).Activate();
+            _multiplyHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&MulHookfunction, (long)_nativeCalculator.Multiply).Activate();
 
             int x = 100;
             for (int y = 0; y < 100; y++)
             {
                 int expected = (x * y) * 2;
-                int result = _multiplyFunctionPointer.Invoke(x, y);
+                int result = _multiplyFunctionPointer.Value.Invoke(x, y);
 
                 Assert.Equal(expected, result);
             }
@@ -105,15 +106,15 @@ namespace Reloaded.Hooks.Tests.X64
         public unsafe void TestHookDiv()
         {
             [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-            static int DivHookfunction(int a, int b) => _divideHook.OriginalFunction.Invoke(a, b) * 2;
+            static int DivHookfunction(int a, int b) => _divideHook.OriginalFunction.Value.Invoke(a, b) * 2;
 
-            _divideHook = ReloadedHooks.Instance.CreateHook<FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&DivHookfunction, (long)_nativeCalculator.Divide).Activate();
+            _divideHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&DivHookfunction, (long)_nativeCalculator.Divide).Activate();
 
             int x = 100;
             for (int y = 1; y < 100; y++)
             {
                 int expected = (x / y) * 2;
-                int result = _divideFunctionPointer.Invoke(x, y);
+                int result = _divideFunctionPointer.Value.Invoke(x, y);
 
                 Assert.Equal(expected, result);
             }

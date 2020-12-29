@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.StdcallFuncPtr<int, int, int>;
 
 // Watch out!
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X64;
@@ -24,7 +25,7 @@ namespace Reloaded.Hooks.X64
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
-        ///     Please keep a reference to this class as long as you are using it.
+        ///     Please keep a reference to this class as long as you are using it (if <see cref="TFunction"/> is a delegate type).
         ///     Otherwise Garbage Collection will break the native function pointer to your C# function
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
@@ -32,7 +33,12 @@ namespace Reloaded.Hooks.X64
         public ReverseWrapper(TFunction function)
         {
             CSharpFunction = function;
-            NativeFunctionPtr = Marshal.GetFunctionPointerForDelegate(function);
+
+            if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
+                NativeFunctionPtr = Unsafe.As<TFunction, IntPtr>(ref function);
+            else
+                NativeFunctionPtr = Marshal.GetFunctionPointerForDelegate(function);
+
             WrapperPointer = NativeFunctionPtr;
 
             // Call above may or may not replace WrapperPointer.

@@ -35,11 +35,15 @@ namespace Reloaded.Hooks.X64
         /// <param name="functionAddress">Address of the function to wrap.</param>
         /// <param name="wrapperAddress">
         ///     Address of the wrapper used to call the original function.
-        ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
+        ///     If the source and target calling conventions match, this is the same as <see cref="functionAddress"/>
         /// </param>
         public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(CreatePointer<TFunction>(functionAddress, out wrapperAddress));
+            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
+            if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
+                return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
+
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
         }
 
         /// <summary>
@@ -65,21 +69,6 @@ namespace Reloaded.Hooks.X64
         }
 
         /// <summary>
-        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
-        /// </summary>
-        /// <param name="functionAddress">Address of the function to wrap.</param>
-        /// <param name="wrapperAddress">
-        ///     Address of the wrapper used to call the original function.
-        ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
-        /// </param>
-        public static TFunction CreateFunctionPointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
-        {
-            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
-            return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
-        }
-
-        /// <summary>
         /// Creates a wrapper converting a call to a source calling convention to a given target calling convention.
         /// </summary>
         /// <param name="functionAddress">Address of the function in fromConvention to execute.</param>
@@ -100,7 +89,7 @@ namespace Reloaded.Hooks.X64
                 var codeAddress = buffer.Properties.WritePointer;
 
                 // Retrieve number of parameters.
-                int numberOfParameters = Utilities.GetNumberofParametersWithoutFloats(typeof(TFunction));
+                int numberOfParameters = Utilities.GetNumberofParametersWithoutFloats<TFunction>();
                 List<string> assemblyCode = new List<string>
                 {
                     "use64", 
