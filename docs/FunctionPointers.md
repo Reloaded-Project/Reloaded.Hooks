@@ -1,61 +1,75 @@
 # Function Pointers
 
-With the release of .NET 5 and C# 9.0, Reloaded also additionally provides minimal support for the usage of function pointers. This is however a tacked on feature for now, due to limitations [some of which you can read about here](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/proposals/csharp-9.0/function-pointers#open-questions).
+With the release of .NET 5 and C# 9.0, `Reloaded.Hooks` also additionally provides support for the usage of function pointers for those interested in maximizing performance. 
 
-The main benefit of the use of function pointers is reducing overhead in the native <=> managed transition as we can skip delegates altogether and under the hood, use the efficient `calli` IL opcode.
+Using function pointers reduces overhead in the native <=> managed transition as we can skip delegates altogether and under the hood, use the efficient `calli` IL opcode. Outside of the quest of achieving performance however, the usage of function pointers is not recommended.
 
-Below are a few examples of working with pointers (taken from tests). Notably, as there are no functions to get the metadata of function pointers (yet); you still require to use delegates to define the functions in question.
+## Compromises with Function Pointers
+
+- Static functions only.
+- No compile-time checking (no compile error if your function doesn't match defined pointer).
+- No marshalling.
+    - Do it yourself. e.g. `Marshal.StringToHGlobalAnsi` and `Marshal.FreeHGlobal` for ANSI strings.
+  
+- No pointer types/ref/out (limitation of generics). 
+    - You should use struct wrappers like `Reloaded.Memory`'s [BlittablePointer](https://github.com/Reloaded-Project/Reloaded.Memory/blob/master/Source/Reloaded.Memory/Pointers/BlittablePointer.cs).
+
+- Documentation: Cannot document parameter types outside of including the info directly in the struct description.
+
+## Defining Functions
+
+As C# currently doesn't support named function pointers, we have to improvise a bit.
+
+In order to define a structure, you should define a struct with a **single field** of type `FuncPtr`. The generic type arguments to the `FuncPtr` are the arguments to your function pointer and the return type.
+
+```csharp
+// Parameter 1 is `int`
+// Parameter 2 is `int`
+// Return type is `int`
+[Function(CallingConventions.Cdecl)]
+public struct CalculatorFunction { public FuncPtr<int, int, int> Value; }
+```
+
+You should then be able to use (`CalculatorFunction`) in place of the regular delegate in all common APIs.
+
+------
+Note: If no value is returned, consider using `Reloaded.Hooks.Definitions.Structs.Void` as the return parameter to help readability.
+
+------
 
 ## Calling Functions
 
-Use the `CreateWrapperPtr` API in place of the `CreateWrapper` API.
+Calling functions is the same as with delegates, simply use the `Invoke` function of the pointer inside your struct.
 
 ```csharp
 // Alias can be set at the top of the .cs file.
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.CdeclFuncPtr<int,int,int>;
+private CalculatorFunction _addFunctionPointer;
 
 void makeFunctionPointer() 
 {
-    var addFuncPointer = ReloadedHooks.CreateWrapperPtr<NativeCalculator.AddFunction, FuncPtr>((long)_nativeCalculator.Add);
-    var three = addFuncPointer.Invoke(1, 2); 
+    var addFuncPointer = ReloadedHooks.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Add, out var _);
+    var three = addFuncPointer.Value.Invoke(1, 2); 
 }
 ```
+
+Note: There are overloads for common calling conventions `InvokeStdcall`, `InvokeCdecl` and `InvokeThiscall`. Invoke is equivalent to `InvokeStdcall`.
 
 ## Hooking Functions
 
-Hooking functions requires .NET 5; due to the necessity of using the `UnmanagedCallersOnly` attribute.
+Hooking functions using poitners requires .NET 5; due to the necessity of using the `UnmanagedCallersOnly` attribute.
 
 ```csharp
-// Alias can be set at the top of the .cs file.
-using FuncPtr = Reloaded.Hooks.Definitions.Structs.CdeclFuncPtr<int,int,int>;
-
 /* Hook object. */
-private static IHook<NativeCalculator.AddFunction, FuncPtr> _addHook;
+private static IHook<CalculatorFunction> _addHook;
 
-// The `UnmanagedCallersOnly` calling convention attribute has to match the 
-// calling convention of the delegate. In .NET the default convention is Stdcall on Windows,
-// therefore you should use Stdcall unless overwritten with `UnmanagedFunctionPointerAttribute`.
+// Reloaded.Hooks assumes function pointners are `Stdcall` on Windows (.NET default).
+// You should therefore use `CallConvStdcall` with your hook functions and use 
+// Invoke/InvokeStdcall for calling the original function.
 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-static int AddHookFunction(int a, int b) => _addHook.OriginalFunction(a, b) + 1;
+static int AddHookFunction(int a, int b) => _addHook.OriginalFunction.Value.Invoke(a, b) + 1;
 
 public unsafe void HookAdd()
 {
-    _addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction, FuncPtr>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
+    _addHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
 }
 ```
-
-Please note that on x64, only the Microsoft convention is supported for function pointers. So you should be able to freely use `CdeclFuncPtr` or `StdcallFuncPtr` interchangeably in 64-bit processes.
-
-## Predefined Pointer Types
-
-`Reloaded.Hooks` provides the following function pointer types out of the box:
-
-- CdeclFuncPtr
-- StdcallFuncPtr
-- ThiscallFuncPtr
-
-## Miscellaneous
-
-### Ref/Out Parameters?
-
-- For ref parameters at the very least, consider using an equivalent to [BlittablePointer](https://github.com/Reloaded-Project/Reloaded.Memory/blob/master/Source/Reloaded.Memory/Pointers/BlittablePointer.cs) in Reloaded.Memory; alternatively define your own struct.

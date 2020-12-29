@@ -35,16 +35,6 @@ Reloaded.Hooks is a managed alternative to native libraries such as `MinHook` an
 + Generate native wrapper functions for converting between custom calling conventions. e.g. Stdcall to Fastcall converter.
 + Many lower level utility functions allowing you to deal with things like *Virtual Function Tables*. 
 
-### Documentation
-
-As advanced as the library may sound, in reality using the library is super simple.
-The following links below should help you get started with the library:
-
-+ [Explain Hooking: What do you use this library for](https://github.com/Reloaded-Project/Reloaded.Hooks/issues/1)
-+ [Getting Started](Docs/Getting-Started.md)
-
-In addition, feel free to look through `Reloaded.Hooks.Tests` for some ideas 😉.
-
 ### Contributions
 As with the standard for all of the `Reloaded-Project`, repositories; contributions are very welcome and encouraged.
 
