@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Memory.Buffers;
 using SharpDisasm;
 
@@ -247,6 +248,36 @@ namespace Reloaded.Hooks.Tools
         {
             MethodInfo method = delegateType.GetMethod("Invoke");
             return method != null ? GetNonFloatParameters(method) : 0;
+        }
+
+        /// <summary>
+        /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
+        /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
+        /// </summary>
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        /// <param name="value">Any non-null value.</param>>
+        public static int GetNumberofParameters<TFunction>(TFunction value)
+        {
+            if (value is IFuncPtr funcPtr)
+                return funcPtr.NumberOfParameters;
+
+            return GetNumberofParametersWithoutFloats(typeof(TFunction));
+        }
+
+
+        /// <summary>
+        /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
+        /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
+        /// Ignores float and double parameters.
+        /// </summary>
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        /// <param name="value">Any non-null value.</param>
+        public static int GetNumberofParametersWithoutFloats<TFunction>(TFunction value)
+        {
+            if (value is IFuncPtr funcPtr)
+                return funcPtr.NumberOfParametersWithoutFloats;
+
+            return GetNumberofParametersWithoutFloats(typeof(TFunction));
         }
 
         /// <summary>

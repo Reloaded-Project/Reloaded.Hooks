@@ -29,6 +29,11 @@ namespace Reloaded.Hooks
 
         public int GetNumberofParameters(Type delegateType) => Utilities.GetNumberofParameters(delegateType);
         public int GetNumberofParametersWithoutFloats(Type delegateType) => Utilities.GetNumberofParametersWithoutFloats(delegateType);
+
+
+        public int GetNumberofParameters<TFunction>(TFunction value) => Utilities.GetNumberofParameters(value);
+        public int GetNumberofParametersWithoutFloats<TFunction>(TFunction value) => Utilities.GetNumberofParametersWithoutFloats(value);
+
         public string PushCdeclCallerSavedRegisters() => "push eax\npush ecx\npush edx";
         public string PopCdeclCallerSavedRegisters() => "pop edx\npop ecx\npop eax";
         public IntPtr WritePointer(IntPtr target) => Utilities.WritePointer(target);

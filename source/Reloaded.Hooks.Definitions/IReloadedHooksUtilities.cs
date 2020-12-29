@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Reloaded.Hooks.Definitions.Structs;
 
 namespace Reloaded.Hooks.Definitions
 {
@@ -115,12 +116,29 @@ namespace Reloaded.Hooks.Definitions
         int GetNumberofParameters(Type delegateType);
 
         /// <summary>
-        /// Retrieves the number of parameters for a specific delegate Type,
-        /// ignoring any floating point parameters.
+        /// Retrieves the number of parameters for a specific delegate Type.
+        /// Ignores float and double parameters.
         /// </summary>
         /// <param name="delegateType">A Type extracted from a Delegate.</param>
         /// <returns>Number of parameters for the supplied delegate type, without floats.</returns>
         int GetNumberofParametersWithoutFloats(Type delegateType);
+
+        /// <summary>
+        /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
+        /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
+        /// </summary>
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        /// <param name="value">Any non-null value.</param>
+        int GetNumberofParameters<TFunction>(TFunction value);
+
+        /// <summary>
+        /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
+        /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
+        /// Ignores float and double parameters.
+        /// </summary>
+        /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/>.</typeparam>
+        /// <param name="value">Any non-null value.</param>
+        int GetNumberofParametersWithoutFloats<TFunction>(TFunction value);
 
         /// <summary>
         /// A macro for "push eax\npush ecx\npush edx" that preserves all CDECL caller saved registers before

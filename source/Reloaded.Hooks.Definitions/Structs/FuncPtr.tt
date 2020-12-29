@@ -29,6 +29,7 @@
 #>
 
 using System;
+using System.Linq;
 
 namespace Reloaded.Hooks.Definitions.Structs
 {
@@ -40,7 +41,7 @@ namespace Reloaded.Hooks.Definitions.Structs
                 foreach (var convention in conventions)
 			    { 
 #>        
-    public unsafe struct <#= convention #>FuncPtr<<#= template #>>
+    public unsafe struct <#= convention #>FuncPtr<<#= template #>> : IFuncPtr
     {
         /// <summary>
         /// Calls the underlying function.
@@ -54,6 +55,12 @@ namespace Reloaded.Hooks.Definitions.Structs
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(void* ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(IntPtr ptr) => new <#= convention #>FuncPtr<<#= template #>>((void*)ptr);
         public static implicit operator <#= convention #>FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new <#= convention #>FuncPtr<<#= template #>>(ptr);
+           
+        /// <inheritdoc />
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(<#= convention #>FuncPtr<<#= template #>>));
+
+        /// <inheritdoc />
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(<#= convention #>FuncPtr<<#= template #>>));
     }
 <#
                 }
