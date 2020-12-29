@@ -63,8 +63,8 @@ namespace Reloaded.Hooks.Internal
             if (_newPrologueAddress != IntPtr.Zero)
                 return _newPrologueAddress;
 
-            int alignment       = _bitness / 8;
-            var estimateLength  = (_bytes.Length * 2) + 4; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
+            int alignment       = 16;
+            var estimateLength  = (_bytes.Length * 2) + alignment; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
             var minMax          = Utilities.GetRelativeJumpMinMax(jumpTarget.HasValue ? (long) jumpTarget.Value : 0);
             var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength, minMax.min, minMax.max, alignment);
             return buffer.ExecuteWithLock(() =>

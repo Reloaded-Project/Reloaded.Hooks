@@ -85,7 +85,7 @@ namespace Reloaded.Hooks.X64
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
-                buffer.SetAlignment(8);
+                buffer.SetAlignment(16);
                 var codeAddress = buffer.Properties.WritePointer;
 
                 // Retrieve number of parameters.

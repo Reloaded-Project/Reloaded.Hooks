@@ -87,7 +87,7 @@ namespace Reloaded.Hooks.X86
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
-                buffer.SetAlignment(4);
+                buffer.SetAlignment(16);
                 var codeAddress = buffer.Properties.WritePointer;
 
                 // Write pointer.

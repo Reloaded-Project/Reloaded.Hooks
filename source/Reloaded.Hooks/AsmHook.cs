@@ -90,8 +90,8 @@ namespace Reloaded.Hooks
             // Stub Hook    => Caller.
             // Disable.Original Stub => Caller.
 
-            int codeAlignment          = 4; // Alignment of code in memory.
-            int numberOfStubs          = 3; // Also number of allocations.
+            int codeAlignment          = 16; // Alignment of code in memory.
+            int numberOfStubs          = 3;  // Also number of allocations.
             int alignmentRequiredBytes = (codeAlignment * numberOfStubs);
 
             int stubEntrySize          = MaxJmpSize;
