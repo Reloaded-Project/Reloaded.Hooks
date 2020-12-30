@@ -20,7 +20,7 @@ namespace Reloaded.Hooks.X86
     {
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// using the calling convention of <see cref="TFunction"/>.
+        /// using the calling convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         public static TFunction Create<TFunction>(long functionAddress)
@@ -30,12 +30,12 @@ namespace Reloaded.Hooks.X86
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
+        /// <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         /// <param name="wrapperAddress">
         ///     Address of the wrapper used to call the original function.
-        ///     If the source and target calling conventions match, this is the same as <see cref="functionAddress"/>
+        ///     If the source and target calling conventions match, this is the same as <paramref name="functionAddress"/>
         /// </param>
         public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
         {
@@ -48,7 +48,7 @@ namespace Reloaded.Hooks.X86
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
+        /// <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
         /// <param name="wrapperAddress">
@@ -71,11 +71,11 @@ namespace Reloaded.Hooks.X86
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
+        /// <typeparamref name="TFunction"/>.
         /// </summary>
-        /// <param name="functionAddress">The address of the function using <see cref="fromConvention"/>.</param>
-        /// <param name="fromConvention">The calling convention to convert to <see cref="toConvention"/>. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
-        /// <param name="toConvention">The target convention to which convert to <see cref="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory.</returns>
         public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {

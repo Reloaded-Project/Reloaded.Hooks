@@ -170,7 +170,11 @@ namespace Reloaded.Hooks.Tools
         /// <summary>
         /// Appends an absolute jump to the supplied opcodes and assembles the result, returning a pointer.
         /// </summary>
-        /// <param name="targetAddress">[Optional] Target address within of which the wrapper should be placed in 2GB range.</param>
+        /// <param name="jumpTarget">The address to jump to.</param>
+        /// <param name="opcodes">Bytes representing existing assembly instructions.</param>
+        /// <param name="is64bit">True for x64 else x86</param>
+        /// <param name="targetAddress">[Optional] Target address within of which the wrapper should be placed in <paramref name="maxDisplacement"/> range.</param>
+        /// <param name="maxDisplacement">Maximum distance from the <paramref name="targetAddress"/></param>
         public static IntPtr InsertJump(byte[] opcodes, bool is64bit, long jumpTarget, long targetAddress = 0, long maxDisplacement = Int32.MaxValue)
         {
             List<byte> newBytes = opcodes.ToList();
@@ -280,7 +284,7 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <summary>
-        /// Tries to instantiate <see cref="IFuncPtr"/> from a <see cref="TType"/> or and of the type's fields.
+        /// Tries to instantiate <see cref="IFuncPtr"/> from a <typeparamref name="TType"/> or and of the type's fields.
         /// </summary>
         private static bool TryGetIFuncPtrFromType<TType>(out IFuncPtr value)
         {
@@ -322,7 +326,7 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <summary>
-        /// Fills a given array with <see cref="value"/> until the array of bytes is as large as <see cref="length"/>.
+        /// Fills a given array with <paramref name="value"/> until the array of bytes is as large as <paramref name="length"/>.
         /// </summary>
         public static void FillArrayUntilSize<T>(List<T> array, T value, int length)
         {

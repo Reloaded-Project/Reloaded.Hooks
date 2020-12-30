@@ -5,6 +5,9 @@ using Reloaded.Hooks.Definitions.X86;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary>
+    /// An interface providing high level functionality for the Reloaded.Hooks library.
+    /// </summary>
     public interface IReloadedHooks
     {
         /// <summary>
@@ -22,6 +25,7 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+
         IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1);
 
         /// <summary>
@@ -34,7 +38,7 @@ namespace Reloaded.Hooks.Definitions
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
-        /// <see cref="TFunction"/>.
+        /// <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
         /// <param name="wrapperAddress">Address of the wrapper used to call the original function.</param>
@@ -43,37 +47,37 @@ namespace Reloaded.Hooks.Definitions
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention using the convention of <see cref="TFunction"/>.
+        /// convention using the convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
-        /// <returns>Function pointer to the wrapper in memory you can call using <see cref="TFunction"/>'s calling convention.</returns>
+        /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
         IntPtr CreateWrapper<TFunction>(long functionAddress);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention using the convention of <see cref="TFunction"/>.
+        /// convention using the convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">The address of the function.</param>
         /// <param name="fromConvention">Describes the calling convention of the function to wrap.</param>
-        /// <returns>Function pointer to the wrapper in memory you can call using <see cref="TFunction"/>'s calling convention.</returns>
+        /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
         IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention using the convention of <see cref="TFunction"/>.
+        /// convention using the convention of <typeparamref name="TFunction"/>.
         /// </summary>
-        /// <param name="functionAddress">The address of the function using <see cref="fromConvention"/>.</param>
-        /// <param name="fromConvention">The calling convention to convert to <see cref="toConvention"/>. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
-        /// <param name="toConvention">The target convention to which convert to <see cref="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call.</returns>
         IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention);
 
         /// <summary>
         /// Creates a wrapper function converting a call to a source calling convention to a given target calling convention.
         /// </summary>
-        /// <param name="functionAddress">The address of the function using <see cref="fromConvention"/>.</param>
-        /// <param name="fromConvention">The calling convention to convert to <see cref="toConvention"/>. This is the convention of the function (<see cref="functionAddress"/>) called.</param>
-        /// <param name="toConvention">The target convention to which convert to <see cref="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call.</returns>
         IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention);
 
@@ -81,7 +85,7 @@ namespace Reloaded.Hooks.Definitions
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
-        ///     Please keep a reference to this class as long as you are using it (if <see cref="TFunction"/> is a delegate type).
+        ///     Please keep a reference to this class as long as you are using it (if <typeparamref name="TFunction"/> is a delegate type).
         ///     Otherwise Garbage Collection will break the native function pointer to your C# function
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
@@ -92,7 +96,7 @@ namespace Reloaded.Hooks.Definitions
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
-        ///     Please keep a reference to this class as long as you are using it (if <see cref="TFunction"/> is a delegate type).
+        ///     Please keep a reference to this class as long as you are using it (if <typeparamref name="TFunction"/> is a delegate type).
         ///     Otherwise Garbage Collection will break the native function pointer to your C# function
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>

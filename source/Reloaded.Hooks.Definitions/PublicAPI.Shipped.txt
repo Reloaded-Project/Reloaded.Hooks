@@ -1,0 +1,475 @@
+﻿override Reloaded.Hooks.Definitions.X64.FunctionAttribute.Equals(object obj) -> bool
+override Reloaded.Hooks.Definitions.X64.FunctionAttribute.GetHashCode() -> int
+override Reloaded.Hooks.Definitions.X86.FunctionAttribute.Equals(object obj) -> bool
+override Reloaded.Hooks.Definitions.X86.FunctionAttribute.GetHashCode() -> int
+Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour
+Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.DoNotExecuteOriginal = 2 -> Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour
+Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteAfter = 1 -> Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour
+Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst = 0 -> Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour
+Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IAsmHook.Activate() -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IAsmHook.Disable() -> void
+Reloaded.Hooks.Definitions.IAsmHook.Enable() -> void
+Reloaded.Hooks.Definitions.IAsmHook.IsEnabled.get -> bool
+Reloaded.Hooks.Definitions.IFunction<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Address.get -> long
+Reloaded.Hooks.Definitions.IFunction<TFunction>.GetWrapper() -> TFunction
+Reloaded.Hooks.Definitions.IFunction<TFunction>.GetWrapper(out System.IntPtr wrapperAddress) -> TFunction
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(TFunction function, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hooks.get -> Reloaded.Hooks.Definitions.IReloadedHooks
+Reloaded.Hooks.Definitions.IFunction<TFunction>.MakeAsmHook(byte[] asmCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IFunction<TFunction>.MakeAsmHook(string[] asmCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>
+Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>.FunctionPointer.get -> ulong
+Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>.GetDelegate(int index = 0) -> TDelegate
+Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>.GetFunctionAddress(int index = 0) -> System.IntPtr
+Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>.this[int index].get -> TDelegate
+Reloaded.Hooks.Definitions.IHook
+Reloaded.Hooks.Definitions.IHook.Activate() -> Reloaded.Hooks.Definitions.IHook
+Reloaded.Hooks.Definitions.IHook.Disable() -> void
+Reloaded.Hooks.Definitions.IHook.Enable() -> void
+Reloaded.Hooks.Definitions.IHook.IsHookActivated.get -> bool
+Reloaded.Hooks.Definitions.IHook.IsHookEnabled.get -> bool
+Reloaded.Hooks.Definitions.IHook.OriginalFunctionAddress.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IHook.OriginalFunctionWrapperAddress.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IHook<TFunction>.Activate() -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IHook<TFunction>.OriginalFunction.get -> TFunction
+Reloaded.Hooks.Definitions.IHook<TFunction>.ReverseWrapper.get -> Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>
+Reloaded.Hooks.Definitions.Internal.Misc
+Reloaded.Hooks.Definitions.Internal.Misc.Misc() -> void
+Reloaded.Hooks.Definitions.IReloadedHooks
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunction<TFunction>(long address) -> Reloaded.Hooks.Definitions.IFunction<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunctionPtr<TDelegate>(ulong functionPointer) -> Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX64<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X64.IFunctionAttribute fromConvention, Reloaded.Hooks.Definitions.X64.IFunctionAttribute toConvention) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX86<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X86.IFunctionAttribute fromConvention) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX86<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X86.IFunctionAttribute fromConvention, Reloaded.Hooks.Definitions.X86.IFunctionAttribute toConvention) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateReverseWrapper<TFunction>(System.IntPtr function) -> Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateReverseWrapper<TFunction>(TFunction function) -> Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateWrapper<TFunction>(long functionAddress) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateWrapper<TFunction>(long functionAddress, out System.IntPtr wrapperAddress) -> TFunction
+Reloaded.Hooks.Definitions.IReloadedHooks.Utilities.get -> Reloaded.Hooks.Definitions.IReloadedHooksUtilities
+Reloaded.Hooks.Definitions.IReloadedHooks.VirtualFunctionTableFromAddress(System.IntPtr tableAddress, int numberOfMethods) -> Reloaded.Hooks.Definitions.IVirtualFunctionTable
+Reloaded.Hooks.Definitions.IReloadedHooks.VirtualFunctionTableFromObject(System.IntPtr objectAddress, int numberOfMethods) -> Reloaded.Hooks.Definitions.IVirtualFunctionTable
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.AssembleAbsoluteJump(System.IntPtr target, bool is64bit) -> byte[]
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.AssemblePushReturn(System.IntPtr target, bool is64bit) -> byte[]
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.AssembleRelativeJump(System.IntPtr currentAddress, System.IntPtr targetAddress, bool is64bit) -> byte[]
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.AssembleRelativeJump(System.IntPtr relativeJumpOffset, bool is64bit) -> byte[]
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetAbsoluteCallMnemonics(System.IntPtr target, bool is64bit) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetAbsoluteCallMnemonics<TFunction>(TFunction function, out Reloaded.Hooks.Definitions.IReverseWrapper<TFunction> reverseWrapper) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetAbsoluteJumpMnemonics(System.IntPtr target, bool is64bit) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetAbsoluteJumpMnemonics<TFunction>(TFunction function, out Reloaded.Hooks.Definitions.IReverseWrapper<TFunction> reverseWrapper) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetHookLength(System.IntPtr hookAddress, int hookLength, bool is64Bit) -> int
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetNumberofParameters(System.Type delegateType) -> int
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetNumberofParameters<TFunction>() -> int
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetNumberofParametersWithoutFloats(System.Type delegateType) -> int
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetNumberofParametersWithoutFloats<TFunction>() -> int
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetPushReturnMnemonics(System.IntPtr target, bool is64bit) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetRelativeJumpMinMax(long targetAddress, long maxDisplacement = 2147483647) -> (long min, long max)
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetRelativeJumpMnemonics(System.IntPtr relativeJumpOffset, bool is64bit) -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.InsertJump(byte[] opcodes, bool is64bit, long jumpTarget, long targetAddress = 0, long maxDisplacement = 2147483647) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.PopCdeclCallerSavedRegisters() -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.PushCdeclCallerSavedRegisters() -> string
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.WritePointer(System.IntPtr target) -> System.IntPtr
+Reloaded.Hooks.Definitions.IReverseWrapper
+Reloaded.Hooks.Definitions.IReverseWrapper.NativeFunctionPtr.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IReverseWrapper.WrapperPointer.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>
+Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>.CSharpFunction.get -> TFunction
+Reloaded.Hooks.Definitions.IVirtualFunctionTable
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.CreateFunctionHook<TFunction>(int index, TFunction delegateType) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.CreateWrapperFunction<TFunction>(int index) -> TFunction
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.TableEntries.get -> System.Collections.Generic.List<Reloaded.Hooks.Definitions.TableEntry>
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.TableEntries.set -> void
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.this[int i].get -> Reloaded.Hooks.Definitions.TableEntry
+Reloaded.Hooks.Definitions.IVirtualFunctionTable.this[int i].set -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, T4, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, T4, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, T4, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, T3, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, T3, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, T3, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, T3, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, T3, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, T3, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, T2, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, T2, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, T2, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, T2, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, T2, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, T2, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, T2, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<T1, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<T1, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<T1, TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<T1, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<T1, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<T1, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<T1, TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.funcPtr -> void*
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.FuncPtr() -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.FuncPtr(delegate* unmanaged[Cdecl]<TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.FuncPtr(delegate* unmanaged[Stdcall]<TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.FuncPtr(delegate* unmanaged[Thiscall]<TReturn> ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.FuncPtr(void* ptr) -> void
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.Invoke.get -> delegate* unmanaged[Stdcall]<TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.InvokeAsCdecl.get -> delegate* unmanaged[Cdecl]<TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.InvokeAsStdcall.get -> delegate* unmanaged[Stdcall]<TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.InvokeAsThiscall.get -> delegate* unmanaged[Thiscall]<TReturn>
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.IFuncPtr
+Reloaded.Hooks.Definitions.Structs.IFuncPtr.NumberOfParameters.get -> int
+Reloaded.Hooks.Definitions.Structs.IFuncPtr.NumberOfParametersWithoutFloats.get -> int
+Reloaded.Hooks.Definitions.Structs.Void
+Reloaded.Hooks.Definitions.Structs.Void.Void() -> void
+Reloaded.Hooks.Definitions.TableEntry
+Reloaded.Hooks.Definitions.TableEntry.EntryAddress -> System.IntPtr
+Reloaded.Hooks.Definitions.TableEntry.FunctionPointer -> System.IntPtr
+Reloaded.Hooks.Definitions.TableEntry.TableEntry() -> void
+Reloaded.Hooks.Definitions.X64.CallingConventions
+Reloaded.Hooks.Definitions.X64.CallingConventions.Custom = 2 -> Reloaded.Hooks.Definitions.X64.CallingConventions
+Reloaded.Hooks.Definitions.X64.CallingConventions.Microsoft = 0 -> Reloaded.Hooks.Definitions.X64.CallingConventions
+Reloaded.Hooks.Definitions.X64.CallingConventions.SystemV = 1 -> Reloaded.Hooks.Definitions.X64.CallingConventions
+Reloaded.Hooks.Definitions.X64.FunctionAttribute
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.CalleeSavedRegisters.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X64.CallingConventions callingConvention) -> void
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register returnRegister, bool shadowSpace) -> void
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register returnRegister, bool shadowSpace, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[] calleeSavedRegisters) -> void
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register returnRegister, bool shadowSpace) -> void
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register returnRegister, bool shadowSpace, Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[] calleeSavedRegisters) -> void
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r10 = 10 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r11 = 11 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r12 = 12 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r13 = 13 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r14 = 14 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r15 = 15 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r8 = 8 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.r9 = 9 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rax = 0 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rbp = 6 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rbx = 1 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rcx = 2 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rdi = 5 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rdx = 3 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rsi = 4 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register.rsp = 7 -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.ReturnRegister.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.ShadowSpace.get -> bool
+Reloaded.Hooks.Definitions.X64.FunctionAttribute.SourceRegisters.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X64.IFunctionAttribute
+Reloaded.Hooks.Definitions.X64.IFunctionAttribute.CalleeSavedRegisters.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X64.IFunctionAttribute.ReturnRegister.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X64.IFunctionAttribute.ShadowSpace.get -> bool
+Reloaded.Hooks.Definitions.X64.IFunctionAttribute.SourceRegisters.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.Cdecl = 0 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.Fastcall = 2 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.GCCThiscall = 4 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.MicrosoftThiscall = 3 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.Stdcall = 1 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.Usercall = 5 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.CallingConventions.Userpurge = 6 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.FunctionAttribute
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.CalleeSavedRegisters.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Cleanup.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X86.CallingConventions callingConvention) -> void
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, int reservedStackSpace = 0) -> void
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters, int reservedStackSpace = 0) -> void
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, int reservedStackSpace = 0) -> void
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.FunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters, int reservedStackSpace = 0) -> void
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.GetEquivalent(System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute attribute) -> Reloaded.Hooks.Definitions.X86.IFunctionAttribute
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.IsEquivalent(System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute attribute) -> bool
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.eax = 0 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.ebp = 6 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.ebx = 1 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.ecx = 2 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.edi = 5 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.edx = 3 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.esi = 4 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register.esp = 7 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.ReservedStackSpace.get -> int
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.ReturnRegister.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.SourceRegisters.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup.Callee = 2 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup.Caller = 1 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup.None = 0 -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.CalleeSavedRegisters.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[]
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.Cleanup.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.GetEquivalent(System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute attribute) -> Reloaded.Hooks.Definitions.X86.IFunctionAttribute
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.IsEquivalent(System.Runtime.InteropServices.UnmanagedFunctionPointerAttribute attribute) -> bool
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.ReservedStackSpace.get -> int
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.ReturnRegister.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register
+Reloaded.Hooks.Definitions.X86.IFunctionAttribute.SourceRegisters.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[]
+static Reloaded.Hooks.Definitions.Internal.Misc.TryGetAttribute<TType, TAttribute>(out TAttribute result) -> bool
+static Reloaded.Hooks.Definitions.Internal.Misc.TryGetAttributeOrDefault<TType, TAttribute>() -> TAttribute
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, T5, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, T5, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, T5, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, T5, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, T4, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, T4, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, T4, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, T4, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, T3, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, T3, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, T3, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, T3, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>(delegate* unmanaged[Cdecl]<T1, T2, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>(delegate* unmanaged[Stdcall]<T1, T2, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>(delegate* unmanaged[Thiscall]<T1, T2, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, T2, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>(delegate* unmanaged[Cdecl]<T1, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>(delegate* unmanaged[Stdcall]<T1, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>(delegate* unmanaged[Thiscall]<T1, TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<T1, TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.explicit operator void*(Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn> func) -> void*
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>(delegate* unmanaged[Cdecl]<TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>(delegate* unmanaged[Stdcall]<TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>(delegate* unmanaged[Thiscall]<TReturn> ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>(System.IntPtr ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+static Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>.implicit operator Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>(void* ptr) -> Reloaded.Hooks.Definitions.Structs.FuncPtr<TReturn>
+static Reloaded.Hooks.Definitions.X64.FunctionAttribute.DefaultSavedRegisters.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register[]
+static Reloaded.Hooks.Definitions.X64.FunctionAttribute.GetAttribute<TFunction>() -> Reloaded.Hooks.Definitions.X64.IFunctionAttribute
+static Reloaded.Hooks.Definitions.X64.FunctionAttribute.Microsoft.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute
+static Reloaded.Hooks.Definitions.X64.FunctionAttribute.SystemV.get -> Reloaded.Hooks.Definitions.X64.FunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.Cdecl -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.DefaultSavedRegisters.get -> Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[]
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.Fastcall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.GccThiscall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.GetAttribute<TFunction>() -> Reloaded.Hooks.Definitions.X86.IFunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.MicrosoftThiscall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
+static Reloaded.Hooks.Definitions.X86.FunctionAttribute.StdCall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute

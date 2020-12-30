@@ -2,6 +2,7 @@
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary/>
     public interface IVirtualFunctionTable
     {
         /// <summary>

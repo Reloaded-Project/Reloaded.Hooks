@@ -96,8 +96,8 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="jumpTarget">The address to jump to.</param>
         /// <param name="opcodes">Bytes representing existing assembly instructions.</param>
         /// <param name="is64bit">True for x64 else x86</param>
-        /// <param name="targetAddress">[Optional] Target address within of which the wrapper should be placed in <see cref="maxDisplacement"/> range.</param>
-        /// <param name="maxDisplacement">Maximum distance from the <see cref="targetAddress"/></param>
+        /// <param name="targetAddress">[Optional] Target address within of which the wrapper should be placed in <paramref name="maxDisplacement"/> range.</param>
+        /// <param name="maxDisplacement">Maximum distance from the <paramref name="targetAddress"/></param>
         IntPtr InsertJump(byte[] opcodes, bool is64bit, long jumpTarget, long targetAddress = 0, long maxDisplacement = Int32.MaxValue);
 
         /// <summary>

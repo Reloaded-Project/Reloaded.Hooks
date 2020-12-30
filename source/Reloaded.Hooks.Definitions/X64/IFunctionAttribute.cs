@@ -4,6 +4,7 @@ using System.Text;
 
 namespace Reloaded.Hooks.Definitions.X64
 {
+    /// <summary/>
     public interface IFunctionAttribute
     {
         /// <summary>

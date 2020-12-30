@@ -7,6 +7,7 @@
 	<PlatformTarget>x86</PlatformTarget>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_UNMANAGED_CALLERS_ONLY</DefineConstants>
+	<NoWarn>1701;1702;0169</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -3,6 +3,7 @@ using Reloaded.Hooks.Definitions.Structs;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary/>
     public interface IHook
     {
         /// <summary>
@@ -17,13 +18,13 @@ namespace Reloaded.Hooks.Definitions
         bool IsHookActivated { get; }
 
         /// <summary>
-        /// The address to call if you wish to call the <see cref="OriginalFunction"/>.
+        /// The address to call if you wish to call the <see cref="IHook{TFunction}.OriginalFunction"/>.
         /// </summary>
         IntPtr OriginalFunctionAddress { get; }
 
         /// <summary>
-        /// The address of the wrapper used to call the <see cref="OriginalFunction"/>.
-        /// If the <see cref="OriginalFunction"/> is CDECL, this is equal to <see cref="OriginalFunctionAddress"/>.
+        /// The address of the wrapper used to call the <see cref="IHook{TFunction}.OriginalFunction"/>.
+        /// If no wrapper was generated, this value is the same as <see cref="OriginalFunctionAddress"/>
         /// </summary>
         IntPtr OriginalFunctionWrapperAddress { get; }
 
@@ -38,8 +39,8 @@ namespace Reloaded.Hooks.Definitions
         ///     attaching to other processes whereby the following happens:
         ///
         ///     A. Original process calls a function that was just hooked.
-        ///     B. Create function has not yet returned, and OriginalFunction is unassigned.
-        ///     C. Hook tried to call OriginalFunction. NullReferenceException.
+        ///     B. Create function has not yet returned, and <see cref="IHook{TFunction}.OriginalFunction"/> is unassigned.
+        ///     C. Hook tried to call <see cref="IHook{TFunction}.OriginalFunction"/>. <see cref="NullReferenceException"/>.
         /// </remarks>
         IHook Activate();
 
@@ -55,6 +56,8 @@ namespace Reloaded.Hooks.Definitions
         void Enable();
     }
 
+    /// <summary/>
+    /// <typeparam name="TFunction">A valid delegate type or struct representing a function pointer.</typeparam>
     public interface IHook<TFunction> : IHook
     {
         /// <summary>
@@ -79,8 +82,8 @@ namespace Reloaded.Hooks.Definitions
         ///     attaching to other processes whereby the following happens:
         ///
         ///     A. Original process calls a function that was just hooked.
-        ///     B. Create function has not yet returned, and OriginalFunction is unassigned.
-        ///     C. Hook tried to call OriginalFunction. NullReferenceException.
+        ///     B. Create function has not yet returned, and <see cref="IHook{TFunction}.OriginalFunction"/> is unassigned.
+        ///     C. Hook tried to call <see cref="IHook{TFunction}.OriginalFunction"/>. <see cref="NullReferenceException"/>.
         /// </remarks>
         new IHook<TFunction> Activate();
     }

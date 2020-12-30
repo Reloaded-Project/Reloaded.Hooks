@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary>
+    /// Represents an individual x86/x64 Cheat Engine style assembly hook.
+    /// </summary>
     public interface IAsmHook
     {
         /// <summary>
@@ -17,7 +20,14 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         IAsmHook Activate();
 
+        /// <summary>
+        /// Enables the current hook if it is disabled.
+        /// </summary>
         void Enable();
+
+        /// <summary>
+        /// Disables the current hook if it is enabled.
+        /// </summary>
         void Disable();
     }
 }

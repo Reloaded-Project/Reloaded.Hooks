@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary>
+    /// Utility interface for working with pointers to functions with non-standard conventions.
+    /// </summary>
     public interface IFunctionPtr<TDelegate> where TDelegate : Delegate
     {
         /// <summary>

@@ -3,6 +3,7 @@ using System;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary/>
     public interface IReverseWrapper
     {
         /// <summary> Pointer to the function that gets executed inside the wrapper, either native or C#. </summary>
@@ -12,6 +13,7 @@ namespace Reloaded.Hooks.Definitions
         IntPtr WrapperPointer { get; }
     }
 
+    /// <summary/>
     public interface IReverseWrapper<TFunction> : IReverseWrapper
     {
         /// <summary> Copy of C# function behind the pointer. </summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.Internal;
 
+#pragma warning disable 1591 // XML Documentation Not Present for Public
 namespace Reloaded.Hooks.Definitions.X86
 {
     /// <summary>
@@ -34,8 +35,10 @@ namespace Reloaded.Hooks.Definitions.X86
         /// <inheritdoc />
         public Register[] CalleeSavedRegisters { get; } = DefaultSavedRegisters;
 
+
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum Register
+
         {
             eax,
             ebx,

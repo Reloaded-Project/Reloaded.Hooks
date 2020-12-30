@@ -5,6 +5,9 @@ using Reloaded.Hooks.Definitions.Enums;
 
 namespace Reloaded.Hooks.Definitions
 {
+    /// <summary>
+    /// An interface for performing operations on native functions in memory.
+    /// </summary>
     public interface IFunction<TFunction>
     {
         /// <summary>
@@ -26,7 +29,7 @@ namespace Reloaded.Hooks.Definitions
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention using the convention of <see cref="TFunction"/>.
+        /// convention using the convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="wrapperAddress">Native address of the wrapper used to call the original function.</param>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
@@ -35,7 +38,7 @@ namespace Reloaded.Hooks.Definitions
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
-        /// convention using the convention of <see cref="TFunction"/>.
+        /// convention using the convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <remarks>The return value of this function is cached. Multiple calls will return same value.</remarks>
         /// <returns>A delegate for this function, ready to be called.</returns>
@@ -50,6 +53,7 @@ namespace Reloaded.Hooks.Definitions
         /// </param>
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+
         IAsmHook MakeAsmHook(string[] asmCode, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1);
 
         /// <summary>

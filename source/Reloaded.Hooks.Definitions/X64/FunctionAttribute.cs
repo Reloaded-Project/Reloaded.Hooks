@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.Internal;
 using static Reloaded.Hooks.Definitions.X64.FunctionAttribute.Register;
+#pragma warning disable 1591
 
 namespace Reloaded.Hooks.Definitions.X64
 {

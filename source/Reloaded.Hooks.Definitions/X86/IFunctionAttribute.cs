@@ -5,6 +5,9 @@ using System.Text;
 
 namespace Reloaded.Hooks.Definitions.X86
 {
+    /// <summary>
+    /// Represents the details of an individual x86 calling convention.
+    /// </summary>
     public interface IFunctionAttribute
     {
         /// <summary>

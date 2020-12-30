@@ -1,7 +1,7 @@
 ﻿namespace Reloaded.Hooks.Definitions.Enums
 {
     /// <summary>
-    /// Defines the behaviour used by the <see cref="AsmHook"/>
+    /// Defines the behaviour used by the <see cref="IAsmHook"/>
     /// </summary>
     public enum AsmHookBehaviour
     {
