@@ -3,11 +3,12 @@
 
 using System;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.Definitions.Structs
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-        
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<TReturn> : IFuncPtr
     {
         /// <summary>
@@ -51,7 +52,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -95,7 +97,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -139,7 +142,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -183,7 +187,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -227,7 +232,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -271,7 +277,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -315,7 +322,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -359,7 +367,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -403,7 +412,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -447,7 +457,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -491,7 +502,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -535,7 +547,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -579,7 +592,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -623,7 +637,8 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TReturn>));
     }
-        
+
+    [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn> : IFuncPtr
     {
         /// <summary>
@@ -667,5 +682,6 @@ namespace Reloaded.Hooks.Definitions.Structs
         /// <inheritdoc />
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>));
     }
+
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }
