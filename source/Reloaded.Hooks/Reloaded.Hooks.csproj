@@ -20,9 +20,11 @@
 	<LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>1701;1702;1591</NoWarn>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
   </PropertyGroup>
 
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Iced" Version="1.3.0" />
     <PackageReference Include="Reloaded.Assembler" Version="1.*">
       <IncludeAssets>All</IncludeAssets>

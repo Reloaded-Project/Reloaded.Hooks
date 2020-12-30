@@ -16,6 +16,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<LangVersion>preview</LangVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
   </PropertyGroup>
 	
   <ItemGroup>
