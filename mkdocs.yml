@@ -29,4 +29,5 @@ pages:
     - Getting Started: GettingStarted.md
     - Function Pointers (C#9): FunctionPointers.md
     - Assembly Hooks (Advanced): AssemblyHooks.md
+    - Benchmarks: Benchmarks.md
     - Extras & Utilities: Utilities.md
