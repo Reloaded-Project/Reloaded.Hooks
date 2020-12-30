@@ -92,6 +92,22 @@ namespace Reloaded.Hooks.Definitions.X86
         /// <param name="sourceRegister">Registers in left to right parameter order passed to the custom function.</param>
         /// <param name="returnRegister">The register that the function returns its value in.</param>
         /// <param name="stackCleanup">Defines the stack cleanup rule for the function. See <see cref="StackCleanup"/> for more details.</param>
+        /// <param name="reservedStackSpace">Allocates an extra amount of uninitialized (not zero-written) stack space for the function to use when calling. Required by some compiler optimized functions.</param>
+        public FunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, int reservedStackSpace = 0)
+        {
+            SourceRegisters = new[] { sourceRegister };
+            ReturnRegister = returnRegister;
+            Cleanup = stackCleanup;
+            ReservedStackSpace = reservedStackSpace;
+            CalleeSavedRegisters = DefaultSavedRegisters;
+        }
+
+        /// <summary>
+        /// Initializes a ReloadedFunction with its default parameters supplied in the constructor.
+        /// </summary>
+        /// <param name="sourceRegister">Registers in left to right parameter order passed to the custom function.</param>
+        /// <param name="returnRegister">The register that the function returns its value in.</param>
+        /// <param name="stackCleanup">Defines the stack cleanup rule for the function. See <see cref="StackCleanup"/> for more details.</param>
         /// <param name="calleeSavedRegisters">A list of registers that should be preserved by this function.</param>
         /// <param name="reservedStackSpace">Allocates an extra amount of uninitialized (not zero-written) stack space for the function to use when calling. Required by some compiler optimized functions.</param>
         public FunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters, int reservedStackSpace = 0)

@@ -75,6 +75,23 @@ namespace Reloaded.Hooks.Definitions.X64
         ///     [Default = true] Defines whether the function to be called or hooked expects "Shadow Space".
         ///     Shadow space allocates 32 bytes of memory onto the stack before calling the function. See class definition for more details.
         /// </param>
+        public FunctionAttribute(Register sourceRegister, Register returnRegister, bool shadowSpace)
+        {
+            SourceRegisters = new[] { sourceRegister };
+            ReturnRegister = returnRegister;
+            ShadowSpace = shadowSpace;
+            CalleeSavedRegisters = DefaultSavedRegisters;
+        }
+
+        /// <summary>
+        /// Initializes a ReloadedFunction with its default parameters supplied in the constructor.
+        /// </summary>
+        /// <param name="sourceRegister">Registers in left to right parameter order passed to the custom function.</param>
+        /// <param name="returnRegister">The register that the function returns its value in.</param>
+        /// <param name="shadowSpace">
+        ///     [Default = true] Defines whether the function to be called or hooked expects "Shadow Space".
+        ///     Shadow space allocates 32 bytes of memory onto the stack before calling the function. See class definition for more details.
+        /// </param>
         /// <param name="calleeSavedRegisters">A list of registers that should be preserved by this function.</param>
         public FunctionAttribute(Register sourceRegister, Register returnRegister, bool shadowSpace, Register[] calleeSavedRegisters)
         {
