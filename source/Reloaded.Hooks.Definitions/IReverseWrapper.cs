@@ -18,5 +18,15 @@ namespace Reloaded.Hooks.Definitions
     {
         /// <summary> Copy of C# function behind the pointer. </summary>
         TFunction CSharpFunction { get; }
+
+        // Backwards Compatibility with 2.X.X
+        // DO NOT TOUCH
+        #region Backwards Compatibility
+        /// <inheritdoc cref="IReverseWrapper.NativeFunctionPtr"/>>
+        new IntPtr NativeFunctionPtr { get; }
+
+        /// <inheritdoc cref="IReverseWrapper.WrapperPointer"/>>
+        new IntPtr WrapperPointer { get; }
+        #endregion
     }
 }

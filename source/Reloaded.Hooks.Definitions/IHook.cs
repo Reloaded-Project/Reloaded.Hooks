@@ -71,20 +71,29 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         IReverseWrapper<TFunction> ReverseWrapper { get; }
 
-        /// <summary>
-        /// Performs a one time activation of the hook, making the necessary memory writes to permanently commit the hook.
-        /// </summary>
-        /// <remarks>
-        ///     This function should be called after instantiation as soon as possible,
-        ///     preferably in the same line as instantiation.
-        ///
-        ///     This class exists such that we don't run into concurrency issues on
-        ///     attaching to other processes whereby the following happens:
-        ///
-        ///     A. Original process calls a function that was just hooked.
-        ///     B. Create function has not yet returned, and <see cref="IHook{TFunction}.OriginalFunction"/> is unassigned.
-        ///     C. Hook tried to call <see cref="IHook{TFunction}.OriginalFunction"/>. <see cref="NullReferenceException"/>.
-        /// </remarks>
+        // Backwards compatibility elements for 2.X.X.
+        // DO NOT TOUCH
+        #region Backwards Compatibility
+        /// <inheritdoc cref="IHook.IsHookEnabled"/>>
+        new bool IsHookEnabled { get; }
+
+        /// <inheritdoc cref="IHook.IsHookActivated"/>>
+        new bool IsHookActivated { get; }
+
+        /// <inheritdoc cref="IHook.OriginalFunctionAddress"/>>
+        new IntPtr OriginalFunctionAddress { get; }
+
+        /// <inheritdoc cref="IHook.OriginalFunctionWrapperAddress"/>>
+        new IntPtr OriginalFunctionWrapperAddress { get; }
+
+        /// <inheritdoc cref="IHook.Activate"/>>
         new IHook<TFunction> Activate();
+
+        /// <inheritdoc cref="IHook.Disable"/>>
+        new void Disable();
+
+        /// <inheritdoc cref="IHook.Enable"/>>
+        new void Enable();
+        #endregion
     }
 }

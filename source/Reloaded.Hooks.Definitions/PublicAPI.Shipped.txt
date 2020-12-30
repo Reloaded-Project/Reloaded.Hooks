@@ -473,3 +473,11 @@ static Reloaded.Hooks.Definitions.X86.FunctionAttribute.GccThiscall -> Reloaded.
 static Reloaded.Hooks.Definitions.X86.FunctionAttribute.GetAttribute<TFunction>() -> Reloaded.Hooks.Definitions.X86.IFunctionAttribute
 static Reloaded.Hooks.Definitions.X86.FunctionAttribute.MicrosoftThiscall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
 static Reloaded.Hooks.Definitions.X86.FunctionAttribute.StdCall -> Reloaded.Hooks.Definitions.X86.FunctionAttribute
+Reloaded.Hooks.Definitions.IHook<TFunction>.Disable() -> void
+Reloaded.Hooks.Definitions.IHook<TFunction>.Enable() -> void
+Reloaded.Hooks.Definitions.IHook<TFunction>.IsHookActivated.get -> bool
+Reloaded.Hooks.Definitions.IHook<TFunction>.IsHookEnabled.get -> bool
+Reloaded.Hooks.Definitions.IHook<TFunction>.OriginalFunctionAddress.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IHook<TFunction>.OriginalFunctionWrapperAddress.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>.NativeFunctionPtr.get -> System.IntPtr
+Reloaded.Hooks.Definitions.IReverseWrapper<TFunction>.WrapperPointer.get -> System.IntPtr
