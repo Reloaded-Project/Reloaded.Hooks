@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
+	<LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ManagedCalculator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Reloaded.Memory" Version="2.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="NativeCalculator.cs" />
+  </ItemGroup>
+
+</Project>

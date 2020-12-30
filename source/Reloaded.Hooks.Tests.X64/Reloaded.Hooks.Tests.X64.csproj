@@ -1,0 +1,92 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+	<LangVersion>preview</LangVersion>
+	<PlatformTarget>x64</PlatformTarget>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_UNMANAGED_CALLERS_ONLY</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj" />
+    <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorAsmHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorDoubleHookEnableDisableTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorDoubleHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorDoubleHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorHookTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FunctionPatcherTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="ReloadedHooksTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="SuperStackedHooks.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="VTableTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CSharpFromAssembly.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="CalculatorFunctionPointerTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="FastcallCalculatorFunctionPointerTest.cs" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,7 @@
+
 <div align="center">
 	<h1>Project Reloaded: Hooking</h1>
-	<img src="./docs/Images/ReloadedLogo.png" width="150" align="center" />
+	<img src="./Images/ReloadedLogo.png" width="150" align="center" />
 	<br/> <br/>
 	<strong><i>WTF You can unit test function hooks!?</i></strong>
 	<br/> <br/>
@@ -34,21 +35,14 @@ Reloaded.Hooks is a managed alternative to native libraries such as `MinHook` an
 + Generate native wrapper functions for converting between custom calling conventions. e.g. Stdcall to Fastcall converter.
 + Many lower level utility functions allowing you to deal with things like *Virtual Function Tables*. 
 
-## Documentation
-
-As advanced as the library may sound, in reality using the library is super simple.
-Please visit the [dedicated documentation site for getting started](https://reloaded-project.github.io/Reloaded.Hooks/).
-
-In addition, feel free to look through `Reloaded.Hooks.Tests` for some ideas 😉.
-
-## Contributions
+### Contributions
 As with the standard for all of the `Reloaded-Project`, repositories; contributions are very welcome and encouraged.
 
 Feel free to implement new features, make bug fixes or suggestions so long as they are accompanied by an issue with a clear description of the pull request.
 
 If you are implementing new features, please do provide the appropriate unit tests to cover the new features you have implemented; try to keep the coverage high 😊.
 
-## Authors & Contributions
+### Authors & Contributions
 
 - Reloaded.Hooks uses the `SharpDisasm` library by *Justin Stenning (spazzarama)*, a partial port of Udis86 by *Vivek Thampi*. Both of these libraries are originally distributed under the under the 2-clause "Simplified BSD License". 
 

@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net5.0</TargetFrameworks>
+    <Authors>Sewer56</Authors>
+    <Product>Reloaded.Hooks</Product>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <Description>Contains the definitions and attributes used in the Reloaded.Hooks library and their corresponding interfaces.</Description>
+    <PackageProjectUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</PackageProjectUrl>
+    <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1.5.0</Version>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	<LangVersion>preview</LangVersion>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_FUNCTION_POINTERS</DefineConstants>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <None Include="..\..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <None Update="Structs\FunctionPointer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+</Project>
