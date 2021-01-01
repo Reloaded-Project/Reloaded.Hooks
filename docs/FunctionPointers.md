@@ -13,7 +13,8 @@ Using function pointers reduces overhead in the native <=> managed transition as
   
 - No pointer types/ref/out (limitation of generics). 
     - You should use struct wrappers like `Reloaded.Memory`'s [BlittablePointer](https://github.com/Reloaded-Project/Reloaded.Memory/blob/master/Source/Reloaded.Memory/Pointers/BlittablePointer.cs).
-
+    - Then in your actual `UnmanagedCallersOnly` function declaration use raw pointers. There is an implicit conversion for `BlittablePointer`.
+  
 - Documentation: Cannot document parameter types outside of including the info directly in the struct description.
 
 ## Defining Functions
@@ -73,3 +74,7 @@ public unsafe void HookAdd()
     _addHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>((delegate*unmanaged[Stdcall]<int, int, int>)&AddHookFunction, (long)_nativeCalculator.Add).Activate();
 }
 ```
+
+For your `UnmanagedCallersOnly` function please use raw pointers in places of `BlittablePointer` (where applicable). There is an implicit conversion between the two so no manual conversions will be necessary when calling the original function again. 
+
+There is currently an issue in the runtime where generics aren't properly checked for blittability with `UnmanagedCallersOnly`.
