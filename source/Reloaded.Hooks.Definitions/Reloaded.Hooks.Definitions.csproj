@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net5.0;netcoreapp3.0;netstandard2.0</TargetFrameworks>
     <Authors>Sewer56</Authors>
     <Product>Reloaded.Hooks</Product>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -12,12 +12,14 @@
     <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
     <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>1.7.0</Version>
+    <Version>1.7.1</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<LangVersion>preview</LangVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
+	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
+	<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
   </PropertyGroup>
 	
   <ItemGroup>
