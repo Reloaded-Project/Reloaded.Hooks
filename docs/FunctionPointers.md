@@ -78,3 +78,25 @@ public unsafe void HookAdd()
 For your `UnmanagedCallersOnly` function please use raw pointers in places of `BlittablePointer` (where applicable). There is an implicit conversion between the two so no manual conversions will be necessary when calling the original function again. 
 
 There is currently an issue in the runtime where generics aren't properly checked for blittability with `UnmanagedCallersOnly`.
+
+### Hooking via Reflection
+
+**Experimental**: *Thorough testing not yet conducted.*
+
+```csharp
+/* Hook object. */
+private static IHook<CalculatorFunction> _addHook;
+
+[UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+static int AddHookFunction(int a, int b) => _addHook.OriginalFunction.Value.Invoke(a, b) + 1;
+
+public unsafe void HookAdd()
+{
+    _addHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>(typeof(ThisClass), nameof(AddHookFunction), (long)_nativeCalculator.Add).Activate();
+}
+```
+
+Writing the cast to a function pointer can be tedious.
+As such, Reloaded.Hooks provides overloads which allow you to select a static function via reflection using the containing class and function name.
+
+Note: *Local functions are not supported.*
