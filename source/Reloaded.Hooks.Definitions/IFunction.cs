@@ -25,7 +25,73 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        IHook<TFunction> Hook(TFunction function, int minHookLength = -1);
+        IHook<TFunction> Hook(TFunction function, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        IHook<TFunction> Hook(TFunction function);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        unsafe IHook<TFunction> Hook(void* function, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        unsafe IHook<TFunction> Hook(void* function);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        unsafe IHook<TFunction> Hook(Type type, string methodName);
+
+        /// <summary>
+        /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function);
+
+        /// <summary>
+        /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling

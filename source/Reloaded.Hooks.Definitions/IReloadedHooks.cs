@@ -37,6 +37,25 @@ namespace Reloaded.Hooks.Definitions
         public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1);
 
         /// <summary>
+        /// Creates a hook detouring the provided function to a given function.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">Minimum hook length.</param>
+        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook detouring the provided function to a given function.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress);
+
+        /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
         /// <typeparamref name="TFunction"/>.
         /// </summary>

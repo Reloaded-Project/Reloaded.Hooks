@@ -1,1 +1,13 @@
-﻿
+﻿Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(System.Type type, string methodName) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(System.Type type, string methodName, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(TFunction function) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(TFunction function, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(void* function) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(void* function, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.HookAs<TFunctionType>(System.Type type, string methodName) -> Reloaded.Hooks.Definitions.IHook<TFunctionType>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.HookAs<TFunctionType>(System.Type type, string methodName, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunctionType>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.HookAs<TFunctionType>(void* function) -> Reloaded.Hooks.Definitions.IHook<TFunctionType>
+Reloaded.Hooks.Definitions.IFunction<TFunction>.HookAs<TFunctionType>(void* function, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunctionType>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(System.Type type, string methodName, long functionAddress) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(System.Type type, string methodName, long functionAddress, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetFunctionPointer(System.Type type, string name) -> void*

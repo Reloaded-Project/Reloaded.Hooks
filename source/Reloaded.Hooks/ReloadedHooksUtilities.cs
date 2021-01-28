@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tools;
@@ -37,6 +38,14 @@ namespace Reloaded.Hooks
         public string PushCdeclCallerSavedRegisters() => "push eax\npush ecx\npush edx";
         public string PopCdeclCallerSavedRegisters() => "pop edx\npop ecx\npop eax";
         public IntPtr WritePointer(IntPtr target) => Utilities.WritePointer(target);
+
+        /// <inheritdoc />
+        public unsafe void* GetFunctionPointer(Type type, string name)
+        {
+            var method = type.GetMethod(name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).MethodHandle;
+            RuntimeHelpers.PrepareMethod(method);
+            return (void*) method.GetFunctionPointer();
+        }
 
         public (long min, long max) GetRelativeJumpMinMax(long targetAddress, long maxDisplacement = Int32.MaxValue) => Utilities.GetRelativeJumpMinMax(targetAddress, maxDisplacement);
     }

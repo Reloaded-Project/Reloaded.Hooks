@@ -156,6 +156,15 @@ namespace Reloaded.Hooks.Definitions
         /// <returns>Address of the pointer.</returns>
         IntPtr WritePointer(IntPtr target);
 
+        /// <summary>
+        /// Gets a function pointer to a static managed method. Avoids nasty function pointer casting.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">Type where the method can be found.</param>
+        /// <param name="name">Name of the method in question.</param>
+        /// <returns></returns>
+        unsafe void* GetFunctionPointer(Type type, string name);
+
         /*
          * -----------------
          * Private Functions

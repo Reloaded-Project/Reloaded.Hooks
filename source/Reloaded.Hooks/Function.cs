@@ -33,10 +33,34 @@ namespace Reloaded.Hooks
         }
 
         /// <inheritdoc />
-        public IHook<TFunction> Hook(TFunction function, int minHookLength = -1)
-        {
-            return Hooks.CreateHook(function, Address, minHookLength);
-        }
+        public IHook<TFunction> Hook(TFunction function, int minHookLength) => Hooks.CreateHook(function, Address, minHookLength);
+
+        /// <inheritdoc />
+        public IHook<TFunction> Hook(TFunction function) => Hook(function, -1);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunction> Hook(void* function, int minHookLength) => Hooks.CreateHook<TFunction>(function, Address, minHookLength);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunction> Hook(void* function) => Hook(function, -1);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunction>(type, methodName, minHookLength);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunction> Hook(Type type, string methodName) => Hook(type, methodName, -1);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function, int minHookLength) => Hooks.CreateHook<TFunctionType>(function, Address, minHookLength);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function) => HookAs<TFunctionType>(function, -1);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunctionType>(type, methodName, Address, minHookLength);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName) => HookAs<TFunctionType>(type, methodName, -1);
 
         /// <inheritdoc />
         public TFunction GetWrapper()
