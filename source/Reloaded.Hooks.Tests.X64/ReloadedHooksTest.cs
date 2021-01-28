@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tests.Shared;
 using Xunit;
+using static Reloaded.Hooks.Tests.Shared.NativeCalculator;
 
 // Watch out!
 
@@ -13,15 +14,16 @@ namespace Reloaded.Hooks.Tests.X64
     {
         private NativeCalculator _nativeCalculator;
 
-        private static IHook<NativeCalculator.AddFunction> _addHook;
-        private static IHook<NativeCalculator.SubtractFunction> _subHook;
-        private static IHook<NativeCalculator.DivideFunction> _divideHook;
-        private static IHook<NativeCalculator.MultiplyFunction> _multiplyHook;
+        private static IHook<CalculatorFunction> _addHookPtr;
+        private static IHook<AddFunction> _addHook;
+        private static IHook<SubtractFunction> _subHook;
+        private static IHook<DivideFunction> _divideHook;
+        private static IHook<MultiplyFunction> _multiplyHook;
 
-        private IFunction<NativeCalculator.AddFunction> _addFunction;
-        private IFunction<NativeCalculator.SubtractFunction> _subtractFunction;
-        private IFunction<NativeCalculator.DivideFunction> _divideFunction;
-        private IFunction<NativeCalculator.MultiplyFunction> _multiplyFunction;
+        private IFunction<AddFunction> _addFunction;
+        private IFunction<SubtractFunction> _subtractFunction;
+        private IFunction<DivideFunction> _divideFunction;
+        private IFunction<MultiplyFunction> _multiplyFunction;
 
         private IReloadedHooks _hooks;
 
@@ -30,10 +32,10 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator = new NativeCalculator();
             _hooks = new ReloadedHooks();
 
-            _addFunction = _hooks.CreateFunction<NativeCalculator.AddFunction>((long)_nativeCalculator.Add);
-            _subtractFunction = _hooks.CreateFunction<NativeCalculator.SubtractFunction>((long)_nativeCalculator.Subtract);
-            _divideFunction = _hooks.CreateFunction<NativeCalculator.DivideFunction>((long)_nativeCalculator.Divide);
-            _multiplyFunction = _hooks.CreateFunction<NativeCalculator.MultiplyFunction>((long)_nativeCalculator.Multiply);
+            _addFunction = _hooks.CreateFunction<AddFunction>((long)_nativeCalculator.Add);
+            _subtractFunction = _hooks.CreateFunction<SubtractFunction>((long)_nativeCalculator.Subtract);
+            _divideFunction = _hooks.CreateFunction<DivideFunction>((long)_nativeCalculator.Divide);
+            _multiplyFunction = _hooks.CreateFunction<MultiplyFunction>((long)_nativeCalculator.Multiply);
         }
 
         public void Dispose()
@@ -107,5 +109,29 @@ namespace Reloaded.Hooks.Tests.X64
                 Assert.Equal(expected, result);
             }
         }
+
+#if FEATURE_UNMANAGED_CALLERS_ONLY
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        unsafe static int HookAsfunction(int a, int b) { return _addHookPtr.OriginalFunction.Value.Invoke(a, b) + 1; }
+
+        [Fact]
+        public void TestHookAs()
+        {
+            _addHookPtr = _addFunction.HookAs<CalculatorFunction>(typeof(ReloadedHooksTest), nameof(HookAsfunction)).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result = _addFunction.GetWrapper()(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+#endif
+
     }
 }

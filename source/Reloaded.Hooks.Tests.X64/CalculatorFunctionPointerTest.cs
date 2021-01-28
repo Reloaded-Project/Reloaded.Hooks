@@ -63,6 +63,27 @@ namespace Reloaded.Hooks.Tests.X64
             }
         }
 
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        static unsafe int AddHookFunctionReflection(int a, int b) => _addHook.OriginalFunction.Value.Invoke(a, b) + 1;
+
+        [Fact]
+        public unsafe void TestHookAddViaReflection()
+        {
+            _addHook = ReloadedHooks.Instance.CreateHook<CalculatorFunction>(typeof(CalculatorFunctionPointerTest), nameof(AddHookFunctionReflection), (long)_nativeCalculator.Add).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result = _addFunctionPointer.Value.Invoke(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
         [Fact]
         public unsafe void TestHookSub()
         {
