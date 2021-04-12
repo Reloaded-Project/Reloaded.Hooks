@@ -213,15 +213,22 @@ Lower level APIs:
 If you would like to call managed C# code from assembly code generated at run-time (such as `AsmHook`), consider using the `ReloadedHooksUtilities.GetAbsoluteCallMnemonics` helper function to generate the appropriate x86/x64 call instruction.
 
 ```csharp
-// SomeFunction is a C# function accepting two integers.
+// SomeFunction is a Stdcall C# function accepting two integers.
 // _reverseWrapAddFunction is a `ReverseWrapper`, it is a class member.
 string[] function = 
 {
     $"use32",
+
+    // Backup registers meant to be saved by caller. 
+    // Not always necessary but good practice to do so!
+    $"{Utilities.PushCdeclCallerSavedRegisters()}" 
+                                                   
     $"push ecx", // Right Parameter
     $"push edx", // Left Parameter
     $"{Utilities.GetAbsoluteCallMnemonics(SomeFunction, out _reverseWrapAddFunction)}",
-    $"add esp, 8",
+
+    // Restore backed up registers.
+    $"{Utilities.PopCdeclCallerSavedRegisters()}" 
     $"ret"
 };
 
@@ -229,7 +236,11 @@ string[] function =
 // native/ASM function. Failure to do so will cause issues after Garbage Collection occurs. 
 ```
 
+The calling convention of your C# function is controlled by `UnmanagedFunctionPointerAttribute` for Delegates (default is `StdCall`). While not always necessary*, it is good practice that you wrap your call with `PushCdeclCallerSavedRegisters` and `PopCdeclCallerSavedRegisters` respectively (for both Cdecl and Stdcall). 
+
 For a more advanced example, consider looking at [CSharpFromAssembly.cs](https://github.com/Reloaded-Project/Reloaded.Hooks/blob/2f58cee30ffc144cd33142ab46f194a4fdf2cdef/Source/Reloaded.Hooks.Tests.X64/CSharpFromAssembly.cs#L102) from Reloaded.Hooks' test code.
+
+\* This depends on context; if using an assembly hook, the original function might be doing the backup/restore for you already. If you are unsure, you should always backup and restore.
 
 ## Misc Performance Notes
 
