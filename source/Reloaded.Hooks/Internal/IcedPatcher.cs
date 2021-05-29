@@ -45,7 +45,7 @@ namespace Reloaded.Hooks.Internal
         {
             var writer = new CodeWriterImpl(_bytes.Length * 2);
             var block  = new InstructionBlock(writer, DecodePrologue(), (ulong)newAddress);
-            BlockEncoder.TryEncode(_bitness, block, out _);
+            BlockEncoder.TryEncode(_bitness, block, out _, out _);
             return writer.ToArray();
         }
 
