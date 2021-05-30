@@ -12,8 +12,8 @@ namespace Reloaded.Hooks.Benchmarks
     {
         static void Main(string[] args)
         {
-            var dotnetCli32 = NetCoreAppSettings.NetCoreApp50.WithCustomDotNetCliPath(@"C:\Program Files (x86)\dotnet\dotnet.exe", "32 bit cli");
-            var dotnetCli64 = NetCoreAppSettings.NetCoreApp50.WithCustomDotNetCliPath(@"C:\Program Files\dotnet\dotnet.exe", "64 bit cli");
+            var dotnetCli32 = NetCoreAppSettings.NetCoreApp60.WithCustomDotNetCliPath(@"C:\Program Files (x86)\dotnet\dotnet.exe", "32 bit cli");
+            var dotnetCli64 = NetCoreAppSettings.NetCoreApp60.WithCustomDotNetCliPath(@"C:\Program Files\dotnet\dotnet.exe", "64 bit cli");
 
             var job32   = Job.Default.WithPlatform(Platform.X86).WithToolchain(CsProjCoreToolchain.From(dotnetCli32));
             var job64   = Job.Default.WithPlatform(Platform.X64).WithToolchain(CsProjCoreToolchain.From(dotnetCli64));

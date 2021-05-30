@@ -59,6 +59,14 @@ foreach (var template in templates)
         /// </summary>
         public delegate*unmanaged[Stdcall]<<#= template #>> Invoke => (delegate*unmanaged[Stdcall]<<#= template #>>)funcPtr;
 
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<<#= template #>> InvokeDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<<#= template #>>)funcPtr;
+        #endif
+
 <#
     foreach (var convention in conventions)
 	{ 
@@ -67,6 +75,15 @@ foreach (var template in templates)
         /// Calls the underlying function using the <#= convention #> convention.
         /// </summary>
         public delegate*unmanaged[<#= convention #>]<<#= template #>> InvokeAs<#= convention #> => (delegate*unmanaged[<#= convention #>]<<#= template #>>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the <#= convention #> convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[<#= convention #>, SuppressGCTransition]<<#= template #>> InvokeAs<#= convention #>Dangerous => (delegate*unmanaged[<#= convention #>, SuppressGCTransition]<<#= template #>>)funcPtr;
+        #endif
+
 <#
     } 
 #>
@@ -76,6 +93,9 @@ foreach (var template in templates)
 	{ 
 #>
         public FuncPtr(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[<#= convention #>, SuppressGCTransition]<<#= template #>> ptr) { funcPtr = ptr; }
+        #endif
 <#
     } 
 #>
@@ -88,6 +108,10 @@ foreach (var template in templates)
 	{ 
 #>
         public static implicit operator FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>]<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<<#= template #>>(delegate*unmanaged[<#= convention #>, SuppressGCTransition]<<#= template #>> ptr) => new FuncPtr<<#= template #>>(ptr);
+        #endif
 <#
     } 
 #>

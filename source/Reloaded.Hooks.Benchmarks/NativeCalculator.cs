@@ -12,9 +12,17 @@ namespace Reloaded.Hooks.Benchmarks
     {
         /* Function pointer hook. Wasn't sure where to put the non-generic stuff since UnmanagedCallersOnly can't exist in generic methods. */
         public static IHook<CalculatorFunction> _functionPointerHook;
+        public static IHook<CalculatorFunction> _functionPointerNoCallOriginalHook;
+        public static IHook<CalculatorFunction> _functionPointerDangerousHook;
 
         [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-        public static int FunctionPointerHookFunction(int a, int b) => NativeCalculator._functionPointerHook.OriginalFunction.Value.Invoke(a, b) + 1;
+        public static int FunctionPointerHookFunction(int a, int b) => NativeCalculator._functionPointerHook.OriginalFunction.Value.Invoke(a, b);
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        public static int FunctionPointerDangerousHookFunction(int a, int b) => NativeCalculator._functionPointerDangerousHook.OriginalFunction.Value.InvokeDangerous(a, b);
+
+        [UnmanagedCallersOnly(CallConvs = new[] {typeof(CallConvStdcall) })]
+        public static int FunctionPointerNoCallOriginalFunction(int a, int b) => a + b;
 
         /* Shared Stuff*/
 
