@@ -93,7 +93,8 @@
 
         /// <summary>
         /// The calling convention internally used by the .NET runtime.
-        ///
+        /// Arguments are pushed to the stack LEFT TO RIGHT unlike other conventions,
+        /// so please reverse the order of all parameters past the second one.
         /// ReloadedFunction Attribute:
         ///     TargetRegisters:    ECX, EDX
         ///     ReturnRegister:     EAX    
