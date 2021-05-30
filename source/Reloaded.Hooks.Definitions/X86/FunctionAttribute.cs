@@ -220,7 +220,7 @@ namespace Reloaded.Hooks.Definitions.X86
         /// </summary>
         public static IFunctionAttribute GetAttribute<TFunction>()
         {
-            if (Misc.TryGetAttribute<TFunction, IFunctionAttribute>(out var result))
+            if (Misc.TryGetAttribute<TFunction, FunctionAttribute>(out var result))
                 return result;
 
             throw new Exception($"{nameof(FunctionAttribute)} is missing in the {typeof(TFunction).Name} delegate declaration." +

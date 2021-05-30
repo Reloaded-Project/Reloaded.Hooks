@@ -10,14 +10,14 @@ namespace Reloaded.Hooks.Definitions.Internal
         /// <summary>
         /// Attempts to find a given attribute for a given generic type
         /// </summary>
-        public static bool TryGetAttribute<TType, TAttribute>(out TAttribute result)
+        public static bool TryGetAttribute<TType, TAttribute>(out TAttribute result) where TAttribute : class
         {
             result = default;
-            foreach (Attribute attribute in typeof(TType).GetCustomAttributes(true))
+            foreach (Attribute attribute in typeof(TType).GetCustomAttributes(false))
             {
-                if (attribute is TAttribute target)
+                if (attribute.GetType() == typeof(TAttribute))
                 {
-                    result = target;
+                    result = attribute as TAttribute;
                     return true;
                 }
             }
@@ -28,7 +28,7 @@ namespace Reloaded.Hooks.Definitions.Internal
         /// <summary>
         /// Attempts to find a given attribute for a given generic type.
         /// </summary>
-        public static TAttribute TryGetAttributeOrDefault<TType, TAttribute>()
+        public static TAttribute TryGetAttributeOrDefault<TType, TAttribute>() where TAttribute : class
         {
             if (TryGetAttribute<TType, TAttribute>(out var result))
                 return result;

@@ -64,6 +64,16 @@ namespace Reloaded.Hooks.X86
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
 
             // Hot path: Don't create wrapper if both conventions are already compatible.
+            var managedFuncAttribute = Misc.TryGetAttributeOrDefault<TFunction, ManagedFunctionAttribute>();
+            if (managedFuncAttribute != null)
+            {
+                if (managedFuncAttribute.Equals(attribute))
+                    return;
+                
+                reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, managedFuncAttribute, attribute);
+                return;
+            }
+            
             var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
             if (!attribute.IsEquivalent(funcPtrAttribute))
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, attribute.GetEquivalent(funcPtrAttribute), attribute);

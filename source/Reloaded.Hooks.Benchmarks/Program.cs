@@ -18,7 +18,7 @@ namespace Reloaded.Hooks.Benchmarks
             var job32   = Job.Default.WithPlatform(Platform.X86).WithToolchain(CsProjCoreToolchain.From(dotnetCli32));
             var job64   = Job.Default.WithPlatform(Platform.X64).WithToolchain(CsProjCoreToolchain.From(dotnetCli64));
 
-            BenchmarkRunner.Run<HookBenchmark<NativeCalculator86>>(ManualConfig.Create(DefaultConfig.Instance).AddJob(job32));
+            BenchmarkRunner.Run<HookBenchmark32<NativeCalculator86>>(ManualConfig.Create(DefaultConfig.Instance).AddJob(job32));
             BenchmarkRunner.Run<HookBenchmark<NativeCalculator64>>(ManualConfig.Create(DefaultConfig.Instance).AddJob(job64));
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
@@ -8,27 +9,29 @@ namespace Reloaded.Hooks.Benchmarks
 {
     public unsafe class HookBenchmark<TNativeCalculator> where TNativeCalculator : NativeCalculator, new()
     {
-        private NativeCalculator _normalCalculator;
-        private NativeCalculator _delegateHookedCalculator;
-        private NativeCalculator _delegateHookedCalculatorNoCallOriginal;
-        private NativeCalculator _functionPtrHookedCalculator;
-        private NativeCalculator _functionPtrHookedCalculatorNoCallOriginal;
-        private NativeCalculator _functionPtrDangerousHookedCalculator;
+        protected NativeCalculator _normalCalculator;
+        protected NativeCalculator _delegateHookedCalculator;
+        protected NativeCalculator _delegateHookedCalculatorNoCallOriginal;
+        protected NativeCalculator _functionPtrHookedCalculator;
+        protected NativeCalculator _functionPtrHookedCalculatorNoCall;
+        protected NativeCalculator _functionPtrHookedCalculatorNoCallManaged;
+        protected NativeCalculator _functionPtrDangerousHookedCalculator;
         
-        private NativeCalculator.AddFunction _delegateHookAddFunctionNoCallOriginal;
-        private NativeCalculator.AddFunction _delegateHookAddFunction;
-        private NativeCalculator.AddFunction _delegateAddFunction;
+        protected NativeCalculator.AddFunction _delegateHookAddFunctionNoCallOriginal;
+        protected NativeCalculator.AddFunction _delegateHookAddFunction;
+        protected NativeCalculator.AddFunction _delegateAddFunction;
 
-        private static IHook<NativeCalculator.AddFunction> _delegateHook;
-        private static IHook<NativeCalculator.AddFunction> _delegateHookNoCallOriginal;
+        protected static IHook<NativeCalculator.AddFunction> _delegateHook;
+        protected static IHook<NativeCalculator.AddFunction> _delegateHookNoCallOriginal;
 
-        private NativeCalculator.CalculatorFunction _pointerHookDangerousAddFunction;
-        private NativeCalculator.CalculatorFunction _pointerHookNoCallOriginalAddFunction;
-        private NativeCalculator.CalculatorFunction _pointerHookAddFunction;
-        private NativeCalculator.CalculatorFunction _pointerDangerousAddFunction;
-        private NativeCalculator.CalculatorFunction _pointerAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerHookDangerousAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerHookNoCallAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerHookNoCallManagedAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerHookAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerDangerousAddFunction;
+        protected NativeCalculator.CalculatorFunction _pointerAddFunction;
 
-        private int _numIterations = 1000000;
+        protected int _numIterations = 1000000;
 
         [GlobalSetup]
         public void Setup()
@@ -37,14 +40,16 @@ namespace Reloaded.Hooks.Benchmarks
             _delegateHookedCalculator = new TNativeCalculator();
             _delegateHookedCalculatorNoCallOriginal = new TNativeCalculator();
             _functionPtrHookedCalculator = new TNativeCalculator();
-            _functionPtrHookedCalculatorNoCallOriginal = new TNativeCalculator();
+            _functionPtrHookedCalculatorNoCall = new TNativeCalculator();
+            _functionPtrHookedCalculatorNoCallManaged = new TNativeCalculator();
             _functionPtrDangerousHookedCalculator = new TNativeCalculator();
             var hooks = ReloadedHooks.Instance;
 
             _delegateHookAddFunctionNoCallOriginal = hooks.CreateWrapper<NativeCalculator.AddFunction>((long)_delegateHookedCalculatorNoCallOriginal.Add, out var _);
             _delegateHookAddFunction = hooks.CreateWrapper<NativeCalculator.AddFunction>((long)_delegateHookedCalculator.Add, out var _);
             _pointerHookAddFunction = hooks.CreateWrapper<NativeCalculator.CalculatorFunction>((long)_functionPtrHookedCalculator.Add, out var _);
-            _pointerHookNoCallOriginalAddFunction = hooks.CreateWrapper<NativeCalculator.CalculatorFunction>((long)_functionPtrHookedCalculatorNoCallOriginal.Add, out var _);
+            _pointerHookNoCallAddFunction = hooks.CreateWrapper<NativeCalculator.CalculatorFunction>((long)_functionPtrHookedCalculatorNoCall.Add, out var _);
+            _pointerHookNoCallManagedAddFunction = hooks.CreateWrapper<NativeCalculator.CalculatorFunction>((long)_functionPtrHookedCalculatorNoCallManaged.Add, out var _);
             _pointerHookDangerousAddFunction = hooks.CreateWrapper<NativeCalculator.CalculatorFunction>((long)_functionPtrDangerousHookedCalculator.Add, out var _);
 
             _delegateAddFunction = hooks.CreateWrapper<NativeCalculator.AddFunction>((long)_normalCalculator.Add, out var _);
@@ -55,9 +60,9 @@ namespace Reloaded.Hooks.Benchmarks
             _delegateHook = hooks.CreateHook<NativeCalculator.AddFunction>(DelegateAddHookFunction, (long)_delegateHookedCalculator.Add).Activate();
             NativeCalculator._functionPointerHook = hooks.CreateHook<NativeCalculator.CalculatorFunction>((delegate*unmanaged[Stdcall]<int,int,int>)& NativeCalculator.FunctionPointerHookFunction, (long)_functionPtrHookedCalculator.Add).Activate();
             NativeCalculator._functionPointerDangerousHook = hooks.CreateHook<NativeCalculator.CalculatorFunction>(typeof(NativeCalculator), nameof(NativeCalculator.FunctionPointerDangerousHookFunction), (long)_functionPtrDangerousHookedCalculator.Add).Activate();
-            NativeCalculator._functionPointerNoCallOriginalHook = hooks.CreateHook<NativeCalculator.CalculatorFunction>(typeof(NativeCalculator), nameof(NativeCalculator.FunctionPointerNoCallOriginalFunction), (long)_functionPtrHookedCalculatorNoCallOriginal.Add).Activate();
+            NativeCalculator._functionPointerNoCallHook = hooks.CreateHook<NativeCalculator.CalculatorFunction>(typeof(NativeCalculator), nameof(NativeCalculator.FunctionPointerNoCallOriginalFunction), (long)_functionPtrHookedCalculatorNoCall.Add).Activate();
+            NativeCalculator._functionPointerNoCallManagedHook = hooks.CreateHook<NativeCalculator.CalculatorFunctionManaged>(typeof(NativeCalculator), nameof(NativeCalculator.FunctionPointerNoCallManaged), (long)_functionPtrHookedCalculatorNoCallManaged.Add).Activate();
         }
-
 
         private int DelegateAddHookFunction(int a, int b) => _delegateHook.OriginalFunction(a, b);
         private int DelegateAddHookFunctionNoCallOriginal(int a, int b) => a + b;
@@ -153,14 +158,13 @@ namespace Reloaded.Hooks.Benchmarks
 
             return value;
         }
-
         [Benchmark]
         public int FuncPtrHookNoCallOriginal()
         {
             int value = 0;
             for (int y = 0; y < _numIterations; y++)
             {
-                value += _pointerHookNoCallOriginalAddFunction.Value.Invoke(y, y);
+                value += _pointerHookNoCallAddFunction.Value.Invoke(y, y);
             }
 
             return value;

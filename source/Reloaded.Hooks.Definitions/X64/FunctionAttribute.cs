@@ -156,7 +156,7 @@ namespace Reloaded.Hooks.Definitions.X64
         {
             foreach (Attribute attribute in typeof(TFunction).GetCustomAttributes(false))
             {
-                if (attribute is IFunctionAttribute reloadedFunction)
+                if (attribute is FunctionAttribute reloadedFunction)
                     return reloadedFunction;
             }
             
