@@ -89,6 +89,16 @@
         ///     ReturnRegister:     Depends on Function
         ///     Cleanup:            Callee
         /// </summary>
-        Userpurge
+        Userpurge,
+
+        /// <summary>
+        /// The calling convention internally used by the .NET runtime.
+        ///
+        /// ReloadedFunction Attribute:
+        ///     TargetRegisters:    ECX, EDX
+        ///     ReturnRegister:     EAX    
+        ///     Cleanup:            Callee
+        /// </summary>
+        ClrCall,
     }
 }

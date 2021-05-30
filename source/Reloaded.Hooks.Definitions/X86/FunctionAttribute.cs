@@ -165,6 +165,13 @@ namespace Reloaded.Hooks.Definitions.X86
                     CalleeSavedRegisters = DefaultSavedRegisters;
                     break;
 
+                case CallingConventions.ClrCall:
+                    SourceRegisters = new []{ Register.ecx, Register.edx };
+                    ReturnRegister = Register.eax;
+                    Cleanup = StackCleanup.Callee;
+                    CalleeSavedRegisters = DefaultSavedRegisters;
+                    break;
+
                 default:
                     throw new ArgumentException($"There is no preset for the specified calling convention {callingConvention.GetType().Name}");
             }
