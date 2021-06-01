@@ -1523,5 +1523,409 @@ namespace Reloaded.Hooks.Definitions.Structs
         public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TReturn>));
     }
 
+    [ExcludeFromCodeCoverage]
+    public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> : IFuncPtr
+    {
+        /// <summary>
+        /// Raw pointer to the function.
+        /// </summary>
+        public void* funcPtr;
+
+    
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> Invoke => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention.
+        /// </summary>
+        public delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsCdecl => (delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsCdeclDangerous => (delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsStdcall => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsStdcallDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention.
+        /// </summary>
+        public delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsThiscall => (delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> InvokeAsThiscallDangerous => (delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>)funcPtr;
+        #endif
+
+        public FuncPtr(void* ptr) { funcPtr = ptr; }
+        public FuncPtr(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+
+        public static explicit operator void*(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> func) => func.funcPtr;
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(void* ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(IntPtr ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>((void*)ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>(ptr);
+        #endif
+
+        /// <inheritdoc />
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>));
+
+        /// <inheritdoc />
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TReturn>));
+    }
+
+    [ExcludeFromCodeCoverage]
+    public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> : IFuncPtr
+    {
+        /// <summary>
+        /// Raw pointer to the function.
+        /// </summary>
+        public void* funcPtr;
+
+    
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> Invoke => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention.
+        /// </summary>
+        public delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsCdecl => (delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsCdeclDangerous => (delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsStdcall => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsStdcallDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention.
+        /// </summary>
+        public delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsThiscall => (delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> InvokeAsThiscallDangerous => (delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>)funcPtr;
+        #endif
+
+        public FuncPtr(void* ptr) { funcPtr = ptr; }
+        public FuncPtr(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+
+        public static explicit operator void*(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> func) => func.funcPtr;
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(void* ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(IntPtr ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>((void*)ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>(ptr);
+        #endif
+
+        /// <inheritdoc />
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>));
+
+        /// <inheritdoc />
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TReturn>));
+    }
+
+    [ExcludeFromCodeCoverage]
+    public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> : IFuncPtr
+    {
+        /// <summary>
+        /// Raw pointer to the function.
+        /// </summary>
+        public void* funcPtr;
+
+    
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> Invoke => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention.
+        /// </summary>
+        public delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsCdecl => (delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsCdeclDangerous => (delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsStdcall => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsStdcallDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention.
+        /// </summary>
+        public delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsThiscall => (delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> InvokeAsThiscallDangerous => (delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>)funcPtr;
+        #endif
+
+        public FuncPtr(void* ptr) { funcPtr = ptr; }
+        public FuncPtr(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+
+        public static explicit operator void*(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> func) => func.funcPtr;
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(void* ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(IntPtr ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>((void*)ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>(ptr);
+        #endif
+
+        /// <inheritdoc />
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>));
+
+        /// <inheritdoc />
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, TReturn>));
+    }
+
+    [ExcludeFromCodeCoverage]
+    public unsafe struct FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> : IFuncPtr
+    {
+        /// <summary>
+        /// Raw pointer to the function.
+        /// </summary>
+        public void* funcPtr;
+
+    
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> Invoke => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention.
+        /// </summary>
+        public delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsCdecl => (delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Cdecl convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsCdeclDangerous => (delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention.
+        /// </summary>
+        public delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsStdcall => (delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Stdcall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsStdcallDangerous => (delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        #endif
+
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention.
+        /// </summary>
+        public delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsThiscall => (delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        
+        #if NET6_0_OR_GREATER
+        /// <summary>
+        /// Calls the underlying function using the Thiscall convention using the SuppressGCTransition attribute.
+        /// Please read: https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.suppressgctransitionattribute
+        /// </summary>
+        public delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> InvokeAsThiscallDangerous => (delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>)funcPtr;
+        #endif
+
+        public FuncPtr(void* ptr) { funcPtr = ptr; }
+        public FuncPtr(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+        public FuncPtr(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #if NET6_0_OR_GREATER
+        public FuncPtr(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) { funcPtr = ptr; }
+        #endif
+
+        public static explicit operator void*(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> func) => func.funcPtr;
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(void* ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(IntPtr ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>((void*)ptr);
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Cdecl]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Cdecl, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Stdcall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Stdcall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+        #endif
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Thiscall]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+
+        #if NET6_0_OR_GREATER
+        public static implicit operator FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(delegate*unmanaged[Thiscall, SuppressGCTransition]<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn> ptr) => new FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>(ptr);
+        #endif
+
+        /// <inheritdoc />
+        public int NumberOfParameters => FuncPtr.GetNumberOfParameters(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>));
+
+        /// <inheritdoc />
+        public int NumberOfParametersWithoutFloats => FuncPtr.GetNumberOfParametersWithoutFloats(typeof(FuncPtr<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, TReturn>));
+    }
+
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
 }

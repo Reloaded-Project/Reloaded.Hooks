@@ -20,7 +20,7 @@ namespace Reloaded.Hooks.Definitions.Structs
 
     };
 
-    internal static class FuncPtr
+    public static class FuncPtr
     {
         /// <summary>
         /// Gets the number of parameters.
