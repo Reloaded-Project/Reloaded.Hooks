@@ -45,7 +45,13 @@ namespace Reloaded.Hooks.Internal
         {
             var writer = new CodeWriterImpl(_bytes.Length * 2);
             var block  = new InstructionBlock(writer, DecodePrologue(), (ulong)newAddress);
-            BlockEncoder.TryEncode(_bitness, block, out _, out _);
+            if (!BlockEncoder.TryEncode(_bitness, block, out var error, out _))
+            {
+                throw new Exception($"Reloaded Hooks: Internal Error in {nameof(Reloaded.Hooks.Internal)}/{nameof(IcedPatcher)}. " +
+                                    $"Failed to re-encode code for new address. Process will probably die." +
+                                    $"Error: {error}");
+            }
+
             return writer.ToArray();
         }
 

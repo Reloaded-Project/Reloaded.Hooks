@@ -102,7 +102,8 @@ namespace Reloaded.Hooks
             int stubOriginalSize       = hookLength + MaxJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
 
             int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes;
-            var buffer                 = Utilities.FindOrCreateBufferInRange(requiredSizeOfBuffer);
+            var minMax                 = Utilities.GetRelativeJumpMinMax(functionAddress);
+            var buffer                 = Utilities.FindOrCreateBufferInRange(requiredSizeOfBuffer, minMax.min, minMax.max);
 
             buffer.ExecuteWithLock(() =>
             {
