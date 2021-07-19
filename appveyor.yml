@@ -1,0 +1,56 @@
+version: CI-{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2019 Preview
+configuration:
+- Release
+platform: Any CPU
+environment:
+  CODECOV_TOKEN: e818e36f-09e0-4a85-9b5a-4b89e55b5263
+before_build:
+- ps: |-
+    dotnet --version
+    dotnet restore ./Source/Reloaded.Hooks.sln
+
+    # Build the Changelog
+    if ($env:APPVEYOR_REPO_TAG -eq "true")
+    {
+        $env:CHANGELOG_PATH = "CHANGELOG.MD"
+        npm install -g auto-changelog
+        auto-changelog --sort-commits date --hide-credit --template keepachangelog --commit-limit false --starting-version $env:APPVEYOR_REPO_TAG_NAME -o $env:CHANGELOG_PATH 
+        $env:CHANGELOG_TEXT = Get-Content -Path $env:CHANGELOG_PATH -Raw
+    }
+build:
+  project: ./Source/Reloaded.Hooks.sln
+  verbosity: minimal
+test_script:
+- ps: |-
+    choco install opencover.portable
+    choco install codecov
+    OpenCover.Console.exe -register -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:"test ./source/Reloaded.Hooks.Tests.X64/Reloaded.Hooks.Tests.X64.csproj /p:AllowUnsafeBlocks=true" -excludebyattribute:*.ExcludeFromCodeCoverage* -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*" -output:"./Coverage.xml"
+    OpenCover.Console.exe -register -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:"test ./source/Reloaded.Hooks.Tests.X86/Reloaded.Hooks.Tests.X86.csproj /p:AllowUnsafeBlocks=true" -excludebyattribute:*.ExcludeFromCodeCoverage* -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*" -output:"./Coverage.xml" -mergeoutput
+    codecov -f "./Coverage.xml"
+artifacts:
+- path: Coverage.xml
+  name: Coverage
+- path: Source\Reloaded.Hooks\bin\Release\*.nupkg
+  name: Release NuGet
+- path: Source\Reloaded.Hooks.Definitions\bin\Release\*.nupkg
+  name: Release NuGet Definitions
+deploy:
+- provider: NuGet
+  api_key:
+    secure: /T4vdj8lFWKOcuR5WguX5THrC1DYP4ofjy8yCdm3pz9T/yBMqEZoQKXvVzEBu965
+  artifact: Release NuGet, Release NuGet Definitions
+  on:
+    CONFIGURATION: Release
+    APPVEYOR_REPO_TAG: true
+- provider: GitHub
+  description: $(CHANGELOG_TEXT)
+  auth_token:
+    secure: 3nktB3Ovacl0onzwjgI+F7MtWvAzl1YMIA5gRE+vsVwKzFHICg1wKlj9O63IIiwS
+  artifact: Release NuGet, Release NuGet Definitions
+  on:
+    CONFIGURATION: Release
+    APPVEYOR_REPO_TAG: true
