@@ -13,7 +13,7 @@
     <RepositoryType>git</RepositoryType>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
-    <Version>3.2.2</Version>
+    <Version>3.2.3</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>Icon.png</PackageIcon>
 
@@ -26,7 +26,7 @@
 
   <ItemGroup>
     <PackageReference Include="Iced" Version="1.11.3" />
-    <PackageReference Include="Reloaded.Assembler" Version="1.0.9">
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.10">
       <IncludeAssets>All</IncludeAssets>
       <PrivateAssets>None</PrivateAssets>
     </PackageReference>
