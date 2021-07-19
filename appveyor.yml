@@ -8,6 +8,15 @@ configuration:
 platform: Any CPU
 environment:
   CODECOV_TOKEN: e818e36f-09e0-4a85-9b5a-4b89e55b5263
+
+init:
+- ps: |-
+    # Update Build Version
+    if ($env:APPVEYOR_REPO_TAG -eq "true")
+    {
+        Update-AppveyorBuild -Version "$env:APPVEYOR_REPO_TAG_NAME"
+    }
+
 before_build:
 - ps: |-
     dotnet --version
@@ -17,10 +26,11 @@ before_build:
     if ($env:APPVEYOR_REPO_TAG -eq "true")
     {
         $env:CHANGELOG_PATH = "CHANGELOG.MD"
-        npm install -g auto-changelog
-        auto-changelog --sort-commits date --hide-credit --template keepachangelog --commit-limit false --starting-version $env:APPVEYOR_REPO_TAG_NAME -o $env:CHANGELOG_PATH 
+        & npm install -g auto-changelog
+        & auto-changelog --sort-commits date --hide-credit --template changelog-template.hbs --commit-limit false --starting-version $env:APPVEYOR_REPO_TAG_NAME -o $env:CHANGELOG_PATH 
         $env:CHANGELOG_TEXT = Get-Content -Path $env:CHANGELOG_PATH -Raw
     }
+    
 build:
   project: ./Source/Reloaded.Hooks.sln
   verbosity: minimal
