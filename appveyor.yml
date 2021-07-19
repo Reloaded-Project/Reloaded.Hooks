@@ -27,7 +27,7 @@ before_build:
     {
         $env:CHANGELOG_PATH = "CHANGELOG.MD"
         & npm install -g auto-changelog
-        & auto-changelog --sort-commits date --hide-credit --template changelog-template.hbs --commit-limit false --starting-version $env:APPVEYOR_REPO_TAG_NAME -o $env:CHANGELOG_PATH 
+        & auto-changelog --sort-commits date --hide-credit --commit-limit false --starting-version $env:APPVEYOR_REPO_TAG_NAME -o $env:CHANGELOG_PATH 
         $env:CHANGELOG_TEXT = Get-Content -Path $env:CHANGELOG_PATH -Raw
     }
     
