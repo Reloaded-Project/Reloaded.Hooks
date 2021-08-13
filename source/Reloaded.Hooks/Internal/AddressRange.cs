@@ -14,6 +14,11 @@
             EndPointer = endPointer;
         }
 
+        public static AddressRange FromStartAndLength(long start, long length)
+        {
+            return new AddressRange(start, start + length);
+        }
+
         /// <summary>
         /// Returns true if a specified point is contained in this address range.
         /// </summary>

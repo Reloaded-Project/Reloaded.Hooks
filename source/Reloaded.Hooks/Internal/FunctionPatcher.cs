@@ -242,20 +242,31 @@ namespace Reloaded.Hooks.Internal
                 padding (e.g. with 00 padding) may lead to having the instruction incorrectly decoded 
                 if we start disassembling from the page.
 
-                Therefore we first test only the immediate area, starting from the code alignment.
-                This should fix the odd case of Steam Overlay hooks not being patched.
+                Therefore we first test only the immediate area at specifically crafted starting points
+                to take account either the code being aligned or unaligned.
 
+                This should fix e.g. the odd case of Steam Overlay hooks not being patched.
                 We only expect one jump in practically all cases so it's safe to end if a single jump is found.
             */
-            if (TryCodeAlignmentRange(new AddressRange(originalJmpTarget / intelCodeAlignment * intelCodeAlignment, originalJmpTarget + immediateAreaSize)))
+
+            // Case 1: Our jump target is part of an aligned 16 byte code frame.
+            // Check 1 frame before + 3 frames ahead
+            if (TryCodeAlignmentRange(AddressRange.FromStartAndLength(originalJmpTarget / intelCodeAlignment * intelCodeAlignment, immediateAreaSize)))
                 return result;
 
-            // Search just before our jump target.
-            // This is just in case target hooking library is unaligned and our previous start address was mid instruction.
-            if (TryCodeAlignmentRange(new AddressRange((originalJmpTarget / intelCodeAlignment * intelCodeAlignment) - intelCodeAlignment, originalJmpTarget)))
+            // Case 2: Original code comes before jump target and is in the frame before.
+            // Check 2 frame before + 0 frames ahead
+            if (TryCodeAlignmentRange(AddressRange.FromStartAndLength((originalJmpTarget / intelCodeAlignment * intelCodeAlignment) - intelCodeAlignment, intelCodeAlignment * 2)))
                 return result;
 
-            // Fall back to searching whole memory page.
+            // Case 3: Code is unaligned and original code comes right after the jump target.
+            // 0 frames before + 2 frames ahead.
+            if (TryCodeAlignmentRange(AddressRange.FromStartAndLength(originalJmpTarget, intelCodeAlignment * 2)))
+                return result;
+
+            // Case 4: Fall back to searching whole memory page.
+            // This is successful 90% of the time, but sometimes fails due to code misalignment
+            // (disassembler can interpret 00 as beginning of an instruction when it's padding).
             var patchesForPage = PatchJumpTargets_Internal(searchRange, jumpTargetRange, (long) newOriginalPrologue);
             result.AddRange(patchesForPage);
             return result;
