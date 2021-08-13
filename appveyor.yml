@@ -44,6 +44,8 @@ test_script:
 artifacts:
 - path: Coverage.xml
   name: Coverage
+- path: CHANGELOG.MD
+  name: Changelog
 - path: Source\Reloaded.Hooks\bin\Release\*.nupkg
   name: Release NuGet
 - path: Source\Reloaded.Hooks.Definitions\bin\Release\*.nupkg
