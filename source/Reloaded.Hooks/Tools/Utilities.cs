@@ -6,8 +6,11 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Structs;
+using Reloaded.Hooks.Internal;
 using Reloaded.Memory.Buffers;
+using Reloaded.Memory.Buffers.Internal.Kernel32;
 using SharpDisasm;
+using static Reloaded.Hooks.Internal.Native.MEM_PROTECTION;
 
 namespace Reloaded.Hooks.Tools
 {
@@ -323,6 +326,29 @@ namespace Reloaded.Hooks.Tools
             // Check for non-float and return amount.
             return parameters.Count(parameter => parameter.ParameterType != typeof(Single) && 
                                                  parameter.ParameterType != typeof(Double));
+        }
+
+        /// <summary>
+        /// Checks whether a given address in memory can be read from.
+        /// </summary>
+        /// <param name="address">The target address.</param>
+        internal static unsafe bool IsBadReadPtr(IntPtr address)
+        {
+            const Native.MEM_PROTECTION canReadMask = (PAGE_READONLY | PAGE_READWRITE | PAGE_WRITECOPY | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY);
+            Native.MEMORY_BASIC_INFORMATION mbi = default;
+
+            if (Native.VirtualQuery(address, ref mbi, (UIntPtr) sizeof(Native.MEMORY_BASIC_INFORMATION)) != IntPtr.Zero)
+            {
+                bool badPtr = (mbi.Protect & canReadMask) == 0;
+                
+                // Check the page is not a guard page
+                if ((mbi.Protect & (PAGE_GUARD | PAGE_NOACCESS)) > 0) 
+                    badPtr = true;
+
+                return badPtr;
+            }
+
+            return true;
         }
 
         /// <summary>

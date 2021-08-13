@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Reloaded.Hooks.Tools;
+using Reloaded.Memory.Buffers;
+using Reloaded.Memory.Buffers.Internal.Kernel32;
 using Reloaded.Memory.Sources;
 using SharpDisasm;
 using SharpDisasm.Udis86;
@@ -116,14 +118,13 @@ namespace Reloaded.Hooks.Internal
         /// <param name="searchRange">Range of addresses where to patch jumps.</param>
         /// <param name="originalJmpTarget">Address range of JMP targets to patch with newJmpTarget.</param>
         /// <param name="newJmpTarget">The new address instructions should jmp to.</param>
-        internal List<Patch> PatchJumpTargets(AddressRange searchRange, AddressRange originalJmpTarget, long newJmpTarget)
+        private List<Patch> PatchJumpTargets_Internal(AddressRange searchRange, AddressRange originalJmpTarget, long newJmpTarget)
         {
             var patches = new List<Patch>();
+            int length = (int)(searchRange.EndPointer - searchRange.StartPointer);
+            var memory = TryReadFromMemory((IntPtr) searchRange.StartPointer, length);
 
-            int length  = (int) (searchRange.EndPointer - searchRange.StartPointer);
-            CurrentProcess.SafeReadRaw((IntPtr)searchRange.StartPointer, out byte[] memory, length);
-
-            Disassembler  disassembler = new Disassembler(memory, _architecture, (ulong)searchRange.StartPointer, true);
+            Disassembler disassembler = new Disassembler(memory, _architecture, (ulong)searchRange.StartPointer, true);
             Instruction[] instructions = disassembler.Disassemble().ToArray();
 
             for (int x = 0; x < instructions.Length; x++)
@@ -133,9 +134,9 @@ namespace Reloaded.Hooks.Internal
 
                 if (IsRelativeJump(instruction))
                     PatchRelativeJump(instruction, ref originalJmpTarget, newJmpTarget, patches);
-                if (IsRIPRelativeJump(instruction))
+                else if (IsRIPRelativeJump(instruction))
                     PatchRIPRelativeJump(instruction, ref originalJmpTarget, newJmpTarget, patches);
-                if (IsPushReturn(instruction, nextInstruction))
+                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction))
                     PatchPushReturn(instruction, ref originalJmpTarget, newJmpTarget, patches);
             }
 
@@ -199,16 +200,6 @@ namespace Reloaded.Hooks.Internal
 
         private void PatchReturnAddresses(JumpDetails jumpDetails, FunctionPatch patch, long newAddress)
         {
-            /*
-                On both modern Intel and AMD CPUs, the instruction decoder fetches instructions 16 bytes per cycle.
-                These 16 bytes are always aligned, so you can only fetch 16 bytes from a multiple of 16.
-                
-                Some hooks, such as Reloaded.Hooks itself exploit this for micro-optimisation.
-                Valve seems to be doing this with the Steam overlay too.
-            */
-            const int intelCodeAlignment = 16;
-            const int immediateAreaSize = intelCodeAlignment * 4; // Keep as multiple of code alignment.
-
             long originalJmpTarget    = jumpDetails.JumpOpcodeTarget;
             long initialSearchPointer = originalJmpTarget;
             GetSearchRange(ref initialSearchPointer, out long searchLength);
@@ -217,7 +208,7 @@ namespace Reloaded.Hooks.Internal
 
             IntPtr startRemainingOpcodes = (IntPtr)jumpDetails.JumpOpcodeEnd;
             int lengthRemainingOpcodes   = (int)(newAddress - (long)startRemainingOpcodes);
-            CurrentProcess.ReadRaw(startRemainingOpcodes, out byte[] remainingInstructions, lengthRemainingOpcodes);
+            var remainingInstructions = TryReadFromMemory(startRemainingOpcodes, lengthRemainingOpcodes);
 
             /* Build function stub + patches. */
 
@@ -230,6 +221,22 @@ namespace Reloaded.Hooks.Internal
             var pageRange       = new AddressRange(initialSearchPointer, initialSearchPointer + searchLength);
             var jumpTargetRange = new AddressRange((long) startRemainingOpcodes, newAddress);
 
+            patch.Patches = PatchJumpTargets(pageRange, originalJmpTarget, jumpTargetRange, newOriginalPrologue);
+        }
+
+        internal List<Patch> PatchJumpTargets(AddressRange searchRange, long originalJmpTarget, AddressRange jumpTargetRange, IntPtr newOriginalPrologue)
+        {
+            /*
+                On both modern Intel and AMD CPUs, the instruction decoder fetches instructions 16 bytes per cycle.
+                These 16 bytes are always aligned, so you can only fetch 16 bytes from a multiple of 16.
+
+                Some hooks, such as Reloaded.Hooks itself exploit this for micro-optimisation.
+                Valve seems to be doing this with the Steam overlay too.
+            */
+            const int intelCodeAlignment = 16;
+            const int immediateAreaSize = intelCodeAlignment * 4; // Keep as multiple of code alignment.
+            var result = new List<Patch>();
+
             /*
                 When looking at a whole page range, there are occasional cases where the 
                 padding (e.g. with 00 padding) may lead to having the instruction incorrectly decoded 
@@ -241,21 +248,29 @@ namespace Reloaded.Hooks.Internal
                 We only expect one jump in practically all cases so it's safe to end if a single jump is found.
             */
             if (TryCodeAlignmentRange(new AddressRange(originalJmpTarget / intelCodeAlignment * intelCodeAlignment, originalJmpTarget + immediateAreaSize)))
-                return;
+                return result;
 
             // Search just before our jump target.
             // This is just in case target hooking library is unaligned and our previous start address was mid instruction.
             if (TryCodeAlignmentRange(new AddressRange((originalJmpTarget / intelCodeAlignment * intelCodeAlignment) - intelCodeAlignment, originalJmpTarget)))
-                return;
+                return result;
 
             // Fall back to searching whole memory page.
-            var patchesForPage = PatchJumpTargets(pageRange, jumpTargetRange, (long)newOriginalPrologue);
-            patch.Patches.AddRange(patchesForPage);
+            var patchesForPage = PatchJumpTargets_Internal(searchRange, jumpTargetRange, (long) newOriginalPrologue);
+            result.AddRange(patchesForPage);
+            return result;
 
             bool TryCodeAlignmentRange(AddressRange range)
             {
-                var patchesForImmediateArea = PatchJumpTargets(range, jumpTargetRange, (long)newOriginalPrologue);
-                patch.Patches.AddRange(patchesForImmediateArea);
+                // Clamp to current memory page if the start/end cannot be read.
+                if (range.StartPointer < searchRange.StartPointer && Utilities.IsBadReadPtr((IntPtr) range.StartPointer))
+                    range.StartPointer = searchRange.StartPointer;
+
+                if (range.EndPointer > searchRange.EndPointer && Utilities.IsBadReadPtr((IntPtr) range.EndPointer))
+                    range.EndPointer = searchRange.EndPointer;
+
+                var patchesForImmediateArea = PatchJumpTargets_Internal(range, jumpTargetRange, (long) newOriginalPrologue);
+                result.AddRange(patchesForImmediateArea);
                 return patchesForImmediateArea.Count > 0;
             }
         }
@@ -311,7 +326,7 @@ namespace Reloaded.Hooks.Internal
         }
 
         /// <summary>
-        /// [Part of PatchJumpTargets]
+        /// [Part of PatchJumpTargets_Internal]
         /// Obtains the address range to perform search for jumps back by modifying a given searchPointer and giving a searchRange.
         /// </summary>
         /// <param name="searchPointer">The initial pointer from which to deduce the search range.</param>
@@ -339,6 +354,27 @@ namespace Reloaded.Hooks.Internal
                 searchLength = Environment.SystemPageSize;
                 searchPointer -= searchPointer % searchLength;
             }
+        }
+
+        /// <summary>
+        /// Attempts to read out a number of bytes from unmanaged memory.
+        /// </summary>
+        /// <param name="address">Address to read from.</param>
+        /// <param name="size">The size of memory.</param>
+        private byte[] TryReadFromMemory(IntPtr address, int size)
+        {
+            byte[] memory;
+            try
+            {
+                CurrentProcess.ReadRaw(address, out memory, size);
+            }
+            catch (Exception)
+            {
+                /* Ignore exception, and only take 2nd one. */
+                CurrentProcess.SafeReadRaw(address, out memory, size);
+            }
+
+            return memory;
         }
 
         /* Condition check methods for class. */
