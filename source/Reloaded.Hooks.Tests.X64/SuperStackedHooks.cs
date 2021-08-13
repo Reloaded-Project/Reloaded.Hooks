@@ -29,21 +29,26 @@ namespace Reloaded.Hooks.Tests.X64
         }
 
         [Fact]
-        public void TestHookAdd()
+        public void TestHookAdd() => TestHookAdd_Internal(null);
+
+        [Fact]
+        public void TestHookAddRelativeJump() => TestHookAdd_Internal(new FunctionHookOptions() { PreferRelativeJump = true });
+
+        private void TestHookAdd_Internal(FunctionHookOptions options)
         {
             for (int x = 0; x < HookCount; x++)
             {
                 IHook<NativeCalculator.AddFunction> addHook = null;
-                addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((a, b) => addHook.OriginalFunction(a, b) + 1, (long)_nativeCalculator.Add).Activate();
+                addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>((a, b) => addHook.OriginalFunction(a, b) + 1, (long)_nativeCalculator.Add, -1, options).Activate();
                 manyHooks.Add(addHook);
             }
-            
+
             for (int x = 0; x < 100; x++)
             {
                 for (int y = 1; y < 100;)
                 {
                     int expected = (x + y) + HookCount;
-                    int result   = _addFunction(x, y);
+                    int result = _addFunction(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;

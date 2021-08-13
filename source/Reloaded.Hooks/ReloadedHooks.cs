@@ -14,14 +14,21 @@ namespace Reloaded.Hooks
         public static ReloadedHooks Instance { get; } = new ReloadedHooks();
 
         public IFunction<TFunction> CreateFunction<TFunction>(long address) => new Function<TFunction>(address, this);
-        public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(function, functionAddress, minHookLength);
-        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1) => new Hook<TFunction>(targetAddress, functionAddress, minHookLength);
+        public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress) => CreateHook<TFunction>(function, functionAddress, -1);
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress) => CreateHook<TFunction>(targetAddress, functionAddress, -1);
+        public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength) => new Hook<TFunction>(function, functionAddress, minHookLength);
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength) => new Hook<TFunction>(targetAddress, functionAddress, minHookLength);
+        public IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength, FunctionHookOptions options) => new Hook<TFunction>(function, functionAddress, minHookLength, options);
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength, FunctionHookOptions options) => new Hook<TFunction>(targetAddress, functionAddress, minHookLength, options);
 
         /// <inheritdoc />
         public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength) => CreateHook<TFunction>(Instance.Utilities.GetFunctionPointer(type, methodName), functionAddress, minHookLength);
 
         /// <inheritdoc />
         public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress) => CreateHook<TFunction>(type, methodName, functionAddress, -1);
+
+        /// <inheritdoc />
+        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength, FunctionHookOptions options) => CreateHook<TFunction>(Instance.Utilities.GetFunctionPointer(type, methodName), functionAddress, minHookLength, options);
 
         public IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention) => X86.Wrapper.Create<TFunction>(functionAddress, fromConvention, FunctionAttribute.GetAttribute<TFunction>().GetEquivalent(Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>()));
 

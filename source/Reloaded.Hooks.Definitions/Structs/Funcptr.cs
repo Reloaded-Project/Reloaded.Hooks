@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Reloaded.Hooks.Definitions.Structs
 {
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable RS0016 // Not part of the declared API.
     [ExcludeFromCodeCoverage]
     public unsafe struct FuncPtr<TReturn> : IFuncPtr
     {
@@ -1928,4 +1929,5 @@ namespace Reloaded.Hooks.Definitions.Structs
     }
 
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore RS0016 // Not part of the declared API.
 }

@@ -20,6 +20,7 @@ namespace Reloaded.Hooks.Definitions.Structs
 
     };
 
+    /// <summary/>
     public static class FuncPtr
     {
         /// <summary>

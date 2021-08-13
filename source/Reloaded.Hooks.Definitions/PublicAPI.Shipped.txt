@@ -15,7 +15,6 @@ Reloaded.Hooks.Definitions.IFunction<TFunction>
 Reloaded.Hooks.Definitions.IFunction<TFunction>.Address.get -> long
 Reloaded.Hooks.Definitions.IFunction<TFunction>.GetWrapper() -> TFunction
 Reloaded.Hooks.Definitions.IFunction<TFunction>.GetWrapper(out System.IntPtr wrapperAddress) -> TFunction
-Reloaded.Hooks.Definitions.IFunction<TFunction>.Hook(TFunction function, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
 Reloaded.Hooks.Definitions.IFunction<TFunction>.Hooks.get -> Reloaded.Hooks.Definitions.IReloadedHooks
 Reloaded.Hooks.Definitions.IFunction<TFunction>.MakeAsmHook(byte[] asmCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
 Reloaded.Hooks.Definitions.IFunction<TFunction>.MakeAsmHook(string[] asmCode, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
@@ -43,8 +42,6 @@ Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long fun
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunction<TFunction>(long address) -> Reloaded.Hooks.Definitions.IFunction<TFunction>
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunctionPtr<TDelegate>(ulong functionPointer) -> Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1) -> Reloaded.Hooks.Definitions.IHook<TFunction>
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX64<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X64.IFunctionAttribute fromConvention, Reloaded.Hooks.Definitions.X64.IFunctionAttribute toConvention) -> System.IntPtr
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX86<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X86.IFunctionAttribute fromConvention) -> System.IntPtr
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX86<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X86.IFunctionAttribute fromConvention, Reloaded.Hooks.Definitions.X86.IFunctionAttribute toConvention) -> System.IntPtr
@@ -494,3 +491,32 @@ Reloaded.Hooks.Definitions.IFunction<TFunction>.HookAs<TFunctionType>(void* func
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(System.Type type, string methodName, long functionAddress) -> Reloaded.Hooks.Definitions.IHook<TFunction>
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(System.Type type, string methodName, long functionAddress, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
 Reloaded.Hooks.Definitions.IReloadedHooksUtilities.GetFunctionPointer(System.Type type, string name) -> void*
+Reloaded.Hooks.Definitions.FunctionHookOptions
+Reloaded.Hooks.Definitions.FunctionHookOptions.FunctionHookOptions() -> void
+Reloaded.Hooks.Definitions.FunctionHookOptions.PreferRelativeJump.get -> bool
+Reloaded.Hooks.Definitions.FunctionHookOptions.PreferRelativeJump.set -> void
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(System.Type type, string methodName, long functionAddress, int minHookLength, Reloaded.Hooks.Definitions.FunctionHookOptions options) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(TFunction function, long functionAddress) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength, Reloaded.Hooks.Definitions.FunctionHookOptions options) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(void* targetAddress, long functionAddress) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength, Reloaded.Hooks.Definitions.FunctionHookOptions options) -> Reloaded.Hooks.Definitions.IHook<TFunction>
+Reloaded.Hooks.Definitions.Structs.FuncPtr
+Reloaded.Hooks.Definitions.X86.CallingConventions.ClrCall = 7 -> Reloaded.Hooks.Definitions.X86.CallingConventions
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.CallingConventions callingConvention) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, int reservedStackSpace) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register sourceRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters, int reservedStackSpace) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, int reservedStackSpace) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters) -> void
+Reloaded.Hooks.Definitions.X86.ManagedFunctionAttribute.ManagedFunctionAttribute(Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] sourceRegisters, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register returnRegister, Reloaded.Hooks.Definitions.X86.FunctionAttribute.StackCleanup stackCleanup, Reloaded.Hooks.Definitions.X86.FunctionAttribute.Register[] calleeSavedRegisters, int reservedStackSpace) -> void
+static Reloaded.Hooks.Definitions.Structs.FuncPtr.GetNumberOfParameters(System.Type type) -> int
+static Reloaded.Hooks.Definitions.Structs.FuncPtr.GetNumberOfParametersWithoutFloats(System.Type type) -> int
+Reloaded.Hooks.Definitions.FunctionHookOptions.SearchInModules.get -> bool
+Reloaded.Hooks.Definitions.FunctionHookOptions.SearchInModules.set -> void
+Reloaded.Hooks.Definitions.FunctionHookOptions.VerifyJumpTargetsModule.get -> bool
+Reloaded.Hooks.Definitions.FunctionHookOptions.VerifyJumpTargetsModule.set -> void

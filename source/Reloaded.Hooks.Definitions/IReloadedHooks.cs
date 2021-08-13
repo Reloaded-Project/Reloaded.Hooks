@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.X86;
@@ -24,17 +24,48 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-
-        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength = -1);
+        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
         /// <param name="targetAddress">The address to redirect the function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        /// <param name="minHookLength">Minimum hook length.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength = -1);
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="targetAddress">The address to redirect the function to.</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="function">The function to detour the original function to.</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength, FunctionHookOptions options);
+
+        /// <summary>
+        /// Creates a hook for a function at a given address.
+        /// </summary>
+        /// <param name="targetAddress">The address to redirect the function to.</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength, FunctionHookOptions options);
 
         /// <summary>
         /// Creates a hook detouring the provided function to a given function.
@@ -43,7 +74,18 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        /// <param name="minHookLength">Minimum hook length.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength, FunctionHookOptions options);
+
+        /// <summary>
+        /// Creates a hook detouring the provided function to a given function.
+        /// Use only in .NET 5 and above with methods declared [UnmanagedCallersOnly].
+        /// </summary>
+        /// <param name="type">The type containing the method. Use "typeof()"</param>
+        /// <param name="methodName">The name of the method. Use nameof()</param>
+        /// <param name="functionAddress">The address of the function to hook.</param>
+        /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength);
 
         /// <summary>

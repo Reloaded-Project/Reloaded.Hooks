@@ -10,17 +10,35 @@ namespace Reloaded.Hooks.Definitions.X86
     /// </summary>
     public class ManagedFunctionAttribute : FunctionAttribute
     {
+        // CAREFUL EDITING THIS FILE, FOLLOW THE RULES AT https://github.com/dotnet/roslyn/blob/main/docs/Adding%20Optional%20Parameters%20in%20Public%20API.md
+
+        // BACKCOMPAT OVERLOAD -- DO NOT TOUCH
         /// <inheritdoc />
-        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup, int reservedStackSpace = 0) : base(sourceRegisters, returnRegister, stackCleanup, reservedStackSpace) { }
+        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup) : base(sourceRegisters, returnRegister, stackCleanup, 0) { }
+
+        // BACKCOMPAT OVERLOAD -- DO NOT TOUCH
+        /// <inheritdoc />
+        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters) : base(sourceRegisters, returnRegister, stackCleanup, calleeSavedRegisters, 0) { }
+
+        // BACKCOMPAT OVERLOAD -- DO NOT TOUCH
+        /// <inheritdoc />
+        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup) : base(sourceRegister, returnRegister, stackCleanup, 0) { }
+
+        // BACKCOMPAT OVERLOAD -- DO NOT TOUCH
+        /// <inheritdoc />
+        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters) : base(sourceRegister, returnRegister, stackCleanup, calleeSavedRegisters, 0) { }
 
         /// <inheritdoc />
-        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters, int reservedStackSpace = 0) : base(sourceRegisters, returnRegister, stackCleanup, calleeSavedRegisters, reservedStackSpace) { }
+        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup, int reservedStackSpace) : base(sourceRegisters, returnRegister, stackCleanup, reservedStackSpace) { }
 
         /// <inheritdoc />
-        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, int reservedStackSpace = 0) : base(sourceRegister, returnRegister, stackCleanup, reservedStackSpace) { }
+        public ManagedFunctionAttribute(Register[] sourceRegisters, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters, int reservedStackSpace) : base(sourceRegisters, returnRegister, stackCleanup, calleeSavedRegisters, reservedStackSpace) { }
 
         /// <inheritdoc />
-        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters, int reservedStackSpace = 0) : base(sourceRegister, returnRegister, stackCleanup, calleeSavedRegisters, reservedStackSpace) { }
+        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, int reservedStackSpace) : base(sourceRegister, returnRegister, stackCleanup, reservedStackSpace) { }
+
+        /// <inheritdoc />
+        public ManagedFunctionAttribute(Register sourceRegister, Register returnRegister, StackCleanup stackCleanup, Register[] calleeSavedRegisters, int reservedStackSpace) : base(sourceRegister, returnRegister, stackCleanup, calleeSavedRegisters, reservedStackSpace) { }
 
         /// <inheritdoc />
         public ManagedFunctionAttribute(CallingConventions callingConvention) : base(callingConvention) { }

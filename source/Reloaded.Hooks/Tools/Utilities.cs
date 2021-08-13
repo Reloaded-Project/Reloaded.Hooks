@@ -366,6 +366,23 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <summary>
+        /// Assembles a relative jump if the target is within range,
+        /// else assembles an absolute jump.
+        /// </summary>
+        /// <param name="source">The source address to jump from.</param>
+        /// <param name="target">The target address to jump to.</param>
+        /// <param name="is64Bit">True if 64 bit, else false.</param>
+        /// <param name="isRelative">True if the jump is relative, else false.</param>
+        public static List<byte> TryAssembleRelativeJump(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
+        {
+            var minMax = GetRelativeJumpMinMax((long)source);
+            isRelative = new AddressRange(minMax.min, minMax.max).Contains((long) target);
+            return isRelative ?
+                AssembleRelativeJump(source, target, is64Bit).ToList() :
+                AssembleAbsoluteJump(target, is64Bit).ToList();
+        }
+
+        /// <summary>
         /// Finds an existing <see cref="MemoryBuffer"/> or creates one satisfying the given size.
         /// </summary>
         /// <param name="size">The required size of buffer.</param>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X86;
@@ -44,11 +45,12 @@ namespace Reloaded.Hooks
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1)
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(function);
-            CreateHook(functionAddress, minHookLength);
+            CreateHook(functionAddress, minHookLength, options);
         }
 
         /// <summary>
@@ -57,11 +59,12 @@ namespace Reloaded.Hooks
         /// <param name="targetAddress">Address of the function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1)
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(targetAddress);
-            CreateHook(functionAddress, minHookLength);
+            CreateHook(functionAddress, minHookLength, options);
         }
 
         /// <summary>
@@ -69,8 +72,16 @@ namespace Reloaded.Hooks
         /// </summary>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        private void CreateHook(long functionAddress, int minHookLength = -1)
+        /// <param name="options">Options which control the hook generation procedure.</param>
+        private void CreateHook(long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
+            // Set options if not passed in.
+            if (options == null)
+            {
+                Misc.TryGetAttribute<TFunction, FunctionHookOptions>(out options);
+                options ??= new FunctionHookOptions();
+            }
+
             /*
                === Hook Summary ===
 
@@ -86,7 +97,9 @@ namespace Reloaded.Hooks
             */
 
             /* Create Target Convention => TFunction Wrapper. */
-            List<byte> jumpOpcodes = Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer, _is64Bit).ToList();
+            var jumpOpcodes = options.PreferRelativeJump ?
+                Utilities.TryAssembleRelativeJump((IntPtr) functionAddress, ReverseWrapper.WrapperPointer, _is64Bit, out _) :
+                Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer, _is64Bit).ToList();
 
             /* Calculate Hook Length (Unless Explicit) */
             if (minHookLength == -1)
@@ -99,7 +112,7 @@ namespace Reloaded.Hooks
             /* Get bytes from original function prologue and patch them. */
             CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, minHookLength);
 
-            var functionPatcher   = new FunctionPatcher(_is64Bit);
+            var functionPatcher   = new FunctionPatcher(_is64Bit, options);
             var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
             IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
 

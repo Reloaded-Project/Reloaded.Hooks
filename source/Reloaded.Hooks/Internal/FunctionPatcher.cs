@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Tools;
 using Reloaded.Memory.Buffers;
 using Reloaded.Memory.Buffers.Internal.Kernel32;
@@ -20,16 +21,20 @@ namespace Reloaded.Hooks.Internal
     public class FunctionPatcher
     {
         private ArchitectureMode _architecture;
+        private FunctionHookOptions _options;
+        private ProcessModule[] _modules;
 
-        public FunctionPatcher(bool is64Bit)
+        public FunctionPatcher(bool is64Bit, FunctionHookOptions options = null)
         {
             _architecture = is64Bit ? ArchitectureMode.x86_64
                                     : ArchitectureMode.x86_32;
+            _options = options ?? new FunctionHookOptions();
         }
 
-        public FunctionPatcher(ArchitectureMode mode)
+        public FunctionPatcher(ArchitectureMode mode, FunctionHookOptions options = null)
         {
             _architecture = mode;
+            _options = options ?? new FunctionHookOptions();
         }
 
         /// <summary>
@@ -94,11 +99,11 @@ namespace Reloaded.Hooks.Internal
                 Instruction nextInstruction = (x + 1 < instructions.Length) ? instructions[x + 1] : null;
                 JumpDetails jumpDetails;
 
-                if      (IsRelativeJump(instruction) && IsJumpTargetInDifferentModule((long) instruction.PC, GetRelativeJumpTarget(instruction)) )
+                if      (IsRelativeJump(instruction) && !IsJumpTargetInAModule((long) instruction.PC, GetRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRelativeJump(instruction, functionPatch);
-                else if (IsRIPRelativeJump(instruction) && IsJumpTargetInDifferentModule((long)instruction.PC, (long)GetRewriteRIPRelativeJumpTarget(instruction)) )
+                else if (IsRIPRelativeJump(instruction) && !IsJumpTargetInAModule((long)instruction.PC, (long)GetRewriteRIPRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRIPRelativeJump(instruction, functionPatch);
-                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction) && IsJumpTargetInDifferentModule((long)instruction.PC, GetPushReturnTarget(instruction)) )
+                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction) && !IsJumpTargetInAModule((long)instruction.PC, GetPushReturnTarget(instruction)) )
                     jumpDetails = RewritePushReturn(instruction, nextInstruction, functionPatch);
                 else
                 {
@@ -346,15 +351,20 @@ namespace Reloaded.Hooks.Internal
         {
             searchLength = 0;
 
-            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            // Search in modules (if necessary).
+            if (_options.SearchInModules)
             {
-                long minimumAddress = (long)module.BaseAddress;
-                long maximumAddress = (long)module.BaseAddress + module.ModuleMemorySize;
-
-                if (searchPointer >= minimumAddress && searchPointer <= maximumAddress)
+                // Cache the module list.
+                foreach (ProcessModule module in GetCachedModules())
                 {
-                    searchPointer = minimumAddress;
-                    searchLength = module.ModuleMemorySize;
+                    long minimumAddress = (long)module.BaseAddress;
+                    long maximumAddress = (long)module.BaseAddress + module.ModuleMemorySize;
+
+                    if (searchPointer >= minimumAddress && searchPointer <= maximumAddress)
+                    {
+                        searchPointer = minimumAddress;
+                        searchLength = module.ModuleMemorySize;
+                    }
                 }
             }
 
@@ -423,16 +433,33 @@ namespace Reloaded.Hooks.Internal
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsJumpTargetInDifferentModule(long source, long target)
+        private bool IsJumpTargetInAModule(long source, long target)
         {
-            foreach (ProcessModule module in Process.GetCurrentProcess().Modules)
+            if (!_options.VerifyJumpTargetsModule)
+                return false;
+
+            foreach (ProcessModule module in GetCachedModules())
             {
                 var range = new AddressRange((long) module.BaseAddress, (long) (module.BaseAddress + module.ModuleMemorySize));
                 if (range.Contains(source) && range.Contains(target))
-                    return false;
+                    return true;
             }
 
-            return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Grabs a cached copy of the module list.
+        /// </summary>
+        private ProcessModule[] GetCachedModules()
+        {
+            if (_modules != null)
+                return _modules;
+
+            var modules = Process.GetCurrentProcess().Modules;
+            _modules = new ProcessModule[modules.Count];
+            modules.CopyTo(_modules, 0);
+            return _modules;
         }
 
         /* Other Utility Functions */
