@@ -199,8 +199,19 @@ namespace Reloaded.Hooks.Internal
 
         private void PatchReturnAddresses(JumpDetails jumpDetails, FunctionPatch patch, long newAddress)
         {
-            long originalJmpTarget = jumpDetails.JumpOpcodeTarget;
-            GetSearchRange(ref originalJmpTarget, out long searchLength);
+            /*
+                On both modern Intel and AMD CPUs, the instruction decoder fetches instructions 16 bytes per cycle.
+                These 16 bytes are always aligned, so you can only fetch 16 bytes from a multiple of 16.
+                
+                Some hooks, such as Reloaded.Hooks itself exploit this for micro-optimisation.
+                Valve seems to be doing this with the Steam overlay too.
+            */
+            const int intelCodeAlignment = 16;
+            const int immediateAreaSize = intelCodeAlignment * 4; // Keep as multiple of code alignment.
+
+            long originalJmpTarget    = jumpDetails.JumpOpcodeTarget;
+            long initialSearchPointer = originalJmpTarget;
+            GetSearchRange(ref initialSearchPointer, out long searchLength);
 
             /* Get original opcodes after original JMP instruction. */
 
@@ -214,13 +225,40 @@ namespace Reloaded.Hooks.Internal
             // as such must get range of search first before creating stub.
             long maxDisplacement         = Int32.MaxValue - searchLength;
             IntPtr newOriginalPrologue   = Utilities.InsertJump(remainingInstructions, Is64Bit(), newAddress, originalJmpTarget, maxDisplacement);
+            
+            // Catch all return addresses in page range.
+            var pageRange       = new AddressRange(initialSearchPointer, initialSearchPointer + searchLength);
+            var jumpTargetRange = new AddressRange((long) startRemainingOpcodes, newAddress);
 
-            var patches = PatchJumpTargets(new AddressRange(originalJmpTarget, originalJmpTarget + searchLength),
-                                           new AddressRange((long)startRemainingOpcodes, newAddress), (long) newOriginalPrologue);
+            /*
+                When looking at a whole page range, there are occasional cases where the 
+                padding (e.g. with 00 padding) may lead to having the instruction incorrectly decoded 
+                if we start disassembling from the page.
 
-            patch.Patches.AddRange(patches);
+                Therefore we first test only the immediate area, starting from the code alignment.
+                This should fix the odd case of Steam Overlay hooks not being patched.
+
+                We only expect one jump in practically all cases so it's safe to end if a single jump is found.
+            */
+            if (TryCodeAlignmentRange(new AddressRange(originalJmpTarget / intelCodeAlignment * intelCodeAlignment, originalJmpTarget + immediateAreaSize)))
+                return;
+
+            // Search just before our jump target.
+            // This is just in case target hooking library is unaligned and our previous start address was mid instruction.
+            if (TryCodeAlignmentRange(new AddressRange((originalJmpTarget / intelCodeAlignment * intelCodeAlignment) - intelCodeAlignment, originalJmpTarget)))
+                return;
+
+            // Fall back to searching whole memory page.
+            var patchesForPage = PatchJumpTargets(pageRange, jumpTargetRange, (long)newOriginalPrologue);
+            patch.Patches.AddRange(patchesForPage);
+
+            bool TryCodeAlignmentRange(AddressRange range)
+            {
+                var patchesForImmediateArea = PatchJumpTargets(range, jumpTargetRange, (long)newOriginalPrologue);
+                patch.Patches.AddRange(patchesForImmediateArea);
+                return patchesForImmediateArea.Count > 0;
+            }
         }
-
 
         /// <summary>
         /// Creates patch for a relative jump, if necessary.
