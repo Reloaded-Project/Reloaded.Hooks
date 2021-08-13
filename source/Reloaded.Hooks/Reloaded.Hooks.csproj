@@ -16,7 +16,7 @@
     <Version>3.2.3</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>Icon.png</PackageIcon>
-
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	<LangVersion>preview</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>1701;1702;1591</NoWarn>
