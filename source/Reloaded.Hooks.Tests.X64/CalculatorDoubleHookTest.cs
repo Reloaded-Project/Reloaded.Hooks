@@ -28,6 +28,9 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<NativeCalculator.DivideFunction>     _divideHook02;
         private static IHook<NativeCalculator.MultiplyFunction>   _multiplyHook02;
 
+        private static IHook<NativeCalculator.CalculatorFunction> _addFnPtrHook01;
+        private static IHook<NativeCalculator.CalculatorFunction> _addFnPtrHook02;
+
         private static IHook<NativeCalculator.AddFunction> _addWithBranchHook01;
         private static IHook<NativeCalculator.AddFunction> _addWithBranchHook02;
 
@@ -145,5 +148,32 @@ namespace Reloaded.Hooks.Tests.X64
                 Assert.Equal(expected, result);
             }
         }
+
+#if FEATURE_UNMANAGED_CALLERS_ONLY
+        [Fact]
+        public void TestHookAddFnPtr()
+        {
+            _addFnPtrHook01 = ReloadedHooks.Instance.CreateHook<NativeCalculator.CalculatorFunction>(typeof(CalculatorDoubleHookTest), nameof(AddFnPtrHook01), (long)_nativeCalculator.Add).Activate();
+            _addFnPtrHook02 = ReloadedHooks.Instance.CreateHook<NativeCalculator.CalculatorFunction>(typeof(CalculatorDoubleHookTest), nameof(AddFnPtrHook02), (long)_nativeCalculator.Add).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = ((x + y) + 1) + 1;
+                    int result = _addFunction(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+        [UnmanagedCallersOnly()]
+        static unsafe int AddFnPtrHook01(int a, int b) => _addFnPtrHook01.OriginalFunction.Value.Invoke(a, b) + 1;
+
+        [UnmanagedCallersOnly()]
+        static unsafe int AddFnPtrHook02(int a, int b) => _addFnPtrHook02.OriginalFunction.Value.Invoke(a, b) + 1;
+#endif
     }
 }
