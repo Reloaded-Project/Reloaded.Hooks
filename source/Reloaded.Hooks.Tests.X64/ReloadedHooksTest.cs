@@ -20,6 +20,7 @@ namespace Reloaded.Hooks.Tests.X64
         private static IHook<DivideFunction> _divideHook;
         private static IHook<MultiplyFunction> _multiplyHook;
 
+        private IFunction<CalculatorFunction> _addFunctionPtr;
         private IFunction<AddFunction> _addFunction;
         private IFunction<SubtractFunction> _subtractFunction;
         private IFunction<DivideFunction> _divideFunction;
@@ -32,6 +33,7 @@ namespace Reloaded.Hooks.Tests.X64
             _nativeCalculator = new NativeCalculator();
             _hooks = new ReloadedHooks();
 
+            _addFunctionPtr = _hooks.CreateFunction<CalculatorFunction>((long)_nativeCalculator.Add);
             _addFunction = _hooks.CreateFunction<AddFunction>((long)_nativeCalculator.Add);
             _subtractFunction = _hooks.CreateFunction<SubtractFunction>((long)_nativeCalculator.Subtract);
             _divideFunction = _hooks.CreateFunction<DivideFunction>((long)_nativeCalculator.Divide);
@@ -115,7 +117,7 @@ namespace Reloaded.Hooks.Tests.X64
         unsafe static int HookAsfunction(int a, int b) { return _addHookPtr.OriginalFunction.Value.Invoke(a, b) + 1; }
 
         [Fact]
-        public void TestHookAs()
+        public unsafe void TestHookAs()
         {
             _addHookPtr = _addFunction.HookAs<CalculatorFunction>(typeof(ReloadedHooksTest), nameof(HookAsfunction)).Activate();
 
@@ -124,7 +126,7 @@ namespace Reloaded.Hooks.Tests.X64
                 for (int y = 1; y < 100;)
                 {
                     int expected = (x + y) + 1;
-                    int result = _addFunction.GetWrapper()(x, y);
+                    int result = _addFunctionPtr.GetWrapper().Value.Invoke(x, y);
 
                     Assert.Equal(expected, result);
                     y += 2;

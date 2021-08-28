@@ -18,6 +18,7 @@ namespace Reloaded.Hooks
         /// <inheritdoc />
         public IReloadedHooks Hooks { get; private set; }
 
+        private bool _wrapperCreated = false;
         private TFunction _wrapper;
         private IntPtr _wrapperAddress;
 
@@ -65,8 +66,11 @@ namespace Reloaded.Hooks
         /// <inheritdoc />
         public TFunction GetWrapper()
         {
-            if (_wrapper == null) 
+            if (!_wrapperCreated)
+            {
                 _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
+                _wrapperCreated = true;
+            }
 
             return _wrapper;
         }
@@ -74,8 +78,11 @@ namespace Reloaded.Hooks
         /// <inheritdoc />
         public TFunction GetWrapper(out IntPtr wrapperAddress)
         {
-            if (_wrapper == null)
+            if (!_wrapperCreated)
+            {
                 _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
+                _wrapperCreated = true;
+            }
 
             wrapperAddress = _wrapperAddress;
             return _wrapper;
