@@ -45,7 +45,7 @@ namespace Reloaded.Hooks
         public unsafe IHook<TFunction> Hook(void* function) => Hook(function, -1);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunction>(type, methodName, minHookLength);
+        public unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunction>(type, methodName, Address, minHookLength);
 
         /// <inheritdoc />
         public unsafe IHook<TFunction> Hook(Type type, string methodName) => Hook(type, methodName, -1);
