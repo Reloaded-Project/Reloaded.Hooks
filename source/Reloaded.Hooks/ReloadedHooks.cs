@@ -72,9 +72,20 @@ namespace Reloaded.Hooks
         public IVirtualFunctionTable VirtualFunctionTableFromObject(IntPtr objectAddress, int numberOfMethods) => VirtualFunctionTable.FromObject(objectAddress, numberOfMethods);
         public IVirtualFunctionTable VirtualFunctionTableFromAddress(IntPtr tableAddress, int numberOfMethods) => VirtualFunctionTable.FromAddress(tableAddress, numberOfMethods);
         public IFunctionPtr<TDelegate> CreateFunctionPtr<TDelegate>(ulong functionPointer) where TDelegate : Delegate => new FunctionPtr<TDelegate>(functionPointer);
+        public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
 
-        public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
-        public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
+        public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
+
+        public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour) => CreateAsmHook(asmCode, functionAddress, behaviour, -1);
+
+        public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour) => CreateAsmHook(asmCode, functionAddress, behaviour, -1);
+
+        public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
+
+        public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength) => new AsmHook(asmCode, functionAddress, behaviour, hookLength);
+        public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookOptions options) => new AsmHook(asmCode, functionAddress, options);
+
+        public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookOptions options) => new AsmHook(asmCode, functionAddress, options);
 
         public IReloadedHooksUtilities Utilities { get; } = ReloadedHooksUtilities.Instance;
     }

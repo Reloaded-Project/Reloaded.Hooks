@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Tests.Shared;
@@ -33,10 +34,15 @@ namespace Reloaded.Hooks.Tests.X64
         }
 
         [Fact]
-        public void TestHookAddNoOriginal()
+        public void TestHookAddNoOriginal() => TestHookAddNoOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.DoNotExecuteOriginal });
+
+        [Fact]
+        public void TestHookAddNoOriginalRelative() => TestHookAddNoOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.DoNotExecuteOriginal, PreferRelativeJump = true });
+
+        private void TestHookAddNoOriginal_Internal(AsmHookOptions options)
         {
             int wordSize = IntPtr.Size;
-            string[] addFunction = 
+            string[] addFunction =
             {
                 $"{Macros._use32}",
                 $"push {Macros._ebp}",
@@ -47,32 +53,7 @@ namespace Reloaded.Hooks.Tests.X64
                 $"add {Macros._eax}, 1",                         // Left Parameter
             };
 
-            _addNoOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long) _nativeCalculator.Add, AsmHookBehaviour.DoNotExecuteOriginal).Activate();
-
-            for (int x = 0; x < 100; x++)
-            {
-                for (int y = 1; y < 100;)
-                {
-                    int expected = (x + y) + 1;
-                    int result   = _addFunction(x, y);
-
-                    Assert.Equal(expected, result);
-                    y += 2;
-                }
-            }
-        }
-
-        [Fact]
-        public void TestHookAddBeforeOriginal()
-        {
-            int wordSize = IntPtr.Size;
-            string[] addFunction =
-            {
-                $"{Macros._use32}",
-                $"add [{Macros._esp} + {wordSize * 1}], byte 1",      // Left Parameter
-            };
-
-            _addBeforeOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, AsmHookBehaviour.ExecuteFirst).Activate();
+            _addNoOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, options).Activate();
 
             for (int x = 0; x < 100; x++)
             {
@@ -88,7 +69,42 @@ namespace Reloaded.Hooks.Tests.X64
         }
 
         [Fact]
-        public void TestHookAddAfterOriginal()
+        public void TestHookAddBeforeOriginal() => TestHookAddBeforeOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.ExecuteFirst });
+
+        [Fact]
+        public void TestHookAddBeforeOriginalRelative() => TestHookAddBeforeOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.ExecuteFirst, PreferRelativeJump = true });
+
+        private void TestHookAddBeforeOriginal_Internal(AsmHookOptions options)
+        {
+            int wordSize = IntPtr.Size;
+            string[] addFunction =
+            {
+                $"{Macros._use32}",
+                $"add [{Macros._esp} + {wordSize * 1}], byte 1",      // Left Parameter
+            };
+
+            _addBeforeOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, options).Activate();
+
+            for (int x = 0; x < 100; x++)
+            {
+                for (int y = 1; y < 100;)
+                {
+                    int expected = (x + y) + 1;
+                    int result = _addFunction(x, y);
+
+                    Assert.Equal(expected, result);
+                    y += 2;
+                }
+            }
+        }
+
+        [Fact]
+        public void TestHookAddAfterOriginal() => TestHookAddAfterOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.ExecuteAfter });
+
+        [Fact]
+        public void TestHookAddAfterOriginalRelative() => TestHookAddAfterOriginal_Internal(new AsmHookOptions() { Behaviour = AsmHookBehaviour.ExecuteAfter, PreferRelativeJump = true });
+
+        private void TestHookAddAfterOriginal_Internal(AsmHookOptions options)
         {
             string[] addFunction =
             {
@@ -96,7 +112,7 @@ namespace Reloaded.Hooks.Tests.X64
                 $"add {Macros._eax}, 1", // Left Parameter - Should have already been copied from stack.
             };
 
-            _addAfterOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, AsmHookBehaviour.ExecuteAfter).Activate();
+            _addAfterOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, options).Activate();
 
             for (int x = 0; x < 100; x++)
             {

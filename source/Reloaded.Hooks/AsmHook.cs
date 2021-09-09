@@ -18,7 +18,9 @@ namespace Reloaded.Hooks
     public unsafe class AsmHook : IAsmHook
     {
         private static Memory.Sources.Memory _memory = CurrentProcess;
-        private const int MaxJmpSize = 7; // Maximum size of jmp opcode.
+
+        private const int MaxRelJmpSize = 5; // Maximum size of jmp opcode.
+        private const int MaxAbsJmpSize = 7; // Maximum size of jmp opcode.
 
         /// <inheritdoc />
         public bool IsEnabled { get; private set; } = false;
@@ -46,7 +48,8 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public AsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) : this(Utilities.Assembler.Assemble(asmCode), functionAddress, behaviour, hookLength)
+        public AsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) 
+            : this(Utilities.Assembler.Assemble(asmCode), functionAddress, new AsmHookOptions() { Behaviour = behaviour, hookLength = hookLength })
         { }
 
         /// <summary>
@@ -56,8 +59,32 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public AsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) : this()
+        public AsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour = AsmHookBehaviour.ExecuteFirst, int hookLength = -1) : this(asmCode, functionAddress,
+                new AsmHookOptions() { Behaviour = behaviour, hookLength = hookLength })
+        { }
+
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">
+        ///     The assembly code to execute, in FASM syntax.
+        ///     (Should start with use32/use64)
+        /// </param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        /// <param name="options">The options used for creating the assembly hook.</param>
+        public AsmHook(string[] asmCode, long functionAddress, AsmHookOptions options = default) : this(Utilities.Assembler.Assemble(asmCode), functionAddress, options)
+        { }
+
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">The assembly code to execute, precompiled.</param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        /// <param name="options">The options used for creating the assembly hook.</param>
+        public AsmHook(byte[] asmCode, long functionAddress, AsmHookOptions options = default) : this()
         {
+            options ??= new AsmHookOptions();
+
             /*
                === Hook Summary ===
 
@@ -77,11 +104,11 @@ namespace Reloaded.Hooks
             */
 
 
-            if (hookLength == -1)
-                hookLength = Utilities.GetHookLength((IntPtr)functionAddress, MaxJmpSize, _is64Bit);
+            if (options.hookLength == -1)
+                options.hookLength = Utilities.GetHookLength((IntPtr)functionAddress, options.MaxOpcodeSize, _is64Bit);
 
-            CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, hookLength);
-            long jumpBackAddress = functionAddress + hookLength;
+            CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, options.hookLength);
+            long jumpBackAddress = functionAddress + options.hookLength;
 
             /* Size calculations for buffer, must have sufficient space. */
 
@@ -97,12 +124,12 @@ namespace Reloaded.Hooks
             int pointerSize            = (_is64Bit ? 8 : 4);
 
             int pointerRequiredBytes   = pointerSize * 2; // 2 calls to AssembleAbsoluteJump
-            int stubEntrySize          = MaxJmpSize;
-            int stubHookSize           = asmCode.Length + hookLength + MaxJmpSize;
-            int stubOriginalSize       = hookLength + MaxJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
+            int stubEntrySize          = MaxAbsJmpSize;
+            int stubHookSize           = asmCode.Length + options.hookLength + MaxAbsJmpSize;
+            int stubOriginalSize       = options.hookLength + MaxAbsJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
 
             int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes;
-            var minMax                 = Utilities.GetRelativeJumpMinMax(functionAddress);
+            var minMax                 = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - requiredSizeOfBuffer);
             var buffer                 = Utilities.FindOrCreateBufferInRange(requiredSizeOfBuffer, minMax.min, minMax.max);
 
             buffer.ExecuteWithLock(() =>
@@ -111,14 +138,16 @@ namespace Reloaded.Hooks
 
                 // Make Hook and Original Stub
                 buffer.SetAlignment(codeAlignment);
-                IntPtr hookStubAddr     = MakeHookStub(buffer, patcher, asmCode, originalFunction, jumpBackAddress, behaviour);
+                IntPtr hookStubAddr     = MakeHookStub(buffer, patcher, asmCode, originalFunction, jumpBackAddress, options.Behaviour);
 
                 buffer.SetAlignment(codeAlignment);
                 IntPtr originalStubAddr = MakeOriginalStub(buffer, patcher, originalFunction, jumpBackAddress);
 
                 // Make Jump to Entry, Original Stub
-                byte[] jmpToOriginal = Utilities.AssembleAbsoluteJump(originalStubAddr, _is64Bit);
-                byte[] jmpToHook     = Utilities.AssembleAbsoluteJump(hookStubAddr, _is64Bit);
+                buffer.SetAlignment(codeAlignment);
+                var currAddress = buffer.Properties.WritePointer;
+                byte[] jmpToOriginal = Utilities.AssembleRelativeJump(currAddress, originalStubAddr, _is64Bit);
+                byte[] jmpToHook     = Utilities.AssembleRelativeJump(currAddress, hookStubAddr, _is64Bit);
 
                 // Make Entry Stub
                 IntPtr entryStubAddr = buffer.Add(jmpToHook, codeAlignment);
@@ -128,8 +157,8 @@ namespace Reloaded.Hooks
                 _enableHookPatch  = new Patch(entryStubAddr, jmpToHook);
 
                 // Make Hook Enabler
-                var jumpOpcodes = Utilities.AssembleAbsoluteJump(entryStubAddr, _is64Bit).ToList();
-                Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, hookLength);
+                var jumpOpcodes = options.PreferRelativeJump ? Utilities.AssembleRelativeJump((IntPtr) functionAddress, entryStubAddr, _is64Bit).ToList() : Utilities.AssembleAbsoluteJump(entryStubAddr, _is64Bit).ToList();
+                Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, options.hookLength);
                 _activateHookPatch = new Patch((IntPtr) functionAddress, jumpOpcodes.ToArray());
                 return true;
             });
@@ -138,7 +167,6 @@ namespace Reloaded.Hooks
         private IntPtr MakeHookStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] asmCode, byte[] originalCode, long jumpBackAddress, AsmHookBehaviour behaviour)
         {
             var bytes        = new List<byte>(asmCode.Length + originalCode.Length);
-            var jmpBackBytes = Utilities.AssembleAbsoluteJump((IntPtr) jumpBackAddress, _is64Bit);
            
             switch (behaviour)
             {
@@ -160,6 +188,7 @@ namespace Reloaded.Hooks
                     throw new ArgumentOutOfRangeException(nameof(behaviour), behaviour, null);
             }
 
+            var jmpBackBytes = Utilities.AssembleRelativeJump(buffer.Properties.WritePointer + bytes.Count, (IntPtr)jumpBackAddress, _is64Bit);
             bytes.AddRange(jmpBackBytes);
             return buffer.Add(bytes.ToArray(), 1); // Buffer is pre-aligned
         }
@@ -167,9 +196,9 @@ namespace Reloaded.Hooks
         private IntPtr MakeOriginalStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] originalCode, long jumpBackAddress)
         {
             var bytes         = new List<byte>(originalCode.Length);
-            var jmpBackBytes  = Utilities.AssembleAbsoluteJump((IntPtr)jumpBackAddress, _is64Bit);
-
             bytes.AddRange(patcher.EncodeForNewAddress(buffer.Properties.WritePointer));
+
+            var jmpBackBytes = Utilities.AssembleRelativeJump(buffer.Properties.WritePointer + bytes.Count, (IntPtr)jumpBackAddress, _is64Bit);
             bytes.AddRange(jmpBackBytes);
             return buffer.Add(bytes.ToArray(), 1); // Buffer is pre-aligned
         }

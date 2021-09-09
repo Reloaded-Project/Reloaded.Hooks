@@ -38,8 +38,6 @@ Reloaded.Hooks.Definitions.IHook<TFunction>.ReverseWrapper.get -> Reloaded.Hooks
 Reloaded.Hooks.Definitions.Internal.Misc
 Reloaded.Hooks.Definitions.Internal.Misc.Misc() -> void
 Reloaded.Hooks.Definitions.IReloadedHooks
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour = Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour.ExecuteFirst, int hookLength = -1) -> Reloaded.Hooks.Definitions.IAsmHook
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunction<TFunction>(long address) -> Reloaded.Hooks.Definitions.IFunction<TFunction>
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateFunctionPtr<TDelegate>(ulong functionPointer) -> Reloaded.Hooks.Definitions.IFunctionPtr<TDelegate>
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateNativeWrapperX64<TFunction>(System.IntPtr functionAddress, Reloaded.Hooks.Definitions.X64.IFunctionAttribute fromConvention, Reloaded.Hooks.Definitions.X64.IFunctionAttribute toConvention) -> System.IntPtr
@@ -520,3 +518,21 @@ Reloaded.Hooks.Definitions.FunctionHookOptions.SearchInModules.get -> bool
 Reloaded.Hooks.Definitions.FunctionHookOptions.SearchInModules.set -> void
 Reloaded.Hooks.Definitions.FunctionHookOptions.VerifyJumpTargetsModule.get -> bool
 Reloaded.Hooks.Definitions.FunctionHookOptions.VerifyJumpTargetsModule.set -> void
+Reloaded.Hooks.Definitions.AsmHookOptions
+Reloaded.Hooks.Definitions.AsmHookOptions.PreferRelativeJump.get -> bool
+Reloaded.Hooks.Definitions.AsmHookOptions.PreferRelativeJump.set -> void
+Reloaded.Hooks.Definitions.AsmHookOptions.MaxOpcodeSize.get -> int
+Reloaded.Hooks.Definitions.AsmHookOptions.MaxOpcodeSize.set -> void
+Reloaded.Hooks.Definitions.AsmHookOptions.AsmHookOptions() -> void
+Reloaded.Hooks.Definitions.AsmHookOptions.Behaviour.get -> Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour
+Reloaded.Hooks.Definitions.AsmHookOptions.Behaviour.set -> void
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour, int hookLength) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour, int hookLength) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.AsmHookOptions.hookLength.get -> int
+Reloaded.Hooks.Definitions.AsmHookOptions.hookLength.set -> void
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.AsmHookOptions options) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.AsmHookOptions options) -> Reloaded.Hooks.Definitions.IAsmHook
