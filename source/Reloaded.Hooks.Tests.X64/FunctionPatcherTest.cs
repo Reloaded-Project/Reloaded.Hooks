@@ -48,7 +48,7 @@ namespace Reloaded.Hooks.Tests.X64
         /* Build Jump methods for Patching */
         private void BuildRelativeJmp()
         {
-            var minMax = Utilities.GetRelativeJumpMinMax((long) _dummyFunctions.ReturnFive);
+            var minMax = Utilities.GetRelativeJumpMinMax((long) _dummyFunctions.ReturnFive, Int32.MaxValue - 32);
             var buffer = Utilities.FindOrCreateBufferInRange(32, minMax.min, minMax.max);
 
             long jmpSource = (long)buffer.Properties.WritePointer;

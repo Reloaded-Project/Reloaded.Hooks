@@ -82,8 +82,9 @@ namespace Reloaded.Hooks.X86
             // 256 Bytes should allow for around 60-70 parameters in worst case scenario.
             // If you need more than that, then... I don't know what you're doing with your life.
             // Please do a pull request though and we can stick some code to predict the size.
-            var minMax = Utilities.GetRelativeJumpMinMax((long) functionAddress);
-            var buffer = Utilities.FindOrCreateBufferInRange(256, minMax.min, minMax.max);
+            const int MaxFunctionSize = 256;
+            var minMax = Utilities.GetRelativeJumpMinMax((long) functionAddress, Int32.MaxValue - MaxFunctionSize);
+            var buffer = Utilities.FindOrCreateBufferInRange(MaxFunctionSize, minMax.min, minMax.max);
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
