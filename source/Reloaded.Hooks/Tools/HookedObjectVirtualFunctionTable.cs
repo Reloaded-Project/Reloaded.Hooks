@@ -184,9 +184,7 @@ namespace Reloaded.Hooks.Tools
             _newVTableForObject = new IntPtr[table.Count];
             _hooks = new List<IHook>();
             for (int i = 0; i < table.Count; i++)
-            {
                 _newVTableForObject[i] = table[i].FunctionPointer;
-            }
 
             _pinnedNewVTableForObject = GCHandle.Alloc(_newVTableForObject, GCHandleType.Pinned);
             CurrentProcess.SafeWrite(objectAddress, _pinnedNewVTableForObject.AddrOfPinnedObject());

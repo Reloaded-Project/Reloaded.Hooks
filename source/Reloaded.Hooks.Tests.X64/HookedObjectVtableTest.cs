@@ -57,14 +57,16 @@ namespace Reloaded.Hooks.Tests.X64
             // this serves as a fake object, which we can hook
             IntPtr vTableOriginal = _nativeCalculator.VTable;
             IntPtr fakeObject = new IntPtr(&vTableOriginal);
+
             // we hook the vtable pointer(fakeObject), this changes the vtable pointer but does not hook any functions yet
             var vTableHook = HookedObjectVirtualFunctionTable.HookObject(fakeObject, Enum.GetNames(typeof(NativeCalculator.VTableFunctions)).Length); ;
-            
+         
             // Setup calling functions.
             var addFunction = vTableHook.CreateWrapperFunction<NativeCalculator.AddFunction>((int) NativeCalculator.VTableFunctions.Add);
             var subtractFunction = vTableHook.CreateWrapperFunction<NativeCalculator.SubtractFunction>((int) NativeCalculator.VTableFunctions.Subtract);
             var multiplyFunction = vTableHook.CreateWrapperFunction<NativeCalculator.MultiplyFunction>((int) NativeCalculator.VTableFunctions.Multiply);
             var divideFunction = vTableHook.CreateWrapperFunction<NativeCalculator.DivideFunction>((int) NativeCalculator.VTableFunctions.Divide);
+
             // This test only tests if calling functions using HookedObjectVirtualFunctionTable still works
             // We need another test to check if -others- can still call the vtable functions without prolems
             // This is done in TestExternalVTableCallAfterVTablePointerIsHooked and TestExternalVTableCallAfterFunctionHook
@@ -86,6 +88,7 @@ namespace Reloaded.Hooks.Tests.X64
                 }
             }
         }
+
         [Fact]
         public unsafe void TestExternalVTableCallAfterVTablePointerIsHooked()
         {
@@ -125,6 +128,7 @@ namespace Reloaded.Hooks.Tests.X64
                 }
             }
         }
+
         [Fact]
         public unsafe void TestExternalVTableCallAfterFunctionHook()
         {
@@ -139,10 +143,10 @@ namespace Reloaded.Hooks.Tests.X64
             // this serves as a fake object, which we can hook
             IntPtr vTableOriginal = _nativeCalculator.VTable;
             IntPtr fakeObject = new IntPtr(&vTableOriginal);
+
             // We hook the vtable pointer(fakeObject), this changes the vtable pointer but does not hook any functions yet
             // Checking if this corrupts anything is done in TestVTableCallsAfterHookingVTablePointer
             var vTableHook = HookedObjectVirtualFunctionTable.HookObject(fakeObject, Enum.GetNames(typeof(NativeCalculator.VTableFunctions)).Length);;
-           
             _addHook = vTableHook.CreateFunctionHook<NativeCalculator.AddFunction>((int)NativeCalculator.VTableFunctions.Add, addHook).Activate();
             _subHook = vTableHook.CreateFunctionHook<NativeCalculator.SubtractFunction>((int)NativeCalculator.VTableFunctions.Subtract, subHook).Activate();
             _multiplyHook = vTableHook.CreateFunctionHook<NativeCalculator.MultiplyFunction>((int)NativeCalculator.VTableFunctions.Multiply, mulHook).Activate();
@@ -150,12 +154,12 @@ namespace Reloaded.Hooks.Tests.X64
 
             // We create a VirtualFunctionTable from our fakeObject
             // Calling the functions should call our hooks
-
             var vTable = VirtualFunctionTable.FromObject(fakeObject, Enum.GetNames(typeof(NativeCalculator.VTableFunctions)).Length);
             var addFunction = vTable.CreateWrapperFunction<NativeCalculator.AddFunction>((int)NativeCalculator.VTableFunctions.Add);
             var subtractFunction = vTable.CreateWrapperFunction<NativeCalculator.SubtractFunction>((int)NativeCalculator.VTableFunctions.Subtract);
             var multiplyFunction = vTable.CreateWrapperFunction<NativeCalculator.MultiplyFunction>((int)NativeCalculator.VTableFunctions.Multiply);
             var divideFunction = vTable.CreateWrapperFunction<NativeCalculator.DivideFunction>((int)NativeCalculator.VTableFunctions.Divide);
+
             // Test Calling after we hook the vtable function pointers using an 'external' class (VirtualFunctionTable)
             // This should not modify any results
             for (int x = 1; x < 100; x++)
@@ -190,8 +194,6 @@ namespace Reloaded.Hooks.Tests.X64
             IntPtr vTableOriginal = _nativeCalculator.VTable;
             IntPtr fakeObject = new IntPtr(&vTableOriginal);
 
-            
-
             // We hook the vtable pointer(fakeObject), this changes the vtable pointer but does not hook any functions yet
             // Checking if this corrupts anything is done in TestVTableCallsAfterHookingVTablePointer
             var vTableHook = HookedObjectVirtualFunctionTable.HookObject(fakeObject, Enum.GetNames(typeof(NativeCalculator.VTableFunctions)).Length); ;
@@ -205,11 +207,11 @@ namespace Reloaded.Hooks.Tests.X64
             // As the vtable itself is never changed, this should not hook any functions
             var vTable = VirtualFunctionTable.FromAddress(_nativeCalculator.VTable, Enum.GetNames(typeof(NativeCalculator.VTableFunctions)).Length);
 
-
             var addFunction = vTable.CreateWrapperFunction<NativeCalculator.AddFunction>((int)NativeCalculator.VTableFunctions.Add);
             var subtractFunction = vTable.CreateWrapperFunction<NativeCalculator.SubtractFunction>((int)NativeCalculator.VTableFunctions.Subtract);
             var multiplyFunction = vTable.CreateWrapperFunction<NativeCalculator.MultiplyFunction>((int)NativeCalculator.VTableFunctions.Multiply);
             var divideFunction = vTable.CreateWrapperFunction<NativeCalculator.DivideFunction>((int)NativeCalculator.VTableFunctions.Divide);
+
             // Test Calling after we hook the vtable function pointers using an 'external' class (VirtualFunctionTable)
             // This should not modify any results
             for (int x = 1; x < 100; x++)
@@ -228,6 +230,5 @@ namespace Reloaded.Hooks.Tests.X64
                 }
             }
         }
-
     }
 }
