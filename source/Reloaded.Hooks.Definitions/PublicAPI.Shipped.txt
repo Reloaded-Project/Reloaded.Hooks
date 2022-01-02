@@ -536,3 +536,4 @@ Reloaded.Hooks.Definitions.AsmHookOptions.hookLength.get -> int
 Reloaded.Hooks.Definitions.AsmHookOptions.hookLength.set -> void
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(byte[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.AsmHookOptions options) -> Reloaded.Hooks.Definitions.IAsmHook
 Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string[] asmCode, long functionAddress, Reloaded.Hooks.Definitions.AsmHookOptions options) -> Reloaded.Hooks.Definitions.IAsmHook
+Reloaded.Hooks.Definitions.IReloadedHooks.HookedVirtualFunctionTableFromObject(System.IntPtr objectAddress, int numberOfMethods) -> Reloaded.Hooks.Definitions.IVirtualFunctionTable

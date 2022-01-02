@@ -69,8 +69,11 @@ namespace Reloaded.Hooks
             return new X64.ReverseWrapper<TFunction>(function);
         }
 
+        public IVirtualFunctionTable HookedVirtualFunctionTableFromObject(IntPtr objectAddress, int numberOfMethods) => HookedObjectVirtualFunctionTable.FromObject(objectAddress, numberOfMethods);
+        
         public IVirtualFunctionTable VirtualFunctionTableFromObject(IntPtr objectAddress, int numberOfMethods) => VirtualFunctionTable.FromObject(objectAddress, numberOfMethods);
         public IVirtualFunctionTable VirtualFunctionTableFromAddress(IntPtr tableAddress, int numberOfMethods) => VirtualFunctionTable.FromAddress(tableAddress, numberOfMethods);
+
         public IFunctionPtr<TDelegate> CreateFunctionPtr<TDelegate>(ulong functionPointer) where TDelegate : Delegate => new FunctionPtr<TDelegate>(functionPointer);
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
 
