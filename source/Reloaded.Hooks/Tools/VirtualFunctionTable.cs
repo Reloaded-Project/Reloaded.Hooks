@@ -60,7 +60,7 @@ namespace Reloaded.Hooks.Tools
         public static VirtualFunctionTable FromAddress(IntPtr tableAddress, int numberOfMethods)
         {
             VirtualFunctionTable table = new VirtualFunctionTable();
-            table.TableEntries = GetAddresses(tableAddress, numberOfMethods);
+            table.TableEntries = VirtualFunctionTableHelpers.GetAddresses(tableAddress, numberOfMethods);
             return table;
         }
 
@@ -90,28 +90,40 @@ namespace Reloaded.Hooks.Tools
         private static List<TableEntry> GetObjectVTableAddresses(IntPtr objectAddress, int numberOfMethods)
         {
             CurrentProcess.SafeRead(objectAddress, out IntPtr virtualFunctionTableAddress);
-            return GetAddresses(virtualFunctionTableAddress, numberOfMethods);
+            return VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
         }
+    }
+}
 
-        private static List<TableEntry> GetAddresses(IntPtr tablePointer, int numberOfMethods)
+/// <summary>
+/// Helper classes for dealing with virtual function tables.
+/// </summary>
+public static class VirtualFunctionTableHelpers
+{
+    /// <summary>
+    /// Gets all addresses belonging to a virtual function table.
+    /// </summary>
+    /// <param name="tablePointer">Pointer to the virtual table itself.</param>
+    /// <param name="numberOfMethods">The number of methods stored in the virtual table.</param>
+    public static List<TableEntry> GetAddresses(IntPtr tablePointer, int numberOfMethods)
+    {
+        // Stores the addresses of the virtual function table.
+        var tablePointers = new List<TableEntry>();
+
+        // Append the table pointers onto the tablePointers list.
+        // Using the size of the IntPtr allows for both x64 and x86 support.
+        for (int i = 0; i < numberOfMethods; i++)
         {
-            // Stores the addresses of the virtual function table.
-            List<TableEntry> tablePointers = new List<TableEntry>();
+            var targetAddress = tablePointer + (IntPtr.Size * i);
 
-            // Append the table pointers onto the tablePointers list.
-            // Using the size of the IntPtr allows for both x64 and x86 support.
-            for (int i = 0; i < numberOfMethods; i++)
+            CurrentProcess.SafeRead(targetAddress, out IntPtr functionPtr);
+            tablePointers.Add(new TableEntry
             {
-                IntPtr targetAddress = tablePointer + (IntPtr.Size * i);
-
-                CurrentProcess.SafeRead(targetAddress, out IntPtr functionPtr);
-                tablePointers.Add(new TableEntry {
-                    EntryAddress = targetAddress,
-                    FunctionPointer = functionPtr
-                });
-            }
-
-            return tablePointers;
+                EntryAddress = targetAddress,
+                FunctionPointer = functionPtr
+            });
         }
+
+        return tablePointers;
     }
 }
