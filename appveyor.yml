@@ -2,7 +2,7 @@ version: CI-{build}
 branches:
   only:
   - master
-image: Visual Studio 2019 Preview
+image: Visual Studio 2022
 configuration:
 - Release
 platform: Any CPU
@@ -36,10 +36,16 @@ build:
   verbosity: minimal
 test_script:
 - ps: |-
-    choco install opencover.portable
-    choco install codecov
-    OpenCover.Console.exe -register -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:"test ./source/Reloaded.Hooks.Tests.X64/Reloaded.Hooks.Tests.X64.csproj /p:AllowUnsafeBlocks=true" -excludebyattribute:*.ExcludeFromCodeCoverage* -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*" -output:"./Coverage.xml"
-    OpenCover.Console.exe -register -target:"C:/Program Files/dotnet/dotnet.exe" -targetargs:"test ./source/Reloaded.Hooks.Tests.X86/Reloaded.Hooks.Tests.X86.csproj /p:AllowUnsafeBlocks=true" -excludebyattribute:*.ExcludeFromCodeCoverage* -filter:"+[Reloaded.Hooks*]* -[Reloaded.Hooks.Tests*]*" -output:"./Coverage.xml" -mergeoutput
+    dotnet tool install --global altcover.global --version 8.2.833
+    $ipmo = (AltCover ImportModule | Out-String)
+    Invoke-Expression $ipmo
+    
+    dotnet test -f net6.0 .\source\Reloaded.Hooks.Tests.X86\Reloaded.Hooks.Tests.X86.csproj /p:AltCover=true /p:CopyLocalLockFileAssemblies="true" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverageAttribute" /p:AltCoverAssemblyExcludeFilter="Reloaded.Hooks.Tests.X86|Reloaded.Hooks.Tests.X64|Reloaded.Hooks.Tests.Shared|xunit\.*" /p:AltCoverTypeFilter="xunit\.*|AltCover\.*|Reloaded\.Assembler.*" /p:AltCoverReport="../../coverage-86.xml"
+    
+    dotnet test -f net6.0 .\source\Reloaded.Hooks.Tests.X64\Reloaded.Hooks.Tests.X64.csproj /p:AltCover=true /p:CopyLocalLockFileAssemblies="true" /p:AltCoverAttributeFilter="ExcludeFromCodeCoverageAttribute" /p:AltCoverAssemblyExcludeFilter="Reloaded.Hooks.Tests.X86|Reloaded.Hooks.Tests.X64|Reloaded.Hooks.Tests.Shared|xunit\.*" /p:AltCoverTypeFilter="xunit\.*|AltCover\.*|Reloaded\.Assembler.*" /p:AltCoverReport="../../coverage-64.xml"
+    
+    Get-ChildItem coverage-* | Merge-OpenCover -OutputFile "Coverage.xml" | Out-Null
+    choco install codecov -f -y | Out-Null
     codecov -f "./Coverage.xml"
 artifacts:
 - path: Coverage.xml
