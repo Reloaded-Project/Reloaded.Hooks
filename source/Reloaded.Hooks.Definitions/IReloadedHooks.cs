@@ -275,6 +275,31 @@ namespace Reloaded.Hooks.Definitions
         IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookOptions options);
 
         /// <summary>
+        /// Hooks an object's virtual function table from an object address in memory.
+        /// Only this object is hooked, other objects are unaffected.
+        /// 
+        /// An assumption is made that the virtual function table pointer is the first parameter of the object.
+        /// This method hooks the virtual function table pointer by copying the object's virtual function table
+        /// and changing the objects virtual function table pointer to the address of the copy.
+        /// 
+        /// After calling this, individual functions must be hooked by calling CreateFunctionHook.
+        /// </summary>
+        /// <param name="objectAddress">
+        ///     The memory address at which the object is stored.
+        ///     The function will assume that the first entry is a pointer to the virtual function
+        ///     table, as standard with C++ code.
+        /// </param>
+        /// <param name="numberOfMethods">
+        ///     The number of methods contained in the virtual function table.
+        ///     For enumerables, you may obtain this value as such: Enum.GetNames(typeof(MyEnum)).Length; where
+        ///     MyEnum is the name of your enumerable.
+        ///     Make sure this number is at least as big as your target vtable, 
+        ///     as we need to copy -all- of the vtable function pointers.
+        /// </param>
+        /// <returns></returns>
+        public IVirtualFunctionTable HookedVirtualFunctionTableFromObject(IntPtr objectAddress, int numberOfMethods);
+
+        /// <summary>
         /// Provides access to various useful utilities.
         /// </summary>
         IReloadedHooksUtilities Utilities { get; }

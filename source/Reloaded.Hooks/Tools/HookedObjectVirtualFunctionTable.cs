@@ -151,7 +151,7 @@ namespace Reloaded.Hooks.Tools
         ///     Make sure this number is at least as big as your target vtable, 
         ///     as we need to copy -all- of the vtable function pointers.
         /// </param>
-        public static HookedObjectVirtualFunctionTable HookObject(IntPtr objectAddress, int numberOfMethods)
+        public static HookedObjectVirtualFunctionTable FromObject(IntPtr objectAddress, int numberOfMethods)
         {
             CurrentProcess.SafeRead(objectAddress, out IntPtr virtualFunctionTableAddress);
             var table = VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
