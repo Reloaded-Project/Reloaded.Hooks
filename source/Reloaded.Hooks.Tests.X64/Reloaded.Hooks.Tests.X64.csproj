@@ -90,4 +90,8 @@
     <NativeLibs Remove="FastcallCalculatorFunctionPointerTest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="HookedObjectVtableTest.cs" />
+  </ItemGroup>
+
 </Project>
