@@ -12,10 +12,6 @@
 	<a href="https://www.nuget.org/packages/Reloaded.Hooks">
 		<img src="https://img.shields.io/nuget/v/Reloaded.Hooks.svg" alt="NuGet" />
 	</a>
-	<!-- Build Status -->
-	<a href="https://ci.appveyor.com/project/sewer56lol/reloaded-hooks">
-		<img src="https://ci.appveyor.com/api/projects/status/hfeonbkitheaclo3?svg=true" alt="Build Status" />
-	</a>
 </div>
 
 # Introduction
