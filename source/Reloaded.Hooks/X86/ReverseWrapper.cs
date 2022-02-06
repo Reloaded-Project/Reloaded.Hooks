@@ -5,6 +5,7 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Definitions.X86;
 using Reloaded.Hooks.Internal;
+using Reloaded.Hooks.Tools;
 
 namespace Reloaded.Hooks.X86
 {
@@ -68,7 +69,10 @@ namespace Reloaded.Hooks.X86
             if (managedFuncAttribute != null)
             {
                 if (managedFuncAttribute.Equals(attribute))
+                {
+                    reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8);
                     return;
+                }
                 
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, managedFuncAttribute, attribute);
                 return;
@@ -77,6 +81,8 @@ namespace Reloaded.Hooks.X86
             var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
             if (!attribute.IsEquivalent(funcPtrAttribute))
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, attribute.GetEquivalent(funcPtrAttribute), attribute);
+            else
+                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8);
         }
     }
 }

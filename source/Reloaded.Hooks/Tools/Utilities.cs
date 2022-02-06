@@ -191,6 +191,32 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <summary>
+        /// Creates instructions to jump to a specified address and then writes them to the buffer.
+        /// </summary>
+        /// <param name="targetPtr">The address to jump to.</param>
+        /// <param name="is64Bit">Whether the jump is 64-bit or not.</param>
+        /// <param name="extraBytes">Extra bytes to allocate after the jump.</param>
+        /// <returns>Pointer to the code used to jump to said specified address.</returns>
+        public static IntPtr CreateJump(IntPtr targetPtr, bool is64Bit, int extraBytes = 0)
+        {
+            int maxFunctionSize = 64 + extraBytes;
+            var minMax = Utilities.GetRelativeJumpMinMax((long)targetPtr, Int32.MaxValue - maxFunctionSize);
+            var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
+            return buffer.ExecuteWithLock(() =>
+            {
+                // Align the code.
+                buffer.SetAlignment(16);
+                var codeAddress = buffer.Properties.WritePointer;
+                var bytes = TryAssembleRelativeJumpArray(codeAddress, targetPtr, is64Bit, out _);
+                var result = buffer.Add(bytes, 1);
+                if (extraBytes > 0)
+                    buffer.Add(extraBytes, 1);
+
+                return result;
+            });
+        }
+
+        /// <summary>
         /// Retrieves the length of the hook for trampoline, mid-function hooks etc.
         /// </summary>
         /// <param name="hookAddress">The address that is to be hooked.</param>
@@ -373,13 +399,26 @@ namespace Reloaded.Hooks.Tools
         /// <param name="target">The target address to jump to.</param>
         /// <param name="is64Bit">True if 64 bit, else false.</param>
         /// <param name="isRelative">True if the jump is relative, else false.</param>
-        public static List<byte> TryAssembleRelativeJump(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
+        public static byte[] TryAssembleRelativeJumpArray(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
         {
             var minMax = GetRelativeJumpMinMax((long)source);
-            isRelative = new AddressRange(minMax.min, minMax.max).Contains((long) target);
+            isRelative = new AddressRange(minMax.min, minMax.max).Contains((long)target);
             return isRelative ?
-                AssembleRelativeJump(source, target, is64Bit).ToList() :
-                AssembleAbsoluteJump(target, is64Bit).ToList();
+                AssembleRelativeJump(source, target, is64Bit) :
+                AssembleAbsoluteJump(target, is64Bit);
+        }
+
+        /// <summary>
+        /// Assembles a relative jump if the target is within range,
+        /// else assembles an absolute jump.
+        /// </summary>
+        /// <param name="source">The source address to jump from.</param>
+        /// <param name="target">The target address to jump to.</param>
+        /// <param name="is64Bit">True if 64 bit, else false.</param>
+        /// <param name="isRelative">True if the jump is relative, else false.</param>
+        public static List<byte> TryAssembleRelativeJump(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
+        {
+            return TryAssembleRelativeJumpArray(source, target, is64Bit, out isRelative).ToList();
         }
 
         /// <summary>
