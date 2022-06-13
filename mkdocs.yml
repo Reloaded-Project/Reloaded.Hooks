@@ -12,6 +12,8 @@ extra:
       link: https://twitter.com/TheSewer56
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
   - pymdownx.highlight
   - pymdownx.superfences
 

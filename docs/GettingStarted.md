@@ -37,6 +37,15 @@ public delegate void RwCameraSetViewWindow(ref RWCamera RwCamera, ref RWView vie
 ```
 
 ### Example: Function with registers as parameters
+
+!!! info
+
+    In the real world, compilers will often optimise function calls to optimise for performance. This will often lead to the function using non-standard conventions, such e.g. accepting parameters via registers where normally the stack should be used.  
+
+    This is more common in x86 (32-bit) applications rather than x64 applications.  
+
+Reloaded.Hooks allows for mapping parameters to given registers.  
+
 ```csharp
 /// <summary>
 /// Reads a ANM/HAnim stream from a .ONE archive. Returns address of a decompressed ANM file.
@@ -59,6 +68,57 @@ public delegate int OneFileLoadHAnimation(int fileIndex, void* addressToDecompre
 Those with some experience in reverse engineering might know that the popular IDA decompiler would identify such function as `userpurge`.
 
 For custom functions, under the hood `Reloaded.Hooks` creates wrappers that automatically convert between [calling conventions](https://en.wikipedia.org/wiki/Calling_convention) such as the special one above that uses registers. These wrappers are actually what will be called behind the scenes as you call/hook your native functions, doing all the difficult work for you ❤.
+
+
+#### Deciphering the Function Signature
+
+!!! info
+
+    Some disassemblers may contain useful information about how the function is called.  
+    Below is guidance on deciphering the function signatures in some common disassemblers.  
+
+    Please note that disassemblers are not perfect; they can and will sometimes make mistakes.
+ 
+
+**IDA Pro (Decompiler):** 
+```csharp
+// Example
+void* __userpurge OneFileLoadHAnimation@<eax>(RwUInt32 type@<eax>, void *dest@<ecx>, ONEFILE *this)
+
+// Breakdown
+FUNCTION_NAME@<eax> in function name specifies return register is EAX.
+type@<eax> specifies the `type` argument is passed via EAX register.
+dest@<ecx> specifies the `dest` argument is passed via ECX register.
+remaining parameters are passed via stack.
+
+// Extra Info (IDA Specific)
+_userpurge == 'Callee' Stack Cleanup
+_usercall == 'Caller' Stack Cleanup
+```
+
+**Ghidra:** 
+
+Right click function name and click `Edit Function`.  
+Inside the dialog, you will find the following:  
+
+![EditFunction](../Images/GhidraFunctionRegisters.png)  
+
+Note: Ghidra did not disassemble this correctly; I manually fixed this function for this example.  
+
+**Binary Ninja:**
+
+This one is pretty self explanatory.  
+
+```csharp
+// Example
+void* __stdcall OneFileLoadHAnimation(int32_t arg1 @ eax, char* arg2 @ ecx, char* arg3)
+```
+
+**General:**  
+Some disassemblers might not provide information on return registers and/or stack cleanup because they are implied by the given convention (such as `__stdcall`). Consider using the following presets in `Reloaded.Hooks` to determine these settings.  
+
+- [X86 Calling Conventions (Presets)](https://github.com/Reloaded-Project/Reloaded.Hooks/blob/496d52fae5290a43ff2cbba0400b8ec46e6207b3/source/Reloaded.Hooks.Definitions/X86/CallingConventions.cs#L30)
+- [X64 Calling Conventions (Presets)](https://github.com/Reloaded-Project/Reloaded.Hooks/blob/496d52fae5290a43ff2cbba0400b8ec46e6207b3/source/Reloaded.Hooks.Definitions/X64/CallingConventions.cs#L24)
 
 ### Important Note About the API
 
