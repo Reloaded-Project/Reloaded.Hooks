@@ -21,6 +21,9 @@
 	<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
 	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
 	<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
+
+    <!-- The trimming metadata/attributes consumes more space than saved from trimming. -->
+    <IsTrimmable>false</IsTrimmable>
   </PropertyGroup>
 	
   <ItemGroup>

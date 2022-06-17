@@ -22,6 +22,9 @@
     <NoWarn>1701;1702;1591</NoWarn>
 	<DebugSymbols>true</DebugSymbols>
 	<DebugType>full</DebugType>
+
+    <!-- The trimming metadata/attributes consumes more space than saved from trimming. -->
+    <IsTrimmable>false</IsTrimmable>
   </PropertyGroup>
 
   <ItemGroup>
