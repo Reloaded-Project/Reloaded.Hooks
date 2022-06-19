@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
+using Reloaded.Hooks.Definitions.Helpers;
 
 namespace Reloaded.Hooks
 {
@@ -13,23 +11,24 @@ namespace Reloaded.Hooks
     public class Function<TFunction> : IFunction<TFunction>
     {
         /// <inheritdoc />
-        public long Address { get; private set; }
+        public long Address => _address.ToSigned();
 
         /// <inheritdoc />
         public IReloadedHooks Hooks { get; private set; }
 
         private bool _wrapperCreated = false;
         private TFunction _wrapper;
-        private IntPtr _wrapperAddress;
+        private nuint _wrapperAddress;
+        private nuint _address;
 
         /// <summary>
         /// Encapsulates a function.
         /// </summary>
         /// <param name="address">The address of the function in question.</param>
         /// <param name="hooks">Provides the hooking capability for this class.</param>
-        public Function(long address, IReloadedHooks hooks)
+        public Function(nuint address, IReloadedHooks hooks)
         {
-            Address = address;
+            _address = address;
             Hooks = hooks;
         }
 
@@ -68,7 +67,8 @@ namespace Reloaded.Hooks
         {
             if (!_wrapperCreated)
             {
-                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
+                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out var wrapperAddress);
+                _wrapperAddress = wrapperAddress.ToUnsigned();
                 _wrapperCreated = true;
             }
 
@@ -80,11 +80,12 @@ namespace Reloaded.Hooks
         {
             if (!_wrapperCreated)
             {
-                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out _wrapperAddress);
+                _wrapper = Hooks.CreateWrapper<TFunction>(Address, out var wrapperAddr);
+                _wrapperAddress = wrapperAddr.ToUnsigned();
                 _wrapperCreated = true;
             }
 
-            wrapperAddress = _wrapperAddress;
+            wrapperAddress = _wrapperAddress.ToSigned();
             return _wrapper;
         }
 

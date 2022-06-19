@@ -41,12 +41,12 @@ namespace Reloaded.Hooks.Tests.Shared
         [Definitions.X86.Function(CallingConventions.Fastcall)]
         public struct CalculatorFunction { public FuncPtr<int, int, int> Value; }
 
-        public IntPtr Divide   { get; private set; }
-        public IntPtr Multiply { get; private set; }
-        public IntPtr Subtract { get; private set; }
-        public IntPtr Add      { get; private set; }
+        public nuint Divide   { get; private set; }
+        public nuint Multiply { get; private set; }
+        public nuint Subtract { get; private set; }
+        public nuint Add      { get; private set; }
 
-        public IntPtr VTable   { get; private set; }
+        public nuint VTable   { get; private set; }
 
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();
@@ -171,10 +171,10 @@ namespace Reloaded.Hooks.Tests.Shared
             int size = Enum.GetNames(typeof(VTableFunctions)).Length * IntPtr.Size;
             var buffer = Utilities.FindOrCreateBufferInRange(size);
 
-            IntPtr add = Add;
-            IntPtr subtract = Subtract;
-            IntPtr multiply = Multiply;
-            IntPtr divide = Divide;
+            nuint add = Add;
+            nuint subtract = Subtract;
+            nuint multiply = Multiply;
+            nuint divide = Divide;
 
             VTable = buffer.Add(ref add, false, 1);
             buffer.Add(ref subtract, false, 1);

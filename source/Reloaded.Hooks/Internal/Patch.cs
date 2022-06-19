@@ -9,10 +9,10 @@ namespace Reloaded.Hooks.Internal
     /// </summary>
     public struct Patch
     {
-        private IntPtr _address;
+        private nuint _address;
         private byte[] _bytes;
 
-        public Patch(IntPtr address, byte[] bytes)
+        public Patch(nuint address, byte[] bytes)
         {
             _address = address;
             _bytes = bytes;

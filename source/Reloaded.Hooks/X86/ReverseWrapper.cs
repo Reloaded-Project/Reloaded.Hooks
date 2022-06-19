@@ -2,9 +2,9 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Definitions.X86;
-using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 
 namespace Reloaded.Hooks.X86
@@ -44,23 +44,23 @@ namespace Reloaded.Hooks.X86
             WrapperPointer = NativeFunctionPtr;
 
             // Call above may or may not replace WrapperPointer.
-            Create(this, NativeFunctionPtr);
+            Create(this, NativeFunctionPtr.ToUnsigned());
         }
 
         /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <param name="function">Pointer of native function to wrap.</param>
-        public ReverseWrapper(IntPtr function)
+        public ReverseWrapper(nuint function)
         {
-            NativeFunctionPtr = function;
+            NativeFunctionPtr = function.ToSigned();
             WrapperPointer = NativeFunctionPtr;
 
             // Call above may or may not replace WrapperPointer.
-            Create(this, NativeFunctionPtr);
+            Create(this, function);
         }
 
-        private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, IntPtr functionPtr)
+        private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, nuint functionPtr)
         {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
 
@@ -70,19 +70,19 @@ namespace Reloaded.Hooks.X86
             {
                 if (managedFuncAttribute.Equals(attribute))
                 {
-                    reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8);
+                    reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8).ToSigned();
                     return;
                 }
                 
-                reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, managedFuncAttribute, attribute);
+                reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, managedFuncAttribute, attribute).ToSigned();
                 return;
             }
             
             var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
             if (!attribute.IsEquivalent(funcPtrAttribute))
-                reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, attribute.GetEquivalent(funcPtrAttribute), attribute);
+                reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, attribute.GetEquivalent(funcPtrAttribute), attribute).ToSigned();
             else
-                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8);
+                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8).ToSigned();
         }
     }
 }

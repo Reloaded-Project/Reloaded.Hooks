@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Internal;
 using Reloaded.Memory.Buffers;
@@ -33,16 +34,16 @@ namespace Reloaded.Hooks.Tools
 
         private static string Architecture(bool is64bit) => is64bit ? "use64" : "use32";
 
-        private static string SetAddress(IntPtr address) => $"org {address}";
+        private static string SetAddress(nuint address) => $"org {address}";
 
         /// <summary>
         /// Writes a pointer to a given target address in unmanaged, non-reclaimable memory.
         /// </summary>
         /// <param name="target">The target address/value the pointer is pointing to.</param>
         /// <returns>Address of the pointer.</returns>
-        public static IntPtr WritePointer(IntPtr target)
+        public static unsafe nuint WritePointer(nuint target)
         {
-            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            var buffer = FindOrCreateBufferInRange(sizeof(nuint));
             return buffer.Add(ref target);
         }
 
@@ -51,7 +52,7 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static byte[] AssembleAbsoluteJump(IntPtr target, bool is64bit) => Assembler.Assemble(new[]
+        public static byte[] AssembleAbsoluteJump(nuint target, bool is64bit) => Assembler.Assemble(new[]
         {
             Architecture(is64bit),
             GetAbsoluteJumpMnemonics(target, is64bit)
@@ -62,7 +63,7 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static byte[] AssemblePushReturn(IntPtr target, bool is64bit) => Assembler.Assemble(new[]
+        public static byte[] AssemblePushReturn(nuint target, bool is64bit) => Assembler.Assemble(new[]
         {
             Architecture(is64bit),
             GetPushReturnMnemonics(target, is64bit)
@@ -85,25 +86,28 @@ namespace Reloaded.Hooks.Tools
         /// <param name="currentAddress">Address of the current instruction.</param>
         /// <param name="targetAddress">The address to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static byte[] AssembleRelativeJump(IntPtr currentAddress, IntPtr targetAddress, bool is64bit) => Assembler.Assemble(new[]
+        public static byte[] AssembleRelativeJump(nuint currentAddress, nuint targetAddress, bool is64bit)
         {
-            Architecture(is64bit),
-            SetAddress(currentAddress),
-            GetRelativeJumpMnemonics(targetAddress, is64bit)
-        });
+            return Assembler.Assemble(new[]
+            {
+                Architecture(is64bit),
+                SetAddress(currentAddress),
+                is64bit ? $"jmp qword {targetAddress}" : $"jmp dword {targetAddress}"
+            });
+        }
 
         /// <summary>
         /// Gets the sequence of assembly instructions required to assemble an absolute jump to a user specified address.
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static string GetAbsoluteJumpMnemonics(IntPtr target, bool is64bit)
+        public static string GetAbsoluteJumpMnemonics(nuint target, bool is64bit)
         {
             var buffer = FindOrCreateBufferInRange(IntPtr.Size);
-            IntPtr functionPointer = buffer.Add(ref target);
+            nuint functionPointer = buffer.Add(ref target);
 
-            if (is64bit) return "jmp qword [qword 0x" + functionPointer.ToString("X") + "]";
-            else         return "jmp dword [0x" + functionPointer.ToString("X") + "]";
+            if (is64bit) return "jmp qword [qword " + functionPointer + "]";
+            else         return "jmp dword [" + functionPointer + "]";
         }
 
         /// <summary>
@@ -111,13 +115,13 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static string GetAbsoluteCallMnemonics(IntPtr target, bool is64bit)
+        public static string GetAbsoluteCallMnemonics(nuint target, bool is64bit)
         {
             var buffer = FindOrCreateBufferInRange(IntPtr.Size);
-            IntPtr functionPointer = buffer.Add(ref target);
+            nuint functionPointer = buffer.Add(ref target);
 
-            if (is64bit) return "call qword [qword 0x" + functionPointer.ToString("X") + "]";
-            else         return "call dword [0x" + functionPointer.ToString("X") + "]";
+            if (is64bit) return "call qword [qword " + functionPointer + "]";
+            else         return "call dword [" + functionPointer + "]";
         }
 
         /// <summary>
@@ -133,7 +137,7 @@ namespace Reloaded.Hooks.Tools
         {
             var hooks = ReloadedHooks.Instance;
             reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
-            return GetAbsoluteJumpMnemonics(reverseWrapper.WrapperPointer, IntPtr.Size == 8);
+            return GetAbsoluteJumpMnemonics(reverseWrapper.WrapperPointer.ToUnsigned(), IntPtr.Size == 8);
         }
 
         /// <summary>
@@ -149,7 +153,7 @@ namespace Reloaded.Hooks.Tools
         {
             var hooks = ReloadedHooks.Instance;
             reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
-            return GetAbsoluteCallMnemonics(reverseWrapper.WrapperPointer, IntPtr.Size == 8);
+            return GetAbsoluteCallMnemonics(reverseWrapper.WrapperPointer.ToUnsigned(), IntPtr.Size == 8);
         }
 
         /// <summary>
@@ -157,7 +161,7 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="target">The target memory location to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static string GetPushReturnMnemonics(IntPtr target, bool is64bit) => $"push 0x{target.ToString("X")}\nret";
+        public static string GetPushReturnMnemonics(nuint target, bool is64bit) => $"push {target}\nret";
 
         /// <summary>
         /// Gets the sequence of assembly instructions required to assemble a relative jump to the current instruction pointer.
@@ -178,10 +182,10 @@ namespace Reloaded.Hooks.Tools
         /// <param name="is64bit">True for x64 else x86</param>
         /// <param name="targetAddress">[Optional] Target address within of which the wrapper should be placed in <paramref name="maxDisplacement"/> range.</param>
         /// <param name="maxDisplacement">Maximum distance from the <paramref name="targetAddress"/></param>
-        public static IntPtr InsertJump(byte[] opcodes, bool is64bit, long jumpTarget, long targetAddress = 0, long maxDisplacement = Int32.MaxValue)
+        public static nuint InsertJump(byte[] opcodes, bool is64bit, nuint jumpTarget, nuint targetAddress = 0, nint maxDisplacement = Int32.MaxValue)
         {
             List<byte> newBytes = opcodes.ToList();
-            newBytes.AddRange(AssembleAbsoluteJump((IntPtr)jumpTarget, is64bit));
+            newBytes.AddRange(AssembleAbsoluteJump(jumpTarget, is64bit));
             byte[] newBytesArray = newBytes.ToArray();
 
             var minMax = GetRelativeJumpMinMax(targetAddress, maxDisplacement);
@@ -197,10 +201,10 @@ namespace Reloaded.Hooks.Tools
         /// <param name="is64Bit">Whether the jump is 64-bit or not.</param>
         /// <param name="extraBytes">Extra bytes to allocate after the jump.</param>
         /// <returns>Pointer to the code used to jump to said specified address.</returns>
-        public static IntPtr CreateJump(IntPtr targetPtr, bool is64Bit, int extraBytes = 0)
+        public static nuint CreateJump(nuint targetPtr, bool is64Bit, int extraBytes = 0)
         {
             int maxFunctionSize = 64 + extraBytes;
-            var minMax = Utilities.GetRelativeJumpMinMax((long)targetPtr, Int32.MaxValue - maxFunctionSize);
+            var minMax = Utilities.GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
             return buffer.ExecuteWithLock(() =>
             {
@@ -222,7 +226,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="hookAddress">The address that is to be hooked.</param>
         /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
         /// <param name="is64Bit">True if 64bit, else false.</param>
-        public static int GetHookLength(IntPtr hookAddress, int hookLength, bool is64Bit)
+        public static int GetHookLength(nuint hookAddress, int hookLength, bool is64Bit)
         {
             ArchitectureMode architecture = is64Bit ? ArchitectureMode.x86_64 
                                                     : ArchitectureMode.x86_32;
@@ -235,7 +239,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="hookAddress">The address that is to be hooked.</param>
         /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
         /// <param name="architectureMode">X86 or X64 to use for disassembly.</param>
-        public static int GetHookLength(IntPtr hookAddress, int hookLength, ArchitectureMode architectureMode)
+        public static int GetHookLength(nuint hookAddress, int hookLength, ArchitectureMode architectureMode)
         {
             /*
                 This works by reading a short fixed array of bytes from memory then disassembling the bytes
@@ -399,10 +403,10 @@ namespace Reloaded.Hooks.Tools
         /// <param name="target">The target address to jump to.</param>
         /// <param name="is64Bit">True if 64 bit, else false.</param>
         /// <param name="isRelative">True if the jump is relative, else false.</param>
-        public static byte[] TryAssembleRelativeJumpArray(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
+        public static byte[] TryAssembleRelativeJumpArray(nuint source, nuint target, bool is64Bit, out bool isRelative)
         {
-            var minMax = GetRelativeJumpMinMax((long)source);
-            isRelative = new AddressRange(minMax.min, minMax.max).Contains((long)target);
+            var minMax = GetRelativeJumpMinMax(source);
+            isRelative = new AddressRange(minMax.min, minMax.max).Contains(target);
             return isRelative ?
                 AssembleRelativeJump(source, target, is64Bit) :
                 AssembleAbsoluteJump(target, is64Bit);
@@ -416,7 +420,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="target">The target address to jump to.</param>
         /// <param name="is64Bit">True if 64 bit, else false.</param>
         /// <param name="isRelative">True if the jump is relative, else false.</param>
-        public static List<byte> TryAssembleRelativeJump(IntPtr source, IntPtr target, bool is64Bit, out bool isRelative)
+        public static List<byte> TryAssembleRelativeJump(nuint source, nuint target, bool is64Bit, out bool isRelative)
         {
             return TryAssembleRelativeJumpArray(source, target, is64Bit, out isRelative).ToList();
         }
@@ -428,9 +432,9 @@ namespace Reloaded.Hooks.Tools
         /// <param name="minimumAddress">Maximum address of the buffer.</param>
         /// <param name="maximumAddress">Minimum address of the buffer.</param>
         /// <param name="alignment">Required alignment of the item to add to the buffer.</param>
-        public static MemoryBuffer FindOrCreateBufferInRange(int size, long minimumAddress = 1, long maximumAddress = int.MaxValue, int alignment = 4)
+        public static MemoryBuffer FindOrCreateBufferInRange(int size, nuint minimumAddress = 1, nuint maximumAddress = int.MaxValue, int alignment = 4)
         {
-            var buffers = _bufferHelper.FindBuffers(size + alignment, (IntPtr)minimumAddress, (IntPtr)maximumAddress);
+            var buffers = _bufferHelper.FindBuffers(size + alignment, minimumAddress, maximumAddress);
             return buffers.Length > 0 ? buffers[0] : _bufferHelper.CreateMemoryBuffer(size, minimumAddress, maximumAddress);
         }
 
@@ -445,23 +449,18 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="targetAddress">Address we are jumping from.</param>
         /// <param name="maxDisplacement">Maximum distance we can jump.</param>
-        public static (long min, long max) GetRelativeJumpMinMax(long targetAddress, long maxDisplacement = Int32.MaxValue)
+        public static (nuint min, nuint max) GetRelativeJumpMinMax(nuint targetAddress, nint maxDisplacement = Int32.MaxValue)
         {
-            long minAddress = targetAddress - maxDisplacement;
-            if (minAddress <= 0)
-                minAddress = 1;     // Limitation of Reloaded.Memory.Buffers
+            var minAddress = targetAddress - (nuint)maxDisplacement;
+            if (minAddress > targetAddress) // Check for underflow.
+                minAddress = 1;             // Limitation of Reloaded.Memory.Buffers
 
-            long maxAddress;
+            var maxAddress = targetAddress + (nuint)maxDisplacement;
+            if (maxAddress < targetAddress)
+                maxAddress = unchecked((nuint)(-1)); // nuint.MaxValue not available in netstandard2.0
 
-            // long overflow check.
-            if (long.MaxValue - maxDisplacement < targetAddress)
-                maxAddress = long.MaxValue;
-            else
-                maxAddress = targetAddress + maxDisplacement;
-            
-            if (! Environment.Is64BitProcess)
-                if (maxAddress > Int32.MaxValue)
-                    maxAddress = Int32.MaxValue;
+            if (!Environment.Is64BitProcess && maxAddress > UInt32.MaxValue)
+                maxAddress = UInt32.MaxValue;
 
             return (minAddress, maxAddress);
         }

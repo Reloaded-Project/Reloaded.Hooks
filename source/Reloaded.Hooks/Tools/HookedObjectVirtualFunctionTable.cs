@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using static Reloaded.Memory.Sources.Memory;
 using Reloaded.Memory.Sources;
 
@@ -33,18 +34,18 @@ namespace Reloaded.Hooks.Tools
             /// This will be read to store the original function pointer</param>
             /// <param name="index">The index of the virtual function pointer in the virtual function table</param>
             /// <param name="function">The hook function</param>
-            internal unsafe VTableEntryHook(HookedObjectVirtualFunctionTable vTableHook, IntPtr originalVirtualFunctionTableAddress, int index,
+            internal unsafe VTableEntryHook(HookedObjectVirtualFunctionTable vTableHook, nuint originalVirtualFunctionTableAddress, int index,
                 TFunction function)
             {
-                CurrentProcess.SafeRead(originalVirtualFunctionTableAddress + index * sizeof(IntPtr), out IntPtr originalFunctionAddress);
+                CurrentProcess.SafeRead((UIntPtr)originalVirtualFunctionTableAddress + (index * sizeof(nuint)), out nuint originalFunctionAddress);
 
                 _vTableHook = vTableHook;
                 _index = index;
                 _is64Bit = sizeof(IntPtr) == 8;
                 ReverseWrapper = CreateReverseWrapper(function);
-                OriginalFunction = CreateWrapper(originalFunctionAddress.ToInt64(), out IntPtr originalFunctionWrapperAddress);
-                OriginalFunctionAddress = originalFunctionAddress;
-                OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
+                OriginalFunction = CreateWrapper(originalFunctionAddress, out nuint originalFunctionWrapperAddress);
+                OriginalFunctionAddress = originalFunctionAddress.ToSigned();
+                OriginalFunctionWrapperAddress = originalFunctionWrapperAddress.ToSigned();
                 IsHookActivated = false;
             }
 
@@ -76,7 +77,7 @@ namespace Reloaded.Hooks.Tools
             }
 
             /// <inheritdoc />
-            protected TFunction CreateWrapper(long functionAddress, out IntPtr wrapperAddress)
+            protected TFunction CreateWrapper(nuint functionAddress, out nuint wrapperAddress)
             {
                 if (_is64Bit)
                     return X64.Wrapper.Create<TFunction>(functionAddress, out wrapperAddress);
@@ -99,14 +100,14 @@ namespace Reloaded.Hooks.Tools
             /// <inheritdoc />
             public void Disable()
             {
-                _vTableHook.SetHookedVTableEntry(_index, OriginalFunctionAddress);
+                _vTableHook.SetHookedVTableEntry(_index, OriginalFunctionAddress.ToUnsigned());
                 IsHookEnabled = false;
             }
 
             /// <inheritdoc />
             public void Enable()
             {
-                _vTableHook.SetHookedVTableEntry(_index, ReverseWrapper.WrapperPointer);
+                _vTableHook.SetHookedVTableEntry(_index, ReverseWrapper.WrapperPointer.ToUnsigned());
                 IsHookEnabled = true;
             }
         }
@@ -126,8 +127,8 @@ namespace Reloaded.Hooks.Tools
             set => TableEntries[i] = value;
         }
 
-        private readonly IntPtr _originalVirtualFunctionTableAddress;
-        private readonly IntPtr[] _newVTableForObject;
+        private readonly nuint _originalVirtualFunctionTableAddress;
+        private readonly nuint[] _newVTableForObject;
         private readonly GCHandle _pinnedNewVTableForObject;
         private readonly List<IHook> _hooks;
 
@@ -151,9 +152,9 @@ namespace Reloaded.Hooks.Tools
         ///     Make sure this number is at least as big as your target vtable, 
         ///     as we need to copy -all- of the vtable function pointers.
         /// </param>
-        public static HookedObjectVirtualFunctionTable FromObject(IntPtr objectAddress, int numberOfMethods)
+        public static HookedObjectVirtualFunctionTable FromObject(nuint objectAddress, int numberOfMethods)
         {
-            CurrentProcess.SafeRead(objectAddress, out IntPtr virtualFunctionTableAddress);
+            CurrentProcess.SafeRead(objectAddress, out nuint virtualFunctionTableAddress);
             var table = VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
             return new HookedObjectVirtualFunctionTable(objectAddress, virtualFunctionTableAddress, table);
         }
@@ -168,29 +169,29 @@ namespace Reloaded.Hooks.Tools
         public unsafe TFunction CreateWrapperFunction<TFunction>(int index)
         {
             if (sizeof(IntPtr) == 4)
-                return X86.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
+                return X86.Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);
             if (sizeof(IntPtr) == 8)
-                return X64.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
+                return X64.Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);
 
             throw new Exception("Machine does not appear to be of a 32 or 64bit architecture.");
         }
 
-        private HookedObjectVirtualFunctionTable(IntPtr objectAddress, IntPtr virtualFunctionTableAddress, List<TableEntry> table)
+        private HookedObjectVirtualFunctionTable(nuint objectAddress, nuint virtualFunctionTableAddress, List<TableEntry> table)
         {
-            ObjectAddress = objectAddress;
+            ObjectAddress = objectAddress.ToSigned();
             TableEntries = table;
 
             _originalVirtualFunctionTableAddress = virtualFunctionTableAddress;
-            _newVTableForObject = new IntPtr[table.Count];
+            _newVTableForObject = new nuint[table.Count];
             _hooks = new List<IHook>();
             for (int i = 0; i < table.Count; i++)
-                _newVTableForObject[i] = table[i].FunctionPointer;
+                _newVTableForObject[i] = table[i].FunctionPointer.ToUnsigned();
 
             _pinnedNewVTableForObject = GCHandle.Alloc(_newVTableForObject, GCHandleType.Pinned);
             CurrentProcess.SafeWrite(objectAddress, _pinnedNewVTableForObject.AddrOfPinnedObject());
         }
 
-        private void SetHookedVTableEntry(int index, IntPtr newEntry)
+        private void SetHookedVTableEntry(int index, nuint newEntry)
         {
             _newVTableForObject[index] = newEntry;
         }

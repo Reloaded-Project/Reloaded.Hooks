@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.X64;
 using Reloaded.Memory.Sources;
 using static Reloaded.Memory.Sources.Memory;
@@ -39,7 +40,7 @@ namespace Reloaded.Hooks.Tools
         ///     For enumerables, you may obtain this value as such: Enum.GetNames(typeof(MyEnum)).Length; where
         ///     MyEnum is the name of your enumerable.
         /// </param>
-        public static VirtualFunctionTable FromObject(IntPtr objectAddress, int numberOfMethods)
+        public static VirtualFunctionTable FromObject(nuint objectAddress, int numberOfMethods)
         {
             VirtualFunctionTable table = new VirtualFunctionTable();
             table.TableEntries = GetObjectVTableAddresses(objectAddress, numberOfMethods);
@@ -57,7 +58,7 @@ namespace Reloaded.Hooks.Tools
         ///     For enumerables, you may obtain this value as such: Enum.GetNames(typeof(MyEnum)).Length; where
         ///     MyEnum is the name of your enumerable.
         /// </param>
-        public static VirtualFunctionTable FromAddress(IntPtr tableAddress, int numberOfMethods)
+        public static VirtualFunctionTable FromAddress(nuint tableAddress, int numberOfMethods)
         {
             VirtualFunctionTable table = new VirtualFunctionTable();
             table.TableEntries = VirtualFunctionTableHelpers.GetAddresses(tableAddress, numberOfMethods);
@@ -68,9 +69,9 @@ namespace Reloaded.Hooks.Tools
         public unsafe TFunction CreateWrapperFunction<TFunction>(int index)
         {
             if (sizeof(IntPtr) == 4)
-                return X86.Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
+                return X86.Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);
             if (sizeof(IntPtr) == 8)
-                return Wrapper.Create<TFunction>((long)TableEntries[index].FunctionPointer, out var wrapperAddress);
+                return Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);
 
             throw new Exception("Machine does not appear to be of a 32 or 64bit architecture.");
         }
@@ -78,7 +79,7 @@ namespace Reloaded.Hooks.Tools
         /// <inheritdoc />
         public IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType)
         {
-            return new Hook<TFunction>(delegateType, (long)TableEntries[index].FunctionPointer);
+            return new Hook<TFunction>(delegateType, TableEntries[index].FunctionPointer.ToUnsigned());
         }
 
         /*
@@ -87,9 +88,9 @@ namespace Reloaded.Hooks.Tools
             ---------------
         */
 
-        private static List<TableEntry> GetObjectVTableAddresses(IntPtr objectAddress, int numberOfMethods)
+        private static List<TableEntry> GetObjectVTableAddresses(nuint objectAddress, int numberOfMethods)
         {
-            CurrentProcess.SafeRead(objectAddress, out IntPtr virtualFunctionTableAddress);
+            CurrentProcess.SafeRead(objectAddress, out nuint virtualFunctionTableAddress);
             return VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
         }
     }
@@ -105,7 +106,7 @@ public static class VirtualFunctionTableHelpers
     /// </summary>
     /// <param name="tablePointer">Pointer to the virtual table itself.</param>
     /// <param name="numberOfMethods">The number of methods stored in the virtual table.</param>
-    public static List<TableEntry> GetAddresses(IntPtr tablePointer, int numberOfMethods)
+    public static List<TableEntry> GetAddresses(nuint tablePointer, int numberOfMethods)
     {
         // Stores the addresses of the virtual function table.
         var tablePointers = new List<TableEntry>();
@@ -114,12 +115,12 @@ public static class VirtualFunctionTableHelpers
         // Using the size of the IntPtr allows for both x64 and x86 support.
         for (int i = 0; i < numberOfMethods; i++)
         {
-            var targetAddress = tablePointer + (IntPtr.Size * i);
+            var targetAddress = (UIntPtr)tablePointer + (IntPtr.Size * i);
 
             CurrentProcess.SafeRead(targetAddress, out IntPtr functionPtr);
             tablePointers.Add(new TableEntry
             {
-                EntryAddress = targetAddress,
+                EntryAddress = targetAddress.ToSigned(),
                 FunctionPointer = functionPtr
             });
         }

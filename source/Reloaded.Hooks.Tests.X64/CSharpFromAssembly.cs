@@ -110,7 +110,7 @@ namespace Reloaded.Hooks.Tests.X64
                 $"ret"
             };
 
-            _addFunction = new Function<ManagedCalculator.AddFunction>((long) CreateAsmFunction(function), ReloadedHooks.Instance);
+            _addFunction = new Function<ManagedCalculator.AddFunction>(CreateAsmFunction(function), ReloadedHooks.Instance);
         }
 
         private void CreateSubFunction()
@@ -127,7 +127,7 @@ namespace Reloaded.Hooks.Tests.X64
                 $"ret"
             };
 
-            _subtractFunction = new Function<ManagedCalculator.SubtractFunction>((long)CreateAsmFunction(function), ReloadedHooks.Instance);
+            _subtractFunction = new Function<ManagedCalculator.SubtractFunction>(CreateAsmFunction(function), ReloadedHooks.Instance);
         }
 
         private void CreateMulFunction()
@@ -144,7 +144,7 @@ namespace Reloaded.Hooks.Tests.X64
                 $"ret"
             };
 
-            _multiplyFunction = new Function<ManagedCalculator.MultiplyFunction>((long)CreateAsmFunction(function), ReloadedHooks.Instance);
+            _multiplyFunction = new Function<ManagedCalculator.MultiplyFunction>(CreateAsmFunction(function), ReloadedHooks.Instance);
         }
 
         private void CreateDivFunction()
@@ -161,10 +161,10 @@ namespace Reloaded.Hooks.Tests.X64
                 $"ret"
             };
 
-            _divideFunction = new Function<ManagedCalculator.DivideFunction>((long)CreateAsmFunction(function), ReloadedHooks.Instance);
+            _divideFunction = new Function<ManagedCalculator.DivideFunction>(CreateAsmFunction(function), ReloadedHooks.Instance);
         }
 
-        private IntPtr CreateAsmFunction(string[] function)
+        private nuint CreateAsmFunction(string[] function)
         {
             var result  = _assembler.Assemble(function);
             var address = _memory.Allocate(result.Length);

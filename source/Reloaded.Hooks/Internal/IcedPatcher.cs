@@ -19,10 +19,10 @@ namespace Reloaded.Hooks.Internal
         // In
         private int _bitness;
         private byte[] _bytes;
-        private IntPtr _originalFunctionAddress;
+        private nuint _originalFunctionAddress;
 
         // Out
-        private IntPtr _newPrologueAddress;
+        private nuint _newPrologueAddress;
 
         /// <summary>
         /// Creates a patcher, which patches an existing function prologue using Iced.
@@ -30,7 +30,7 @@ namespace Reloaded.Hooks.Internal
         /// <param name="is64Bit">Set to true if the prologue is 64bit code, else false.</param>
         /// <param name="bytes">The bytes of the prologue of the hooked function.</param>
         /// <param name="originalFunctionAddress">Address of the original function being patched by iced.</param>
-        public IcedPatcher(bool is64Bit, byte[] bytes, IntPtr originalFunctionAddress)
+        public IcedPatcher(bool is64Bit, byte[] bytes, nuint originalFunctionAddress)
         {
             _bitness = is64Bit ? 64 : 32;
             _bytes   = bytes;
@@ -41,10 +41,10 @@ namespace Reloaded.Hooks.Internal
         /// Encodes the original bytes for a new address fixing e.g. branches, calls, jumps for execution at a given address.
         /// </summary>
         /// <param name="newAddress">The new address to encode the original instructions for.</param>
-        public byte[] EncodeForNewAddress(IntPtr newAddress)
+        public byte[] EncodeForNewAddress(nuint newAddress)
         {
             var writer = new CodeWriterImpl(_bytes.Length * 2);
-            var block  = new InstructionBlock(writer, DecodePrologue(), (ulong)newAddress);
+            var block  = new InstructionBlock(writer, DecodePrologue(), newAddress);
             if (!BlockEncoder.TryEncode(_bitness, block, out var error, out _))
             {
                 throw new Exception($"Reloaded Hooks: Internal Error in {nameof(Reloaded.Hooks.Internal)}/{nameof(IcedPatcher)}. " +
@@ -64,14 +64,14 @@ namespace Reloaded.Hooks.Internal
         ///     Address of the patched function added to a <see cref="MemoryBuffer"/>.
         ///     If this function has already been executed, returns the address of previously patched function.
         /// </returns>
-        public IntPtr ToMemoryBuffer(IntPtr? jumpTarget)
+        public nuint ToMemoryBuffer(nuint? jumpTarget)
         {
-            if (_newPrologueAddress != IntPtr.Zero)
+            if (_newPrologueAddress != 0)
                 return _newPrologueAddress;
 
             int alignment       = 16;
             var estimateLength  = (_bytes.Length * 2) + alignment; // Super generous! Exact length not known till relocated, just ensuring the size is enough under any circumstance.
-            var minMax          = Utilities.GetRelativeJumpMinMax(jumpTarget.HasValue ? (long) jumpTarget.Value : 0, Int32.MaxValue - estimateLength);
+            var minMax          = Utilities.GetRelativeJumpMinMax(jumpTarget ?? 0, Int32.MaxValue - estimateLength);
             var buffer          = Utilities.FindOrCreateBufferInRange(estimateLength, minMax.min, minMax.max, alignment);
             return buffer.ExecuteWithLock(() =>
             {
@@ -93,8 +93,8 @@ namespace Reloaded.Hooks.Internal
         private IList<Instruction> DecodePrologue()
         {
             var codeReader = new ByteArrayCodeReader(_bytes);
-            var decoder    = Iced.Intel.Decoder.Create(_bitness, codeReader);
-            decoder.IP     = (ulong) _originalFunctionAddress;
+            var decoder    = Decoder.Create(_bitness, codeReader);
+            decoder.IP     = _originalFunctionAddress;
             ulong endRip   = decoder.IP + (uint)_bytes.Length;
 
             var instructions = new InstructionList();
@@ -118,7 +118,5 @@ namespace Reloaded.Hooks.Internal
                 _allBytes = new List<byte>(capacity);
             }
         }
-
-
     }
 }

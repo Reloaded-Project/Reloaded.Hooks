@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
@@ -23,7 +24,7 @@ namespace Reloaded.Hooks.X64
         /// <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
-        public static TFunction Create<TFunction>(long functionAddress)
+        public static TFunction Create<TFunction>(nuint functionAddress)
         {
             return Create<TFunction>(functionAddress, out var wrapperAddress);
         }
@@ -37,13 +38,13 @@ namespace Reloaded.Hooks.X64
         ///     Address of the wrapper used to call the original function.
         ///     If the source and target calling conventions match, this is the same as <paramref name="functionAddress"/>
         /// </param>
-        public static TFunction Create<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        public static TFunction Create<TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             CreatePointer<TFunction>(functionAddress, out wrapperAddress);
             if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
-                return Unsafe.As<IntPtr, TFunction>(ref wrapperAddress);
+                return Unsafe.As<nuint, TFunction>(ref wrapperAddress);
 
-            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress);
+            return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress.ToSigned());
         }
 
         /// <summary>
@@ -56,14 +57,14 @@ namespace Reloaded.Hooks.X64
         ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
         /// </param>
         /// <returns>Address of the wrapper in native memory.</returns>
-        public static IntPtr CreatePointer<TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        public static nuint CreatePointer<TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
-            wrapperAddress = (IntPtr)functionAddress;
+            wrapperAddress = functionAddress;
 
             // Hot path: Microsoft X64 functions require no wrapping.
             if (!attribute.Equals(FunctionAttribute.Microsoft))
-                wrapperAddress = Create<TFunction>((IntPtr)functionAddress, attribute, FunctionAttribute.Microsoft);
+                wrapperAddress = Create<TFunction>(functionAddress, attribute, FunctionAttribute.Microsoft);
 
             return wrapperAddress;
         }
@@ -75,13 +76,13 @@ namespace Reloaded.Hooks.X64
         /// <param name="fromConvention">The calling convention to convert to toConvention. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to fromConvention. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call .</returns>
-        public static IntPtr Create<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
+        public static nuint Create<TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
             // 384 Bytes should allow for around 100 parameters in worst case scenario.
             // If you need more than that, then... I don't know what you're doing with your life.
             // Please do a pull request though and we can stick some code to predict the size.
             const int MaxFunctionSize = 384;
-            var minMax = Utilities.GetRelativeJumpMinMax((long) functionAddress, Int32.MaxValue - MaxFunctionSize);
+            var minMax = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - MaxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(MaxFunctionSize, minMax.min, minMax.max);
             return buffer.ExecuteWithLock(() =>
             {

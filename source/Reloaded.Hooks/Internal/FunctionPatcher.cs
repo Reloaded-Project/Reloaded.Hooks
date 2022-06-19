@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Tools;
 using Reloaded.Memory.Buffers;
 using Reloaded.Memory.Buffers.Internal.Kernel32;
@@ -45,7 +46,7 @@ namespace Reloaded.Hooks.Internal
         /// <param name="oldFunction">The function to rewrite.</param>
         /// <param name="baseAddress">The original address of the function.</param>
         /// <returns></returns>
-        public FunctionPatch Patch(List<byte> oldFunction, IntPtr baseAddress)
+        public FunctionPatch Patch(List<byte> oldFunction, nuint baseAddress)
         {
             /*
                 === What this is ===    
@@ -87,8 +88,8 @@ namespace Reloaded.Hooks.Internal
                         jmp [0x123456]
              */
 
-            FunctionPatch functionPatch = new FunctionPatch();
-            long reloadedHookEndAddress = oldFunction.Count + (long)baseAddress; // End of our own hook.
+            FunctionPatch functionPatch  = new FunctionPatch();
+            nuint reloadedHookEndAddress = (UIntPtr)baseAddress + oldFunction.Count; // End of our own hook.
 
             Disassembler  disassembler = new Disassembler(oldFunction.ToArray(), _architecture, (ulong)baseAddress, true);
             Instruction[] instructions = disassembler.Disassemble().ToArray();
@@ -99,11 +100,11 @@ namespace Reloaded.Hooks.Internal
                 Instruction nextInstruction = (x + 1 < instructions.Length) ? instructions[x + 1] : null;
                 JumpDetails jumpDetails;
 
-                if      (IsRelativeJump(instruction) && !IsJumpTargetInAModule((long) instruction.PC, GetRelativeJumpTarget(instruction)) )
+                if      (IsRelativeJump(instruction) && !IsJumpTargetInAModule((nuint)instruction.PC, GetRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRelativeJump(instruction, functionPatch);
-                else if (IsRIPRelativeJump(instruction) && !IsJumpTargetInAModule((long)instruction.PC, (long)GetRewriteRIPRelativeJumpTarget(instruction)) )
+                else if (IsRIPRelativeJump(instruction) && !IsJumpTargetInAModule((nuint)instruction.PC, (nuint)GetRewriteRIPRelativeJumpTarget(instruction)) )
                     jumpDetails = RewriteRIPRelativeJump(instruction, functionPatch);
-                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction) && !IsJumpTargetInAModule((long)instruction.PC, GetPushReturnTarget(instruction)) )
+                else if (nextInstruction != null && IsPushReturn(instruction, nextInstruction) && !IsJumpTargetInAModule((nuint)instruction.PC, GetPushReturnTarget(instruction)) )
                     jumpDetails = RewritePushReturn(instruction, nextInstruction, functionPatch);
                 else
                 {
@@ -123,11 +124,11 @@ namespace Reloaded.Hooks.Internal
         /// <param name="searchRange">Range of addresses where to patch jumps.</param>
         /// <param name="originalJmpTarget">Address range of JMP targets to patch with newJmpTarget.</param>
         /// <param name="newJmpTarget">The new address instructions should jmp to.</param>
-        private List<Patch> PatchJumpTargets_Internal(AddressRange searchRange, AddressRange originalJmpTarget, long newJmpTarget)
+        private List<Patch> PatchJumpTargets_Internal(AddressRange searchRange, AddressRange originalJmpTarget, nuint newJmpTarget)
         {
             var patches = new List<Patch>();
             int length = (int)(searchRange.EndPointer - searchRange.StartPointer);
-            var memory = TryReadFromMemory((IntPtr) searchRange.StartPointer, length);
+            var memory = TryReadFromMemory(searchRange.StartPointer, length);
 
             Disassembler disassembler = new Disassembler(memory, _architecture, (ulong)searchRange.StartPointer, true);
             Instruction[] instructions = disassembler.Disassemble().ToArray();
@@ -157,35 +158,35 @@ namespace Reloaded.Hooks.Internal
           ... and add the results to patch.NewFunction
         */
 
-        private long GetPushReturnTarget(Instruction pushInstruction) => GetOperandOffset(pushInstruction.Operands[0]);
-        private long GetRelativeJumpTarget(Instruction instruction) => (long)instruction.PC + GetOperandOffset(instruction.Operands[0]);
-        private IntPtr GetRewriteRIPRelativeJumpTarget(Instruction instruction)
+        private nuint GetPushReturnTarget(Instruction pushInstruction) => (nuint)GetOperandOffset(pushInstruction.Operands[0]);
+        private nuint GetRelativeJumpTarget(Instruction instruction) => (nuint)(instruction.PC + (ulong)GetOperandOffset(instruction.Operands[0]));
+        private nuint GetRewriteRIPRelativeJumpTarget(Instruction instruction)
         {
-            IntPtr pointerAddress = (IntPtr)((long)instruction.PC + GetOperandOffset(instruction.Operands[0]));
-            CurrentProcess.Read(pointerAddress, out IntPtr targetAddress);
+            var pointerAddress = instruction.PC + (ulong)GetOperandOffset(instruction.Operands[0]);
+            CurrentProcess.Read((nuint)pointerAddress, out nuint targetAddress);
             return targetAddress;
         }
 
         private JumpDetails RewriteRelativeJump(Instruction instruction, FunctionPatch patch)
         {
-            long originalJmpTarget = GetRelativeJumpTarget(instruction);
-            patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump((IntPtr) originalJmpTarget, Is64Bit()));
-            return new JumpDetails((long) instruction.PC, originalJmpTarget);
+            nuint originalJmpTarget = GetRelativeJumpTarget(instruction);
+            patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(originalJmpTarget, Is64Bit()));
+            return new JumpDetails((nuint)instruction.PC, originalJmpTarget);
         }
 
         private JumpDetails RewriteRIPRelativeJump(Instruction instruction, FunctionPatch patch)
         {
-            IntPtr targetAddress = GetRewriteRIPRelativeJumpTarget(instruction);
+            nuint targetAddress = GetRewriteRIPRelativeJumpTarget(instruction);
             patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(targetAddress, Is64Bit()));
-            return new JumpDetails((long) instruction.PC, (long) targetAddress);
+            return new JumpDetails((nuint) instruction.PC, targetAddress);
         }
 
         private JumpDetails RewritePushReturn(Instruction pushInstruction, Instruction retInstruction, FunctionPatch patch)
         {
             // Push does not support 64bit immediates. This makes our life considerably easier.
-            long originalJmpTarget = GetPushReturnTarget(pushInstruction);
-            patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump((IntPtr)originalJmpTarget, Is64Bit()));
-            return new JumpDetails((long) retInstruction.PC, originalJmpTarget);
+            nuint originalJmpTarget = GetPushReturnTarget(pushInstruction);
+            patch.NewFunction.AddRange(Utilities.AssembleAbsoluteJump(originalJmpTarget, Is64Bit()));
+            return new JumpDetails((nuint) retInstruction.PC, originalJmpTarget);
         }
 
         /* == Patch Function ==
@@ -203,33 +204,33 @@ namespace Reloaded.Hooks.Internal
           Patches are added to patch.Patches.
         */
 
-        private void PatchReturnAddresses(JumpDetails jumpDetails, FunctionPatch patch, long newAddress)
+        private void PatchReturnAddresses(JumpDetails jumpDetails, FunctionPatch patch, nuint newAddress)
         {
-            long originalJmpTarget    = jumpDetails.JumpOpcodeTarget;
-            long initialSearchPointer = originalJmpTarget;
-            GetSearchRange(ref initialSearchPointer, out long searchLength);
+            nuint originalJmpTarget    = jumpDetails.JumpOpcodeTarget;
+            nuint initialSearchPointer = originalJmpTarget;
+            GetSearchRange(ref initialSearchPointer, out nuint searchLength);
 
             /* Get original opcodes after original JMP instruction. */
 
-            IntPtr startRemainingOpcodes = (IntPtr)jumpDetails.JumpOpcodeEnd;
-            int lengthRemainingOpcodes   = (int)(newAddress - (long)startRemainingOpcodes);
+            nuint startRemainingOpcodes = jumpDetails.JumpOpcodeEnd;
+            int lengthRemainingOpcodes   = (int)(newAddress - startRemainingOpcodes);
             var remainingInstructions = TryReadFromMemory(startRemainingOpcodes, lengthRemainingOpcodes);
 
             /* Build function stub + patches. */
 
             // Must guarantee relative jumps to be patches can reach our new prologue
             // as such must get range of search first before creating stub.
-            long maxDisplacement         = Int32.MaxValue - searchLength;
-            IntPtr newOriginalPrologue   = Utilities.InsertJump(remainingInstructions, Is64Bit(), newAddress, originalJmpTarget, maxDisplacement);
+            nuint maxDisplacement      = Int32.MaxValue - searchLength;
+            nuint newOriginalPrologue  = Utilities.InsertJump(remainingInstructions, Is64Bit(), newAddress, originalJmpTarget, (nint)maxDisplacement);
             
             // Catch all return addresses in page range.
             var pageRange       = new AddressRange(initialSearchPointer, initialSearchPointer + searchLength);
-            var jumpTargetRange = new AddressRange((long) startRemainingOpcodes, newAddress);
+            var jumpTargetRange = new AddressRange(startRemainingOpcodes, newAddress);
 
             patch.Patches = PatchJumpTargets(pageRange, originalJmpTarget, jumpTargetRange, newOriginalPrologue);
         }
 
-        internal List<Patch> PatchJumpTargets(AddressRange searchRange, long originalJmpTarget, AddressRange jumpTargetRange, IntPtr newOriginalPrologue)
+        internal List<Patch> PatchJumpTargets(AddressRange searchRange, nuint originalJmpTarget, AddressRange jumpTargetRange, nuint newOriginalPrologue)
         {
             /*
                 On both modern Intel and AMD CPUs, the instruction decoder fetches instructions 16 bytes per cycle.
@@ -272,20 +273,20 @@ namespace Reloaded.Hooks.Internal
             // Case 4: Fall back to searching whole memory page.
             // This is successful 90% of the time, but sometimes fails due to code misalignment
             // (disassembler can interpret 00 as beginning of an instruction when it's padding).
-            var patchesForPage = PatchJumpTargets_Internal(searchRange, jumpTargetRange, (long) newOriginalPrologue);
+            var patchesForPage = PatchJumpTargets_Internal(searchRange, jumpTargetRange, newOriginalPrologue);
             result.AddRange(patchesForPage);
             return result;
 
             bool TryCodeAlignmentRange(AddressRange range)
             {
                 // Clamp to current memory page if the start/end cannot be read.
-                if (range.StartPointer < searchRange.StartPointer && Utilities.IsBadReadPtr((IntPtr) range.StartPointer))
+                if (range.StartPointer < searchRange.StartPointer && Utilities.IsBadReadPtr(range.StartPointer.ToSigned()))
                     range.StartPointer = searchRange.StartPointer;
 
-                if (range.EndPointer > searchRange.EndPointer && Utilities.IsBadReadPtr((IntPtr) range.EndPointer))
+                if (range.EndPointer > searchRange.EndPointer && Utilities.IsBadReadPtr(range.EndPointer.ToSigned()))
                     range.EndPointer = searchRange.EndPointer;
 
-                var patchesForImmediateArea = PatchJumpTargets_Internal(range, jumpTargetRange, (long) newOriginalPrologue);
+                var patchesForImmediateArea = PatchJumpTargets_Internal(range, jumpTargetRange, newOriginalPrologue);
                 result.AddRange(patchesForImmediateArea);
                 return patchesForImmediateArea.Count > 0;
             }
@@ -294,50 +295,50 @@ namespace Reloaded.Hooks.Internal
         /// <summary>
         /// Creates patch for a relative jump, if necessary.
         /// </summary>
-        private void PatchRelativeJump(Instruction instruction, ref AddressRange originalJmpTarget, long newJmpTarget, List<Patch> patches)
+        private void PatchRelativeJump(Instruction instruction, ref AddressRange originalJmpTarget, nuint newJmpTarget, List<Patch> patches)
         {
-            long jumpTargetAddress = (long)instruction.PC + GetOperandOffset(instruction.Operands[0]);
+            nuint jumpTargetAddress = (UIntPtr)instruction.PC + (nuint)GetOperandOffset(instruction.Operands[0]);
             if (originalJmpTarget.Contains(jumpTargetAddress))
             {
-                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((IntPtr) instruction.Offset, (IntPtr) newJmpTarget, Is64Bit());
-                patches.Add(new Patch((IntPtr) instruction.Offset, relativeJumpBytes));
+                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((nuint)instruction.Offset, newJmpTarget, Is64Bit());
+                patches.Add(new Patch((nuint)instruction.Offset, relativeJumpBytes));
             }
         }
 
         /// <summary>
         /// Creates patch for a RIP relative jump, if necessary.
         /// </summary>
-        private void PatchRIPRelativeJump(Instruction instruction, ref AddressRange originalJmpTarget, long newJmpTarget, List<Patch> patches)
+        private void PatchRIPRelativeJump(Instruction instruction, ref AddressRange originalJmpTarget, nuint newJmpTarget, List<Patch> patches)
         {
-            IntPtr pointerAddress = (IntPtr)((long)instruction.PC + GetOperandOffset(instruction.Operands[0]));
-            CurrentProcess.Read(pointerAddress, out IntPtr jumpTargetAddress);
+            nuint pointerAddress = (UIntPtr)instruction.PC + (nuint)GetOperandOffset(instruction.Operands[0]);
+            CurrentProcess.Read(pointerAddress, out nuint jumpTargetAddress);
 
-            if (originalJmpTarget.Contains((long) jumpTargetAddress))
+            if (originalJmpTarget.Contains(jumpTargetAddress))
             {
                 // newJmpTarget is guaranteed to be in range.
                 // Relative jump uses less bytes, so using it is also safe.
-                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((IntPtr) instruction.Offset, (IntPtr) newJmpTarget, Is64Bit());
-                patches.Add(new Patch((IntPtr)instruction.Offset, relativeJumpBytes));
+                byte[] relativeJumpBytes = Utilities.AssembleRelativeJump((nuint)instruction.Offset, newJmpTarget, Is64Bit());
+                patches.Add(new Patch((nuint)instruction.Offset, relativeJumpBytes));
             }
         }
 
         /// <summary>
         /// Creates patch for a push + return combo, if necessary.
         /// </summary>
-        private void PatchPushReturn(Instruction instruction, ref AddressRange originalJmpTarget, long newJmpTarget, List<Patch> patches)
+        private void PatchPushReturn(Instruction instruction, ref AddressRange originalJmpTarget, nuint newJmpTarget, List<Patch> patches)
         {
             long jumpTargetAddress = GetOperandOffset(instruction.Operands[0]);
 
-            if (originalJmpTarget.Contains((long)jumpTargetAddress))
+            if (originalJmpTarget.Contains((nuint)jumpTargetAddress))
             {
                 // Push + Return & JMP Absolute use the same number of bytes in X86. but not in X64.
                 // We must create a new Push + Return to an absolute jump.
-                byte[] absoluteJump = Utilities.AssembleAbsoluteJump((IntPtr) newJmpTarget, Is64Bit());
+                byte[] absoluteJump = Utilities.AssembleAbsoluteJump(newJmpTarget, Is64Bit());
                 var buffer = Utilities.FindOrCreateBufferInRange(absoluteJump.Length);
                 var absoluteJmpPointer = buffer.Add(absoluteJump);
 
                 byte[] newPushReturn = Utilities.AssemblePushReturn(absoluteJmpPointer, Is64Bit());
-                patches.Add(new Patch((IntPtr)instruction.Offset, newPushReturn));
+                patches.Add(new Patch((nuint)instruction.Offset, newPushReturn));
             }
         }
 
@@ -347,7 +348,7 @@ namespace Reloaded.Hooks.Internal
         /// </summary>
         /// <param name="searchPointer">The initial pointer from which to deduce the search range.</param>
         /// <param name="searchLength"> The length of the search.</param>
-        internal void GetSearchRange(ref long searchPointer, out long searchLength)
+        internal void GetSearchRange(ref nuint searchPointer, out nuint searchLength)
         {
             searchLength = 0;
 
@@ -357,13 +358,13 @@ namespace Reloaded.Hooks.Internal
                 // Cache the module list.
                 foreach (ProcessModule module in GetCachedModules())
                 {
-                    long minimumAddress = (long)module.BaseAddress;
-                    long maximumAddress = (long)module.BaseAddress + module.ModuleMemorySize;
+                    nuint minimumAddress = module.BaseAddress.ToUnsigned();
+                    nuint maximumAddress = (UIntPtr)module.BaseAddress.ToUnsigned() + module.ModuleMemorySize;
 
                     if (searchPointer >= minimumAddress && searchPointer <= maximumAddress)
                     {
                         searchPointer = minimumAddress;
-                        searchLength = module.ModuleMemorySize;
+                        searchLength = (nuint)module.ModuleMemorySize;
                     }
                 }
             }
@@ -372,7 +373,7 @@ namespace Reloaded.Hooks.Internal
             // consider instead scanning the whole memory page.
             if (searchLength == 0)
             {
-                searchLength = Environment.SystemPageSize;
+                searchLength = (nuint)Environment.SystemPageSize;
                 searchPointer -= searchPointer % searchLength;
             }
         }
@@ -382,7 +383,7 @@ namespace Reloaded.Hooks.Internal
         /// </summary>
         /// <param name="address">Address to read from.</param>
         /// <param name="size">The size of memory.</param>
-        private byte[] TryReadFromMemory(IntPtr address, int size)
+        private byte[] TryReadFromMemory(nuint address, int size)
         {
             byte[] memory;
             try
@@ -433,14 +434,14 @@ namespace Reloaded.Hooks.Internal
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsJumpTargetInAModule(long source, long target)
+        private bool IsJumpTargetInAModule(nuint source, nuint target)
         {
             if (!_options.VerifyJumpTargetsModule)
                 return false;
 
             foreach (ProcessModule module in GetCachedModules())
             {
-                var range = new AddressRange((long) module.BaseAddress, (long) (module.BaseAddress + module.ModuleMemorySize));
+                var range = new AddressRange(module.BaseAddress.ToUnsigned(), (module.BaseAddress + module.ModuleMemorySize).ToUnsigned());
                 if (range.Contains(source) && range.Contains(target))
                     return true;
             }
@@ -489,14 +490,14 @@ namespace Reloaded.Hooks.Internal
             /// <summary>
             /// Pointer to end of the opcode combination that causes the jump.
             /// </summary>
-            public long JumpOpcodeEnd;
+            public nuint JumpOpcodeEnd;
 
             /// <summary>
             /// Where the opcode jumps to.
             /// </summary>
-            public long JumpOpcodeTarget;
+            public nuint JumpOpcodeTarget;
 
-            public JumpDetails(long jumpOpcodeEnd, long jumpOpcodeTarget)
+            public JumpDetails(nuint jumpOpcodeEnd, nuint jumpOpcodeTarget)
             {
                 JumpOpcodeEnd = jumpOpcodeEnd;
                 JumpOpcodeTarget = jumpOpcodeTarget;

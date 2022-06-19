@@ -23,8 +23,8 @@ namespace Reloaded.Hooks.Tests.X64
 
         // Pointers to stub functions redirecting to ReturnFive.
         // Test calling them; then test what FunctionPatcher thinks about them.
-        private IntPtr _relativeJmpPtr;
-        private IntPtr _pushReturnPtr;
+        private nuint _relativeJmpPtr;
+        private nuint _pushReturnPtr;
 
         private int _relativeJmpLength;
         private int _pushReturnLength;
@@ -48,7 +48,7 @@ namespace Reloaded.Hooks.Tests.X64
         /* Build Jump methods for Patching */
         private void BuildRelativeJmp()
         {
-            var minMax = Utilities.GetRelativeJumpMinMax((long) _dummyFunctions.ReturnFive, Int32.MaxValue - 32);
+            var minMax = Utilities.GetRelativeJumpMinMax(_dummyFunctions.ReturnFive, Int32.MaxValue - 32);
             var buffer = Utilities.FindOrCreateBufferInRange(32, minMax.min, minMax.max);
 
             long jmpSource = (long)buffer.Properties.WritePointer;
@@ -89,7 +89,7 @@ namespace Reloaded.Hooks.Tests.X64
         {
             // Build RIP Relative Jump to ReturnSix
             var buffer = Utilities.FindOrCreateBufferInRange(100);
-            long jmpTarget = (long)_dummyFunctions.ReturnSix;
+            nuint jmpTarget = _dummyFunctions.ReturnSix;
 
             var pushReturnJmp = new string[]
             {
@@ -107,13 +107,13 @@ namespace Reloaded.Hooks.Tests.X64
 
             // Now try to retarget jump to ReturnFive
             var patcher = new FunctionPatcher(ArchitectureMode);
-            long searchTarget = jmpTarget;
-            FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out long searchLength);
+            nuint searchTarget = jmpTarget;
+            FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out nuint searchLength);
 
             var patches = FunctionPatcherTesting.PatchJumpTargets(patcher,
                 new AddressRange(searchTarget, searchTarget + searchLength),
                 new AddressRange(jmpTarget, jmpTarget),
-                (long)_dummyFunctions.ReturnFive);
+                _dummyFunctions.ReturnFive);
 
             Assert.True(patches.Count > 0);
 
@@ -129,7 +129,7 @@ namespace Reloaded.Hooks.Tests.X64
         {
             // Build RIP Relative Jump to ReturnSix
             var buffer = Utilities.FindOrCreateBufferInRange(100);
-            long jmpTarget = (long)_dummyFunctions.ReturnSix;
+            nuint jmpTarget = _dummyFunctions.ReturnSix;
 
             var relativeJmp = new string[]
             {
@@ -146,13 +146,13 @@ namespace Reloaded.Hooks.Tests.X64
 
             // Now try to retarget jump to ReturnFive
             var patcher = new FunctionPatcher(ArchitectureMode);
-            long searchTarget = jmpTarget;
-            FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out long searchLength);
+            nuint searchTarget = jmpTarget;
+            FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out nuint searchLength);
 
             var patches = FunctionPatcherTesting.PatchJumpTargets(patcher,
                 new AddressRange(searchTarget, searchTarget + searchLength),
                 new AddressRange(jmpTarget, jmpTarget),
-                (long)_dummyFunctions.ReturnFive);
+                _dummyFunctions.ReturnFive);
 
             Assert.True(patches.Count > 0);
 

@@ -1,5 +1,4 @@
-﻿using Reloaded.Hooks.Definitions.Structs;
-using System;
+﻿using System;
 
 namespace Reloaded.Hooks.Definitions
 {

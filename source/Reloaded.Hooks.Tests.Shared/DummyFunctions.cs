@@ -19,8 +19,8 @@ namespace Reloaded.Hooks.Tests.Shared
         public const int Five = 5;
         public const int Six  = 6;
 
-        public IntPtr ReturnFive { get; private set; }
-        public IntPtr ReturnSix  { get; private set; }
+        public nuint ReturnFive { get; private set; }
+        public nuint ReturnSix  { get; private set; }
 
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();

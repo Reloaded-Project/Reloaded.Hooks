@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
@@ -46,7 +47,7 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        public unsafe Hook(TFunction function, long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
+        public unsafe Hook(TFunction function, nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(function);
@@ -60,7 +61,7 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        public unsafe Hook(void* targetAddress, long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
+        public unsafe Hook(void* targetAddress, nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
             ReverseWrapper = CreateReverseWrapper(targetAddress);
@@ -73,7 +74,7 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        private void CreateHook(long functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
+        private void CreateHook(nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             // Set options if not passed in.
             if (options == null)
@@ -98,44 +99,44 @@ namespace Reloaded.Hooks
 
             /* Create Target Convention => TFunction Wrapper. */
             var jumpOpcodes = options.PreferRelativeJump ?
-                Utilities.TryAssembleRelativeJump((IntPtr) functionAddress, ReverseWrapper.WrapperPointer, _is64Bit, out _) :
-                Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer, _is64Bit).ToList();
+                Utilities.TryAssembleRelativeJump(functionAddress, ReverseWrapper.WrapperPointer.ToUnsigned(), _is64Bit, out _) :
+                Utilities.AssembleAbsoluteJump(ReverseWrapper.WrapperPointer.ToUnsigned(), _is64Bit).ToList();
 
             /* Calculate Hook Length (Unless Explicit) */
             if (minHookLength == -1)
-                minHookLength = Utilities.GetHookLength((IntPtr)functionAddress, jumpOpcodes.Count, _is64Bit);
+                minHookLength = Utilities.GetHookLength(functionAddress, jumpOpcodes.Count, _is64Bit);
 
             // Sometimes our hook can be larger than the amount of bytes taken by the jmp opcode.
             // We need to fill the remaining bytes with NOPs.
             Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, minHookLength);
 
             /* Get bytes from original function prologue and patch them. */
-            CurrentProcess.SafeReadRaw((IntPtr)functionAddress, out byte[] originalFunction, minHookLength);
+            CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, minHookLength);
 
             var functionPatcher   = new FunctionPatcher(_is64Bit, options);
-            var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), (IntPtr)functionAddress);
-            IntPtr hookEndAddress = (IntPtr)(functionAddress + minHookLength);
+            var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
+            nuint hookEndAddress = (UIntPtr)functionAddress + minHookLength;
 
             /* Second wave of patching. */
-            var icedPatcher = new IcedPatcher(_is64Bit, functionPatch.NewFunction.ToArray(), (IntPtr)functionAddress);
+            var icedPatcher = new IcedPatcher(_is64Bit, functionPatch.NewFunction.ToArray(), functionAddress);
 
             /* Create Hook instance. */
-            OriginalFunctionAddress = icedPatcher.ToMemoryBuffer(hookEndAddress);
-            OriginalFunction = CreateWrapper((long)icedPatcher.ToMemoryBuffer(null), out IntPtr originalFunctionWrapperAddress);
-            OriginalFunctionWrapperAddress = originalFunctionWrapperAddress;
+            OriginalFunctionAddress = icedPatcher.ToMemoryBuffer(hookEndAddress).ToSigned();
+            OriginalFunction = CreateWrapper(icedPatcher.ToMemoryBuffer(null), out nuint originalFunctionWrapperAddress);
+            OriginalFunctionWrapperAddress = originalFunctionWrapperAddress.ToSigned();
 
             _otherHookPatches = functionPatch.Patches;
-            _hookPatch = new Patch((IntPtr)functionAddress, jumpOpcodes.ToArray());
+            _hookPatch = new Patch(functionAddress, jumpOpcodes.ToArray());
         }
 
         /// <inheritdoc />
         public IHook<TFunction> Activate()
         {
             /* Create enable/disable patch. */
-            var disableOpCodes = Utilities.AssembleAbsoluteJump(OriginalFunctionAddress, _is64Bit);
-            CurrentProcess.SafeReadRaw(ReverseWrapper.WrapperPointer, out var originalOpcodes, disableOpCodes.Length);
-            _disableHookPatch = new Patch(ReverseWrapper.WrapperPointer, disableOpCodes);
-            _enableHookPatch = new Patch(ReverseWrapper.WrapperPointer, originalOpcodes);
+            var disableOpCodes = Utilities.AssembleAbsoluteJump(OriginalFunctionAddress.ToUnsigned(), _is64Bit);
+            CurrentProcess.SafeReadRaw(ReverseWrapper.WrapperPointer.ToUnsigned(), out var originalOpcodes, disableOpCodes.Length);
+            _disableHookPatch = new Patch(ReverseWrapper.WrapperPointer.ToUnsigned(), disableOpCodes);
+            _enableHookPatch = new Patch(ReverseWrapper.WrapperPointer.ToUnsigned(), originalOpcodes);
 
             /* Activate the hook. */
             _hookPatch.Apply();
@@ -184,12 +185,12 @@ namespace Reloaded.Hooks
         protected unsafe IReverseWrapper<TFunction> CreateReverseWrapper(void* function)
         {
             if (_is64Bit)
-                return new X64.ReverseWrapper<TFunction>((IntPtr) function);
+                return new X64.ReverseWrapper<TFunction>((nuint)function);
 
-            return new ReverseWrapper<TFunction>((IntPtr) function);
+            return new ReverseWrapper<TFunction>((nuint) function);
         }
 
-        protected TFunction CreateWrapper(long functionAddress, out IntPtr wrapperAddress)
+        protected TFunction CreateWrapper(nuint functionAddress, out nuint wrapperAddress)
         {
             if (_is64Bit)
                 return X64.Wrapper.Create<TFunction>(functionAddress, out wrapperAddress);

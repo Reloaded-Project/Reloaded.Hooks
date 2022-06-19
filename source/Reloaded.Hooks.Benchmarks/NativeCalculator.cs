@@ -48,7 +48,7 @@ namespace Reloaded.Hooks.Benchmarks
         [Definitions.X64.Function(CallingConventions.Microsoft)]
         public struct CalculatorFunctionManaged { public FuncPtr<int, int, int> Value; }
 
-        public virtual IntPtr Add { get; protected set; }
+        public virtual nuint Add { get; protected set; }
 
     }
 }

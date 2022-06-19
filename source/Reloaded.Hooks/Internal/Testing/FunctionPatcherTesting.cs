@@ -11,15 +11,15 @@ namespace Reloaded.Hooks.Internal.Testing
         /// <summary>
         /// [TESTING USE ONLY]
         /// </summary>
-        public static List<Patch> PatchJumpTargets(FunctionPatcher patcher, AddressRange searchRange, AddressRange jumpTargetRange, long newJmpTarget)
+        public static List<Patch> PatchJumpTargets(FunctionPatcher patcher, AddressRange searchRange, AddressRange jumpTargetRange, nuint newJmpTarget)
         {
-            return patcher.PatchJumpTargets(searchRange, jumpTargetRange.StartPointer, jumpTargetRange, (IntPtr) newJmpTarget);
+            return patcher.PatchJumpTargets(searchRange, jumpTargetRange.StartPointer, jumpTargetRange, newJmpTarget);
         }
 
         /// <summary>
         /// [TESTING USE ONLY]
         /// </summary>
-        public static void GetSearchRange(FunctionPatcher patcher, ref long searchPointer, out long searchLength)
+        public static void GetSearchRange(FunctionPatcher patcher, ref nuint searchPointer, out nuint searchLength)
         {
             patcher.GetSearchRange(ref searchPointer, out searchLength);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Reloaded.Hooks.Definitions;
+using Reloaded.Hooks.Definitions.Helpers;
 
 namespace Reloaded.Hooks.Tools
 {
@@ -55,9 +56,9 @@ namespace Reloaded.Hooks.Tools
             }
 
             if (sizeof(IntPtr) == 4)
-                _delegate = X86.Wrapper.Create<TDelegate>((long) functionPointer, out var wrapperAddress);
+                _delegate = X86.Wrapper.Create<TDelegate>(functionPointer.ToUnsigned(), out var wrapperAddress);
             else
-                _delegate = X64.Wrapper.Create<TDelegate>((long)functionPointer, out var wrapperAddress);
+                _delegate = X64.Wrapper.Create<TDelegate>(functionPointer.ToUnsigned(), out var wrapperAddress);
 
             _methodCache[functionPointer] = _delegate;
             _lastFunctionPointer = functionPointer;
