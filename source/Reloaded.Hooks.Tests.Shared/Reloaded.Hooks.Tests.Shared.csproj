@@ -25,4 +25,8 @@
     <NativeLibs Remove="NativeCalculator.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="IMemoryAllocator.cs" />
+  </ItemGroup>
+
 </Project>

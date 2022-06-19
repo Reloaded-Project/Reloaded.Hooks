@@ -8,6 +8,7 @@
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_UNMANAGED_CALLERS_ONLY</DefineConstants>
 	<NoWarn>1701;1702;0169</NoWarn>
+    <DefineConstants>$(DefineConstants);X86</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
@@ -52,6 +53,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Reloaded.Hooks.Tests.Shared\Reloaded.Hooks.Tests.Shared.csproj" />
     <ProjectReference Include="..\Reloaded.Hooks\Reloaded.Hooks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <NativeLibs Remove="LargeAddressAwarenessTest.cs" />
   </ItemGroup>
 
 </Project>

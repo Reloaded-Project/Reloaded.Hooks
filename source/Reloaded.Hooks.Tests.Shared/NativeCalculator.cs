@@ -64,15 +64,16 @@ namespace Reloaded.Hooks.Tests.Shared
 
         /* Constructor and Destructor */
 
-        public NativeCalculator()
+        public NativeCalculator(IMemoryAllocator alloc = null)
         {
-            BuildAdd();
-            BuildSubtract();
-            BuildDivide();
-            BuildMultiply();
+            alloc ??= new ReloadedMemoryAllocator();
+            BuildAdd(alloc);
+            BuildSubtract(alloc);
+            BuildDivide(alloc);
+            BuildMultiply(alloc);
             BuildVTable();
 
-            BuildAddWithBranch();
+            BuildAddWithBranch(alloc);
         }
 
         [ExcludeFromCodeCoverage]
@@ -87,7 +88,7 @@ namespace Reloaded.Hooks.Tests.Shared
 
         /* Building functions to hook. */
 
-        private void BuildAdd()
+        private void BuildAdd(IMemoryAllocator alloc)
         {
             int wordSize = IntPtr.Size;
             string[] addFunction = new string[]
@@ -105,11 +106,11 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(addFunction);
-            Add = _memory.Allocate(result.Length);
+            Add = alloc.Allocate(result.Length);
             _memory.WriteRaw(Add, result);
         }
 
-        private void BuildMultiply()
+        private void BuildMultiply(IMemoryAllocator alloc)
         {
             int wordSize = IntPtr.Size;
             string[] multiplyFunction = new string[]
@@ -127,11 +128,11 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(multiplyFunction);
-            Multiply = _memory.Allocate(result.Length);
+            Multiply = alloc.Allocate(result.Length);
             _memory.WriteRaw(Multiply, result);
         }
 
-        private void BuildDivide()
+        private void BuildDivide(IMemoryAllocator alloc)
         {
             int wordSize = IntPtr.Size;
             string[] divideFunction = new string[]
@@ -150,11 +151,11 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(divideFunction);
-            Divide = _memory.Allocate(result.Length);
+            Divide = alloc.Allocate(result.Length);
             _memory.WriteRaw(Divide, result);
         }
 
-        private void BuildSubtract()
+        private void BuildSubtract(IMemoryAllocator alloc)
         {
             int wordSize = IntPtr.Size;
             string[] subtractFunction = new string[]
@@ -172,7 +173,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(subtractFunction);
-            Subtract = _memory.Allocate(result.Length);
+            Subtract = alloc.Allocate(result.Length);
             _memory.WriteRaw(Subtract, result);
         }
 
@@ -193,7 +194,7 @@ namespace Reloaded.Hooks.Tests.Shared
         }
 
         /* Extra tests for Iced branch patching. */
-        private void BuildAddWithBranch()
+        private void BuildAddWithBranch(IMemoryAllocator alloc)
         {
             int wordSize = IntPtr.Size;
             string[] addFunction = new string[]
@@ -221,7 +222,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(addFunction);
-            AddWithBranch = _memory.Allocate(result.Length);
+            AddWithBranch = alloc.Allocate(result.Length);
             _memory.WriteRaw(AddWithBranch, result);
         }
     }
