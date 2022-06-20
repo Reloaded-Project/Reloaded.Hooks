@@ -103,7 +103,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
         public static string GetAbsoluteJumpMnemonics(nuint target, bool is64bit)
         {
-            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            var buffer = FindOrCreateBufferInRange(IntPtr.Size, 1, UInt32.MaxValue);
             nuint functionPointer = buffer.Add(ref target);
 
             if (is64bit) return "jmp qword [qword " + functionPointer + "]";
@@ -206,6 +206,9 @@ namespace Reloaded.Hooks.Tools
             int maxFunctionSize = 64 + extraBytes;
             var minMax = Utilities.GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
+
+            // If 
+
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
