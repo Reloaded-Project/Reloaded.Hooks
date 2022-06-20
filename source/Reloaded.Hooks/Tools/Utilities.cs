@@ -86,10 +86,22 @@ namespace Reloaded.Hooks.Tools
         /// <param name="currentAddress">Address of the current instruction.</param>
         /// <param name="targetAddress">The address to jump to.</param>
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
-        public static byte[] AssembleRelativeJump(nuint currentAddress, nuint targetAddress, bool is64bit)
+        public static byte[] AssembleRelativeJump(nuint currentAddress, nuint targetAddress, bool is64bit) => AssembleRelativeJump(currentAddress, targetAddress, is64bit, out _);
+
+        /// <summary>
+        /// Assembles a relative (to EIP/RIP) jump by a user specified offset.
+        /// </summary>
+        /// <param name="currentAddress">Address of the current instruction.</param>
+        /// <param name="targetAddress">The address to jump to.</param>
+        /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
+        /// <param name="isProxied">
+        ///     True if this relative jump is handled through a proxy, i.e. this jump jumps to another jump which jumps to the real target.
+        /// </param>
+        public static byte[] AssembleRelativeJump(nuint currentAddress, nuint targetAddress, bool is64bit, out bool isProxied)
         {
             long offset = (long)targetAddress - (long)currentAddress;
-            if (Math.Abs(offset) <= Int32.MaxValue)
+            isProxied = Math.Abs(offset) > Int32.MaxValue;
+            if (!isProxied)
             {
                 return Assembler.Assemble(new[]
                 {
@@ -459,6 +471,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="minimumAddress">Maximum address of the buffer.</param>
         /// <param name="maximumAddress">Minimum address of the buffer.</param>
         /// <param name="alignment">Required alignment of the item to add to the buffer.</param>
+        /// <exception cref="Exception">Unable to find or create a buffer in given range.</exception>
         public static MemoryBuffer FindOrCreateBufferInRange(int size, nuint minimumAddress = 1, nuint maximumAddress = int.MaxValue, int alignment = 4)
         {
             var buffers = _bufferHelper.FindBuffers(size + alignment, minimumAddress, maximumAddress);
