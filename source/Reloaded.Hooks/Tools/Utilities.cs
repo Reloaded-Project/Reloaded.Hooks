@@ -237,23 +237,27 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="targetPtr">The address to jump to.</param>
         /// <param name="is64Bit">Whether the jump is 64-bit or not.</param>
-        /// <param name="extraBytes">Extra bytes to allocate after the jump.</param>
+        /// <param name="minBytesUsed">Minimum number of bytes to use in the buffer.</param>
         /// <returns>Pointer to the code used to jump to said specified address.</returns>
-        public static nuint CreateJump(nuint targetPtr, bool is64Bit, int extraBytes = 0)
+        public static nuint CreateJump(nuint targetPtr, bool is64Bit, int minBytesUsed = 0)
         {
-            int maxFunctionSize = 64 + extraBytes;
+            const int alignment = 16;
+            int maxFunctionSize = alignment + Constants.MaxAbsJmpSize + minBytesUsed;
             var minMax = Utilities.GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
             
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
-                buffer.SetAlignment(16);
+                buffer.SetAlignment(alignment);
                 var codeAddress = buffer.Properties.WritePointer;
                 var bytes = TryAssembleRelativeJumpArray(codeAddress, targetPtr, is64Bit, out _);
                 var result = buffer.Add(bytes, 1);
+
+                var bytesUsed  = buffer.Properties.WritePointer - codeAddress;
+                var extraBytes = minBytesUsed - (int)bytesUsed;
                 if (extraBytes > 0)
-                    buffer.Add(extraBytes, 1);
+                    buffer.Add((int)extraBytes, 1);
 
                 return result;
             });

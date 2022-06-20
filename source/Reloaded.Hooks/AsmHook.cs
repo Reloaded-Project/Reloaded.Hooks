@@ -18,8 +18,6 @@ namespace Reloaded.Hooks
     public unsafe class AsmHook : IAsmHook
     {
         private static Memory.Sources.Memory _memory = CurrentProcess;
-        
-        private const int MaxAbsJmpSize = 8; // Maximum size of jmp opcode. i.e. jmp qword [qword 0xFFFFFFFF]
 
         /// <inheritdoc />
         public bool IsEnabled { get; private set; } = false;
@@ -123,9 +121,9 @@ namespace Reloaded.Hooks
             int pointerSize            = (_is64Bit ? 8 : 4);
 
             int pointerRequiredBytes   = pointerSize * 2; // 2 calls to AssembleAbsoluteJump
-            int stubEntrySize          = MaxAbsJmpSize;
-            int stubHookSize           = asmCode.Length + options.hookLength + MaxAbsJmpSize;
-            int stubOriginalSize       = options.hookLength + MaxAbsJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
+            int stubEntrySize          = Constants.MaxAbsJmpSize;
+            int stubHookSize           = asmCode.Length + options.hookLength + Constants.MaxAbsJmpSize;
+            int stubOriginalSize       = options.hookLength + Constants.MaxAbsJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
 
             int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes;
             var minMax                 = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - requiredSizeOfBuffer);

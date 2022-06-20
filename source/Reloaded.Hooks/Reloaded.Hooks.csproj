@@ -57,4 +57,8 @@
     <NativeLibs Remove="*.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="Constants.cs" />
+  </ItemGroup>
+
 </Project>

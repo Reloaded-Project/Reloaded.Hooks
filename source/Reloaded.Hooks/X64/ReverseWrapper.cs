@@ -68,7 +68,7 @@ namespace Reloaded.Hooks.X64
             if (!reloadedFunctionAttribute.Equals(FunctionAttribute.Microsoft))
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, FunctionAttribute.Microsoft, reloadedFunctionAttribute).ToSigned();
             else
-                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, true, 8).ToSigned();
+                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, true, Constants.MaxAbsJmpSize).ToSigned();
         }
     }
 }

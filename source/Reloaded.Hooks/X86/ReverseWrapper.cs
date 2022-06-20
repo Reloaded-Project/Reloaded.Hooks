@@ -70,7 +70,7 @@ namespace Reloaded.Hooks.X86
             {
                 if (managedFuncAttribute.Equals(attribute))
                 {
-                    reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8).ToSigned();
+                    reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, Constants.MaxAbsJmpSize).ToSigned();
                     return;
                 }
                 
@@ -82,7 +82,7 @@ namespace Reloaded.Hooks.X86
             if (!attribute.IsEquivalent(funcPtrAttribute))
                 reverseFunctionWrapper.WrapperPointer = Wrapper.Create<TFunction>(functionPtr, attribute.GetEquivalent(funcPtrAttribute), attribute).ToSigned();
             else
-                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, 8).ToSigned();
+                reverseFunctionWrapper.WrapperPointer = Utilities.CreateJump(functionPtr, false, Constants.MaxAbsJmpSize).ToSigned();
         }
     }
 }
