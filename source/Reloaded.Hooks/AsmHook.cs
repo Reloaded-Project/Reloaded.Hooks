@@ -18,9 +18,8 @@ namespace Reloaded.Hooks
     public unsafe class AsmHook : IAsmHook
     {
         private static Memory.Sources.Memory _memory = CurrentProcess;
-
-        private const int MaxRelJmpSize = 5; // Maximum size of jmp opcode.
-        private const int MaxAbsJmpSize = 7; // Maximum size of jmp opcode.
+        
+        private const int MaxAbsJmpSize = 8; // Maximum size of jmp opcode. i.e. jmp qword [qword 0xFFFFFFFF]
 
         /// <inheritdoc />
         public bool IsEnabled { get; private set; } = false;
