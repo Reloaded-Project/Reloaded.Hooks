@@ -45,6 +45,7 @@
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FastcallCalculatorTest.cs" Link="FastcallCalculatorTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\FunctionPatcherTest.cs" Link="FunctionPatcherTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\HookedObjectVtableTest.cs" Link="HookedObjectVtableTest.cs" />
+    <Compile Include="..\Reloaded.Hooks.Tests.X64\LongJumpTest.cs" Link="LongJumpTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\ReloadedHooksTest.cs" Link="ReloadedHooksTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\SuperStackedHooks.cs" Link="SuperStackedHooks.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\VTableTest.cs" Link="VTableTest.cs" />

@@ -88,11 +88,37 @@ namespace Reloaded.Hooks.Tools
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
         public static byte[] AssembleRelativeJump(nuint currentAddress, nuint targetAddress, bool is64bit)
         {
+            long offset = (long)targetAddress - (long)currentAddress;
+            if (Math.Abs(offset) <= Int32.MaxValue)
+            {
+                return Assembler.Assemble(new[]
+                {
+                    Architecture(is64bit),
+                    SetAddress(currentAddress),
+                    is64bit ? $"jmp qword {targetAddress}" : $"jmp dword {targetAddress}"
+                });
+            }
+
+            // Hack: Work around invalid jumps.
+            // There are legitimate possibilities of edge cases whereby it may not be possible to
+            // jump from source to target, such as when there isn't sufficient memory.  
+            // We're going to try hack past this with a simple hack for now, it's not perfect but
+            // it should be good enough in the meantime.
+
+            // Note: This code only handles signed cases in 64-bit due to length of long.
+            // but given the address space of 64b, I don't consider this to be a limitation in my lifetime.
+
+            // If we are exceeding the max jump range, try to
+            // find a buffer within the range of currentaddress and
+            // jump to it, then absolute jump from that one.
+            var minMax = GetRelativeJumpMinMax(currentAddress);
+            var buffer  = FindOrCreateBufferInRange(16, minMax.min, minMax.max); // No code alignment as this is edge case.
+            var absoluteJumpAddress = buffer.Add(AssembleAbsoluteJump(targetAddress, is64bit));
             return Assembler.Assemble(new[]
             {
                 Architecture(is64bit),
                 SetAddress(currentAddress),
-                is64bit ? $"jmp qword {targetAddress}" : $"jmp dword {targetAddress}"
+                is64bit ? $"jmp qword {absoluteJumpAddress}" : $"jmp dword {absoluteJumpAddress}"
             });
         }
 
@@ -206,9 +232,7 @@ namespace Reloaded.Hooks.Tools
             int maxFunctionSize = 64 + extraBytes;
             var minMax = Utilities.GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
-
-            // If 
-
+            
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.

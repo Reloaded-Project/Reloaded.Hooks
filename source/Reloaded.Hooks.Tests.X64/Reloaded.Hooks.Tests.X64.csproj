@@ -95,4 +95,8 @@
     <NativeLibs Remove="HookedObjectVtableTest.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <NativeLibs Remove="LongJumpTest.cs" />
+  </ItemGroup>
+
 </Project>

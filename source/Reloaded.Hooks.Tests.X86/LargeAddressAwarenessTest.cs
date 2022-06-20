@@ -138,23 +138,4 @@ namespace Reloaded.Hooks.Tests.X86
                 Assert.False(true, "Test host is not large address aware!!");
         }
     }
-
-    public class HighMemoryAllocator : IMemoryAllocator
-    {
-        private nuint _minAddress;
-        private nuint _maxAddress;
-        private MemoryBufferHelper _helper = new(Process.GetCurrentProcess());
-
-        public HighMemoryAllocator()
-        {
-            _maxAddress = MemoryAllocatorHelpers.GetMaxAddress(true);
-            _minAddress = (_maxAddress - 0x1F00000); // ~32 MB. hopefully OS wouldn't complain.
-        }
-
-        public nuint Allocate(int size)
-        {
-            var buf = Utilities.FindOrCreateBufferInRange(size, _minAddress, _maxAddress);
-            return buf.Add(new byte[size]);
-        }
-    }
 }
