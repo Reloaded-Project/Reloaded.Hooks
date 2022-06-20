@@ -117,7 +117,7 @@ namespace Reloaded.Hooks.Tools
         /// <param name="is64bit">True to generate x64 code, else false (x86 code).</param>
         public static string GetAbsoluteCallMnemonics(nuint target, bool is64bit)
         {
-            var buffer = FindOrCreateBufferInRange(IntPtr.Size);
+            var buffer = FindOrCreateBufferInRange(IntPtr.Size, 1, UInt32.MaxValue);
             nuint functionPointer = buffer.Add(ref target);
 
             if (is64bit) return "call qword [qword " + functionPointer + "]";
