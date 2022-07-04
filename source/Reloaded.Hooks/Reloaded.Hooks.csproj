@@ -28,13 +28,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iced" Version="1.11.3" />
+    <PackageReference Include="Iced" Version="1.17.0" />
     <PackageReference Include="Reloaded.Assembler" Version="1.0.14">
       <IncludeAssets>All</IncludeAssets>
       <PrivateAssets>None</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Reloaded.Memory.Buffers" Version="2.0.0" />
-    <PackageReference Include="SharpDisasm" Version="1.1.11" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,15 +5,12 @@ using Reloaded.Hooks.Internal.Testing;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.Tests.Shared.Macros;
 using Reloaded.Hooks.Tools;
-using SharpDisasm;
 using Xunit;
 
 namespace Reloaded.Hooks.Tests.X64
 {
     public class FunctionPatcherTest : IDisposable
     {
-        private ArchitectureMode ArchitectureMode = Environment.Is64BitProcess ? SharpDisasm.ArchitectureMode.x86_64 : SharpDisasm.ArchitectureMode.x86_32;
-
         private DummyFunctions _dummyFunctions;
 
         private DummyFunctions.ReturnNumberDelegate _returnFive;
@@ -106,7 +103,7 @@ namespace Reloaded.Hooks.Tests.X64
             Assert.Equal(DummyFunctions.Six, wrapper());
 
             // Now try to retarget jump to ReturnFive
-            var patcher = new FunctionPatcher(ArchitectureMode);
+            var patcher = new FunctionPatcher(Environment.Is64BitProcess);
             nuint searchTarget = jmpTarget;
             FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out nuint searchLength);
 
@@ -145,7 +142,7 @@ namespace Reloaded.Hooks.Tests.X64
             Assert.Equal(DummyFunctions.Six, wrapper());
 
             // Now try to retarget jump to ReturnFive
-            var patcher = new FunctionPatcher(ArchitectureMode);
+            var patcher = new FunctionPatcher(Environment.Is64BitProcess);
             nuint searchTarget = jmpTarget;
             FunctionPatcherTesting.GetSearchRange(patcher, ref searchTarget, out nuint searchLength);
 
@@ -195,7 +192,7 @@ namespace Reloaded.Hooks.Tests.X64
         [Fact]
         public void CallRewrittenRelativeJmp()
         {
-            var functionPatcher = new FunctionPatcher(ArchitectureMode);
+            var functionPatcher = new FunctionPatcher(Environment.Is64BitProcess);
             Memory.Sources.Memory.CurrentProcess.ReadRaw(_relativeJmpPtr, out byte[] originalBytes, _relativeJmpLength);
             var patch = functionPatcher.Patch(originalBytes.ToList(), _relativeJmpPtr);
 
@@ -208,7 +205,7 @@ namespace Reloaded.Hooks.Tests.X64
         [Fact]
         public void CallRewrittenPushReturn()
         {
-            var functionPatcher = new FunctionPatcher(ArchitectureMode);
+            var functionPatcher = new FunctionPatcher(Environment.Is64BitProcess);
             Memory.Sources.Memory.CurrentProcess.ReadRaw(_pushReturnPtr, out byte[] originalBytes, _pushReturnLength);
             var patch = functionPatcher.Patch(originalBytes.ToList(), _pushReturnPtr);
 

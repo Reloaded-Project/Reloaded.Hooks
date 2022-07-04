@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using Iced.Intel;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Internal;
 using Reloaded.Memory.Buffers;
-using Reloaded.Memory.Buffers.Internal.Kernel32;
-using SharpDisasm;
 using static Reloaded.Hooks.Internal.Native.MEM_PROTECTION;
 
 namespace Reloaded.Hooks.Tools
@@ -262,47 +261,29 @@ namespace Reloaded.Hooks.Tools
                 return result;
             });
         }
-
+        
         /// <summary>
         /// Retrieves the length of the hook for trampoline, mid-function hooks etc.
         /// </summary>
         /// <param name="hookAddress">The address that is to be hooked.</param>
         /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
-        /// <param name="is64Bit">True if 64bit, else false.</param>
-        public static int GetHookLength(nuint hookAddress, int hookLength, bool is64Bit)
-        {
-            ArchitectureMode architecture = is64Bit ? ArchitectureMode.x86_64 
-                                                    : ArchitectureMode.x86_32;
-            return GetHookLength(hookAddress, hookLength, architecture);
-        }
-
-        /// <summary>
-        /// Retrieves the length of the hook for trampoline, mid-function hooks etc.
-        /// </summary>
-        /// <param name="hookAddress">The address that is to be hooked.</param>
-        /// <param name="hookLength">The minimum length of the hook, the length of our assembled bytes for the hook.</param>
-        /// <param name="architectureMode">X86 or X64 to use for disassembly.</param>
-        public static int GetHookLength(nuint hookAddress, int hookLength, ArchitectureMode architectureMode)
+        /// <param name="is64Bit">True to disasm as 64-bit, else uses 32.</param>
+        public static unsafe int GetHookLength(nuint hookAddress, int hookLength, bool is64Bit)
         {
             /*
-                This works by reading a short fixed array of bytes from memory then disassembling the bytes
-                and iterating over each individual instruction up to the point where the total length of the
+                This works by disassembling the bytes at the given address and iterating
+                over each individual instruction up to the point where the total length of the
                 disassembled exceeds the user set length of instructions to be assembled.
              */
 
-            // Retrieve the function header, arbitrary length of <see below> bytes is used for this operation.
-            // While you can technically build infinite length X86 instructions, anything greater than 16 to compare seems reasonable.
-            Memory.Sources.Memory.CurrentProcess.ReadRaw(hookAddress, out byte[] functionHeader, 64);
-
-            Disassembler disassembler = new Disassembler(functionHeader, architectureMode);
-            Instruction[] instructions = disassembler.Disassemble().ToArray();
+            using var unmanagedMemStream = new UnmanagedMemoryStream((byte*)hookAddress, 128);
+            var decoder = Decoder.Create(is64Bit ? 64 : 32, new StreamCodeReader(unmanagedMemStream));
 
             int completeHookLength = 0;
-            foreach (Instruction instruction in instructions)
+            while (completeHookLength < hookLength)
             {
+                decoder.Decode(out var instruction);
                 completeHookLength += instruction.Length;
-                if (completeHookLength >= hookLength)
-                    break;
             }
 
             return completeHookLength;
