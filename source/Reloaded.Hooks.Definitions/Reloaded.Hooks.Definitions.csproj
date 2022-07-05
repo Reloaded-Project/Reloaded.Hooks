@@ -12,15 +12,13 @@
     <PackageIconUrl>https://avatars1.githubusercontent.com/u/45473408</PackageIconUrl>
     <RepositoryUrl>https://github.com/Reloaded-Project/Reloaded.Hooks</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>1.13.0</Version>
+    <Version>1.14.0</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-	<LangVersion>preview</LangVersion>
-	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
-	<DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
-	<DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
+	  <LangVersion>preview</LangVersion>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <DefineConstants Condition="'$(TargetFramework)' == 'net6.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
+	  <DefineConstants Condition="'$(TargetFramework)' == 'net5.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
+	  <DefineConstants Condition="'$(TargetFramework)' == 'netcoreapp3.0'">$(DefineConstants);FEATURE_DEFAULT_INTERFACES</DefineConstants>
 
     <!-- The trimming metadata/attributes consumes more space than saved from trimming. -->
     <IsTrimmable>true</IsTrimmable>
