@@ -35,6 +35,13 @@ jobs:
         # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
         dotnet-version: 6.0.x
     
+    - name: Setup .NET Core SDK 7.X
+      uses: actions/setup-dotnet@v1.9.0
+      with:
+        # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
+        dotnet-version: 7.0.x
+        include-prerelease: true
+    
     # Required for C#10 features.
     - name: Setup Node.js
       uses: actions/setup-node@v2

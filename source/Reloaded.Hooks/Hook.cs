@@ -115,7 +115,7 @@ namespace Reloaded.Hooks
 
             var functionPatcher   = new FunctionPatcher(_is64Bit, options);
             var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
-            nuint hookEndAddress = (UIntPtr)functionAddress + minHookLength;
+            nuint hookEndAddress = functionAddress + (nuint)minHookLength;
 
             /* Second wave of patching. */
             var icedPatcher = new IcedPatcher(_is64Bit, functionPatch.NewFunction.ToArray(), functionAddress);

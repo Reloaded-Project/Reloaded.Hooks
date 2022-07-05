@@ -105,7 +105,7 @@ namespace Reloaded.Hooks
                 options.hookLength = Utilities.GetHookLength(functionAddress, options.MaxOpcodeSize, _is64Bit);
 
             CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, options.hookLength);
-            nuint jumpBackAddress = (UIntPtr)functionAddress + options.hookLength;
+            nuint jumpBackAddress = functionAddress + (nuint)options.hookLength;
 
             /* Size calculations for buffer, must have sufficient space. */
 
@@ -169,11 +169,11 @@ namespace Reloaded.Hooks
             {
                 case AsmHookBehaviour.ExecuteFirst:
                     bytes.AddRange(asmCode);
-                    bytes.AddRange(patcher.EncodeForNewAddress((UIntPtr)buffer.Properties.WritePointer + bytes.Count));
+                    bytes.AddRange(patcher.EncodeForNewAddress(buffer.Properties.WritePointer + (nuint)bytes.Count));
                     break;
 
                 case AsmHookBehaviour.ExecuteAfter:
-                    bytes.AddRange(patcher.EncodeForNewAddress((UIntPtr)buffer.Properties.WritePointer + bytes.Count));
+                    bytes.AddRange(patcher.EncodeForNewAddress(buffer.Properties.WritePointer + (nuint)bytes.Count));
                     bytes.AddRange(asmCode);
                     break;
 
@@ -185,7 +185,7 @@ namespace Reloaded.Hooks
                     throw new ArgumentOutOfRangeException(nameof(behaviour), behaviour, null);
             }
 
-            var jmpBackBytes = Utilities.AssembleRelativeJump((UIntPtr)buffer.Properties.WritePointer + bytes.Count, jumpBackAddress, _is64Bit);
+            var jmpBackBytes = Utilities.AssembleRelativeJump(buffer.Properties.WritePointer + (nuint)bytes.Count, jumpBackAddress, _is64Bit);
             bytes.AddRange(jmpBackBytes);
             return buffer.Add(bytes.ToArray(), 1); // Buffer is pre-aligned
         }
@@ -195,7 +195,7 @@ namespace Reloaded.Hooks
             var bytes         = new List<byte>(originalCode.Length);
             bytes.AddRange(patcher.EncodeForNewAddress(buffer.Properties.WritePointer));
 
-            var jmpBackBytes = Utilities.AssembleRelativeJump((UIntPtr)buffer.Properties.WritePointer + bytes.Count, jumpBackAddress, _is64Bit);
+            var jmpBackBytes = Utilities.AssembleRelativeJump(buffer.Properties.WritePointer + (nuint)bytes.Count, jumpBackAddress, _is64Bit);
             bytes.AddRange(jmpBackBytes);
             return buffer.Add(bytes.ToArray(), 1); // Buffer is pre-aligned
         }

@@ -115,7 +115,7 @@ public static class VirtualFunctionTableHelpers
         // Using the size of the IntPtr allows for both x64 and x86 support.
         for (int i = 0; i < numberOfMethods; i++)
         {
-            var targetAddress = (UIntPtr)tablePointer + (IntPtr.Size * i);
+            var targetAddress = tablePointer + (nuint)(IntPtr.Size * i);
 
             CurrentProcess.SafeRead(targetAddress, out IntPtr functionPtr);
             tablePointers.Add(new TableEntry

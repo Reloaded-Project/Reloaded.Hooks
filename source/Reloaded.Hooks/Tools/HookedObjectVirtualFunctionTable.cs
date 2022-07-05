@@ -37,7 +37,7 @@ namespace Reloaded.Hooks.Tools
             internal unsafe VTableEntryHook(HookedObjectVirtualFunctionTable vTableHook, nuint originalVirtualFunctionTableAddress, int index,
                 TFunction function)
             {
-                CurrentProcess.SafeRead((UIntPtr)originalVirtualFunctionTableAddress + (index * sizeof(nuint)), out nuint originalFunctionAddress);
+                CurrentProcess.SafeRead(originalVirtualFunctionTableAddress + (nuint)(index * sizeof(nuint)), out nuint originalFunctionAddress);
 
                 _vTableHook = vTableHook;
                 _index = index;

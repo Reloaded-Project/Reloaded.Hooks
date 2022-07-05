@@ -79,7 +79,7 @@ namespace Reloaded.Hooks.Internal
              */
 
             FunctionPatch functionPatch  = new FunctionPatch();
-            nuint reloadedHookEndAddress = (UIntPtr)baseAddress + oldFunction.Count; // End of our own hook.
+            nuint reloadedHookEndAddress = baseAddress + (nuint)oldFunction.Count; // End of our own hook.
 
             var oldFunctionArr = oldFunction.ToArray();
             var decoder = Decoder.Create(_is64Bit ? 64 : 32, new ByteArrayCodeReader(oldFunctionArr));
@@ -363,7 +363,7 @@ namespace Reloaded.Hooks.Internal
                 foreach (ProcessModule module in GetCachedModules())
                 {
                     nuint minimumAddress = module.BaseAddress.ToUnsigned();
-                    nuint maximumAddress = (UIntPtr)module.BaseAddress.ToUnsigned() + module.ModuleMemorySize;
+                    nuint maximumAddress = module.BaseAddress.ToUnsigned() + (nuint)module.ModuleMemorySize;
 
                     if (searchPointer >= minimumAddress && searchPointer <= maximumAddress)
                     {
