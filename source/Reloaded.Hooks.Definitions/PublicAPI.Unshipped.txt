@@ -1,4 +1,1 @@
-﻿Reloaded.Hooks.Definitions.Helpers.AddressExtensions
-static Reloaded.Hooks.Definitions.Helpers.AddressExtensions.ToSigned(this nuint value) -> nint
-static Reloaded.Hooks.Definitions.Helpers.AddressExtensions.ToUnsigned(this long value) -> ulong
-static Reloaded.Hooks.Definitions.Helpers.AddressExtensions.ToUnsigned(this nint value) -> nuint
+﻿
