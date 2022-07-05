@@ -24,7 +24,7 @@ theme:
     accent: red
     scheme: slate
     
-pages:
+nav:
   - Home: index.md
   - What's This?: https://github.com/Reloaded-Project/Reloaded.Hooks/issues/1
   - Manual: 
