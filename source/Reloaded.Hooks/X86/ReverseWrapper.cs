@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
@@ -12,7 +13,11 @@ namespace Reloaded.Hooks.X86
     /// <summary>
     /// Allows for the creation of functions with a custom calling convention which internally call functions using the conventions specified by <typeparamref name="TFunction"/>.
     /// </summary>
-    public class ReverseWrapper<TFunction> : IReverseWrapper<TFunction>
+    public class ReverseWrapper<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction> : IReverseWrapper<TFunction>
     {
         /// <inheritdoc/>
         public TFunction CSharpFunction { get; }

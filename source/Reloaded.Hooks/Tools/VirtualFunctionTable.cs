@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.X64;
@@ -66,7 +67,11 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <inheritdoc />
-        public unsafe TFunction CreateWrapperFunction<TFunction>(int index)
+        public unsafe TFunction CreateWrapperFunction<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index)
         {
             if (sizeof(IntPtr) == 4)
                 return X86.Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);
@@ -77,7 +82,11 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <inheritdoc />
-        public IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType)
+        public IHook<TFunction> CreateFunctionHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index, TFunction delegateType)
         {
             return new Hook<TFunction>(delegateType, TableEntries[index].FunctionPointer.ToUnsigned());
         }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29123.89
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32611.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks", "Reloaded.Hooks\Reloaded.Hooks.csproj", "{A0275F60-531B-472E-95B0-E48357AC8175}"
 EndProject
@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.X64", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Tests.X86", "Reloaded.Hooks.Tests.X86\Reloaded.Hooks.Tests.X86.csproj", "{4782E4E1-5236-4784-85DE-2082230028A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reloaded.Hooks.Benchmarks", "Reloaded.Hooks.Benchmarks\Reloaded.Hooks.Benchmarks.csproj", "{6656BF5F-3327-42B5-8A61-1C9BBF5B3EB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reloaded.Hooks.Benchmarks", "Reloaded.Hooks.Benchmarks\Reloaded.Hooks.Benchmarks.csproj", "{6656BF5F-3327-42B5-8A61-1C9BBF5B3EB4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Trimming", "Trimming", "{3560C60D-98D4-422B-9515-AFEA301A3A70}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Reloaded.Hooks.Trim.Dummy", "Trimming\Reloaded.Hooks.Trim.Dummy\Reloaded.Hooks.Trim.Dummy.csproj", "{6BEF382C-178D-463D-8EA8-57D3D2E12E5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +49,16 @@ Global
 		{6656BF5F-3327-42B5-8A61-1C9BBF5B3EB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6656BF5F-3327-42B5-8A61-1C9BBF5B3EB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6656BF5F-3327-42B5-8A61-1C9BBF5B3EB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BEF382C-178D-463D-8EA8-57D3D2E12E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BEF382C-178D-463D-8EA8-57D3D2E12E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BEF382C-178D-463D-8EA8-57D3D2E12E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BEF382C-178D-463D-8EA8-57D3D2E12E5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6BEF382C-178D-463D-8EA8-57D3D2E12E5C} = {3560C60D-98D4-422B-9515-AFEA301A3A70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {969EE8C2-C510-49F3-9624-919F6C4DEE8B}

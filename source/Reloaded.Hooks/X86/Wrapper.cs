@@ -11,6 +11,7 @@ using Reloaded.Hooks.Tools;
 using static Reloaded.Hooks.Definitions.X86.FunctionAttribute;
 
 using Reloaded.Hooks.Definitions.Structs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.X86
 {
@@ -24,7 +25,11 @@ namespace Reloaded.Hooks.X86
         /// using the calling convention of <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to reverse wrap..</param>
-        public static TFunction Create<TFunction>(nuint functionAddress)
+        public static TFunction Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress)
         {
             return Create<TFunction>(functionAddress, out var wrapperAddress);
         }
@@ -38,7 +43,11 @@ namespace Reloaded.Hooks.X86
         ///     Address of the wrapper used to call the original function.
         ///     If the source and target calling conventions match, this is the same as <paramref name="functionAddress"/>
         /// </param>
-        public static TFunction Create<TFunction>(nuint functionAddress, out nuint wrapperAddress)
+        public static TFunction Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             CreatePointer<TFunction>(functionAddress, out wrapperAddress);
             if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
@@ -57,7 +66,11 @@ namespace Reloaded.Hooks.X86
         ///     If the original function is CDECL, the wrapper address equals the function address.
         /// </param>
         /// <returns>Address of the wrapper in native memory.</returns>
-        public static nuint CreatePointer<TFunction>(nuint functionAddress, out nuint wrapperAddress)
+        public static nuint CreatePointer<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             var attribute = GetAttribute<TFunction>();
             wrapperAddress = functionAddress;
@@ -78,7 +91,11 @@ namespace Reloaded.Hooks.X86
         /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory.</returns>
-        public static nuint Create<TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
+        public static nuint Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
             // 256 Bytes should allow for around 60-70 parameters in worst case scenario.
             // If you need more than that, then... I don't know what you're doing with your life.
@@ -86,6 +103,8 @@ namespace Reloaded.Hooks.X86
             const int MaxFunctionSize = 256;
             var minMax = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - MaxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(MaxFunctionSize, minMax.min, minMax.max);
+            var numberOfParameters = Utilities.GetNumberofParameters<TFunction>();
+
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
@@ -94,7 +113,6 @@ namespace Reloaded.Hooks.X86
 
                 // Write pointer.
                 // toFunction (target) is CDECL
-                int numberOfParameters = Utilities.GetNumberofParameters<TFunction>();
                 List<string> assemblyCode = new List<string>
                 {
                     "use32",

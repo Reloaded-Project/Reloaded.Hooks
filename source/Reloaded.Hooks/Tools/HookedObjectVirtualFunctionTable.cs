@@ -5,6 +5,7 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using static Reloaded.Memory.Sources.Memory;
 using Reloaded.Memory.Sources;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.Tools
 {
@@ -20,7 +21,11 @@ namespace Reloaded.Hooks.Tools
     /// </summary>
     public class HookedObjectVirtualFunctionTable : IVirtualFunctionTable
     {
-        internal class VTableEntryHook<TFunction> : IHook<TFunction>
+        internal class VTableEntryHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction> : IHook<TFunction>
         {
             private readonly HookedObjectVirtualFunctionTable _vTableHook;
             private readonly int _index;
@@ -160,13 +165,21 @@ namespace Reloaded.Hooks.Tools
         }
 
         /// <inheritdoc />
-        public IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType)
+        public IHook<TFunction> CreateFunctionHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index, TFunction delegateType)
         {
             return new VTableEntryHook<TFunction>(this, _originalVirtualFunctionTableAddress, index, delegateType);
         }
 
         /// <inheritdoc />
-        public unsafe TFunction CreateWrapperFunction<TFunction>(int index)
+        public unsafe TFunction CreateWrapperFunction<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index)
         {
             if (sizeof(IntPtr) == 4)
                 return X86.Wrapper.Create<TFunction>(TableEntries[index].FunctionPointer.ToUnsigned(), out var wrapperAddress);

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Reloaded.Hooks.Definitions.Helpers;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.Definitions
 {
@@ -21,11 +23,19 @@ namespace Reloaded.Hooks.Definitions
         /// <summary>
         /// Generates a wrapper function for an individual virtual function table entry.
         /// </summary>
-        TFunction CreateWrapperFunction<TFunction>(int index);
+        TFunction CreateWrapperFunction<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index);
 
         /// <summary>
         /// Hooks an individual virtual function table entry in a virtual function table.
         /// </summary>
-        IHook<TFunction> CreateFunctionHook<TFunction>(int index, TFunction delegateType);
+        IHook<TFunction> CreateFunctionHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(int index, TFunction delegateType);
     }
 }

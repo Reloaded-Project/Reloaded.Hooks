@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
@@ -12,7 +13,11 @@ using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
 { 
-    public class Hook<TFunction> : IHook<TFunction>
+    public class Hook<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction> : IHook<TFunction>
     {
         /// <inheritdoc />
         public bool IsHookEnabled { get; private set; } = false;

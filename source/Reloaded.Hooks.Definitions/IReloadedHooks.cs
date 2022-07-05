@@ -1,7 +1,12 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions.Enums;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.X86;
+#if NET5_0_OR_GREATER
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+#endif
 
 namespace Reloaded.Hooks.Definitions
 {
@@ -17,21 +22,33 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="address">The address of the function.</param>
         /// <typeparam name="TFunction">The delegate type of the function.</typeparam>
         /// <returns>The function.</returns>
-        IFunction<TFunction> CreateFunction<TFunction>(long address);
+        IFunction<TFunction> CreateFunction<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(long address);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress);
+        IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, long functionAddress);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
         /// </summary>
         /// <param name="targetAddress">The address to redirect the function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(void* targetAddress, long functionAddress);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -39,7 +56,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength);
+        IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, long functionAddress, int minHookLength);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -47,7 +68,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="targetAddress">The address to redirect the function to.</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(void* targetAddress, long functionAddress, int minHookLength);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -56,7 +81,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        IHook<TFunction> CreateHook<TFunction>(TFunction function, long functionAddress, int minHookLength, FunctionHookOptions options);
+        IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, long functionAddress, int minHookLength, FunctionHookOptions options);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -65,7 +94,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(void* targetAddress, long functionAddress, int minHookLength, FunctionHookOptions options);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(void* targetAddress, long functionAddress, int minHookLength, FunctionHookOptions options);
 
         /// <summary>
         /// Creates a hook detouring the provided function to a given function.
@@ -76,7 +109,15 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength, FunctionHookOptions options);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, long functionAddress, int minHookLength, FunctionHookOptions options);
 
         /// <summary>
         /// Creates a hook detouring the provided function to a given function.
@@ -86,7 +127,15 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="methodName">The name of the method. Use nameof()</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">[Default: -1] Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress, int minHookLength);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, long functionAddress, int minHookLength);
 
         /// <summary>
         /// Creates a hook detouring the provided function to a given function.
@@ -95,7 +144,15 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
         /// <param name="functionAddress">The address of the function to hook.</param>
-        public unsafe IHook<TFunction> CreateHook<TFunction>(Type type, string methodName, long functionAddress);
+        public unsafe IHook<TFunction> CreateHook<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, long functionAddress);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
@@ -104,7 +161,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
         /// <param name="wrapperAddress">Address of the wrapper used to call the original function.</param>
         /// <returns>The function ready to be called.</returns>
-        TFunction CreateWrapper<TFunction>(long functionAddress, out IntPtr wrapperAddress);
+        TFunction CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(long functionAddress, out IntPtr wrapperAddress);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
@@ -112,7 +173,11 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
         /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
-        IntPtr CreateWrapper<TFunction>(long functionAddress);
+        IntPtr CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(long functionAddress);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
@@ -121,7 +186,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function.</param>
         /// <param name="fromConvention">Describes the calling convention of the function to wrap.</param>
         /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
-        IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention);
+        IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
@@ -131,7 +200,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call.</returns>
-        IntPtr CreateNativeWrapperX86<TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention);
+        IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention);
 
         /// <summary>
         /// Creates a wrapper function converting a call to a source calling convention to a given target calling convention.
@@ -140,7 +213,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call.</returns>
-        IntPtr CreateNativeWrapperX64<TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention);
+        IntPtr CreateNativeWrapperX64<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention);
 
         /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
@@ -151,7 +228,11 @@ namespace Reloaded.Hooks.Definitions
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
         /// <param name="function">The function to be called by the wrapper.</param>
-        IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(TFunction function);
+        IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function);
 
         /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
@@ -162,7 +243,11 @@ namespace Reloaded.Hooks.Definitions
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
         /// <param name="function">Pointer of native function to wrap.</param>
-        IReverseWrapper<TFunction> CreateReverseWrapper<TFunction>(IntPtr function);
+        IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr function);
 
         /// <summary>
         /// Initiates a virtual function table from an object address in memory.
@@ -196,7 +281,11 @@ namespace Reloaded.Hooks.Definitions
         /// <summary>
         /// Creates a pointer to a native function.
         /// </summary>
-        IFunctionPtr<TDelegate> CreateFunctionPtr<TDelegate>(ulong functionPointer) where TDelegate : Delegate;
+        IFunctionPtr<TDelegate> CreateFunctionPtr<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TDelegate>(ulong functionPointer) where TDelegate : Delegate;
 
         /// <summary>
         /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).

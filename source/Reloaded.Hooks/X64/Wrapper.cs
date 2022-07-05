@@ -9,6 +9,7 @@ using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 
 using Reloaded.Hooks.Definitions.Structs;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.X64
 {
@@ -24,7 +25,11 @@ namespace Reloaded.Hooks.X64
         /// <typeparamref name="TFunction"/>.
         /// </summary>
         /// <param name="functionAddress">Address of the function to wrap.</param>
-        public static TFunction Create<TFunction>(nuint functionAddress)
+        public static TFunction Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress)
         {
             return Create<TFunction>(functionAddress, out var wrapperAddress);
         }
@@ -38,7 +43,11 @@ namespace Reloaded.Hooks.X64
         ///     Address of the wrapper used to call the original function.
         ///     If the source and target calling conventions match, this is the same as <paramref name="functionAddress"/>
         /// </param>
-        public static TFunction Create<TFunction>(nuint functionAddress, out nuint wrapperAddress)
+        public static TFunction Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             CreatePointer<TFunction>(functionAddress, out wrapperAddress);
             if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
@@ -57,7 +66,11 @@ namespace Reloaded.Hooks.X64
         ///     If the original function uses the Microsoft calling convention, it is equal to the function address.
         /// </param>
         /// <returns>Address of the wrapper in native memory.</returns>
-        public static nuint CreatePointer<TFunction>(nuint functionAddress, out nuint wrapperAddress)
+        public static nuint CreatePointer<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
             wrapperAddress = functionAddress;
@@ -76,7 +89,11 @@ namespace Reloaded.Hooks.X64
         /// <param name="fromConvention">The calling convention to convert to toConvention. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
         /// <param name="toConvention">The target convention to which convert to fromConvention. This is the convention of the function returned.</param>
         /// <returns>Address of the wrapper in memory you can call .</returns>
-        public static nuint Create<TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
+        public static nuint Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
             // 384 Bytes should allow for around 100 parameters in worst case scenario.
             // If you need more than that, then... I don't know what you're doing with your life.
@@ -84,6 +101,8 @@ namespace Reloaded.Hooks.X64
             const int MaxFunctionSize = 384;
             var minMax = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - MaxFunctionSize);
             var buffer = Utilities.FindOrCreateBufferInRange(MaxFunctionSize, minMax.min, minMax.max);
+            int numberOfParameters = Utilities.GetNumberofParametersWithoutFloats<TFunction>();
+
             return buffer.ExecuteWithLock(() =>
             {
                 // Align the code.
@@ -91,7 +110,6 @@ namespace Reloaded.Hooks.X64
                 var codeAddress = buffer.Properties.WritePointer;
 
                 // Retrieve number of parameters.
-                int numberOfParameters = Utilities.GetNumberofParametersWithoutFloats<TFunction>();
                 List<string> assemblyCode = new List<string>
                 {
                     "use64", 

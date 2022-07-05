@@ -1,14 +1,23 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Definitions.Helpers;
+
+#if NET5_0_OR_GREATER
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+#endif
 
 namespace Reloaded.Hooks
 {
     /// <summary>
     /// Class that encapsulates a singular function, allowing for actions to be directly performed on that function.
     /// </summary>
-    public class Function<TFunction> : IFunction<TFunction>
+    public class Function<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction> : IFunction<TFunction>
     {
         /// <inheritdoc />
         public long Address => _address.ToSigned();
@@ -45,22 +54,54 @@ namespace Reloaded.Hooks
         public unsafe IHook<TFunction> Hook(void* function) => Hook(function, -1);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunction>(type, methodName, Address, minHookLength);
+        public unsafe IHook<TFunction> Hook(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunction>(type, methodName, Address, minHookLength);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunction> Hook(Type type, string methodName) => Hook(type, methodName, -1);
+        public unsafe IHook<TFunction> Hook(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName) => Hook(type, methodName, -1);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function, int minHookLength) => Hooks.CreateHook<TFunctionType>(function, Address, minHookLength);
+        public unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(void* function, int minHookLength) => Hooks.CreateHook<TFunctionType>(function, Address, minHookLength);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function) => HookAs<TFunctionType>(function, -1);
+        public unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(void* function) => HookAs<TFunctionType>(function, -1);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunctionType>(type, methodName, Address, minHookLength);
+        public unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, int minHookLength) => Hooks.CreateHook<TFunctionType>(type, methodName, Address, minHookLength);
 
         /// <inheritdoc />
-        public unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName) => HookAs<TFunctionType>(type, methodName, -1);
+        public unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName) => HookAs<TFunctionType>(type, methodName, -1);
 
         /// <inheritdoc />
         public TFunction GetWrapper()

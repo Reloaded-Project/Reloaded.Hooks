@@ -1,8 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Structs;
+#if NET5_0_OR_GREATER
+using static System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes;
+#endif
 
 namespace Reloaded.Hooks.Definitions
 {
@@ -63,7 +65,11 @@ namespace Reloaded.Hooks.Definitions
         ///     Please keep a reference to this class as long as you are using the generated code.
         ///     i.e. make it a class/struct member on heap.
         /// </param>
-        string GetAbsoluteJumpMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate;
+        string GetAbsoluteJumpMnemonics<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate;
 
         /// <summary>
         /// Gets the sequence of assembly instructions required to assemble an absolute call to a C# function address.
@@ -74,7 +80,11 @@ namespace Reloaded.Hooks.Definitions
         ///     Please keep a reference to this class as long as you are using the generated code.
         ///     i.e. make it a class/struct member on heap.
         /// </param>
-        string GetAbsoluteCallMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate;
+        string GetAbsoluteCallMnemonics<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate;
 
         /// <summary>
         /// Gets the sequence of assembly instructions required to assemble an absolute jump to a user specified address.
@@ -113,7 +123,11 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="delegateType">A Type extracted from a Delegate.</param>
         /// <returns>Number of parameters for the supplied delegate type.</returns>
-        int GetNumberofParameters(Type delegateType);
+        int GetNumberofParameters(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            Type delegateType);
 
         /// <summary>
         /// Retrieves the number of parameters for a specific delegate Type.
@@ -121,14 +135,22 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="delegateType">A Type extracted from a Delegate.</param>
         /// <returns>Number of parameters for the supplied delegate type, without floats.</returns>
-        int GetNumberofParametersWithoutFloats(Type delegateType);
+        int GetNumberofParametersWithoutFloats(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            Type delegateType);
 
         /// <summary>
         /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// </summary>
         /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        int GetNumberofParameters<TFunction>();
+        int GetNumberofParameters<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>();
 
         /// <summary>
         /// Retrieves the number of parameters for a type that inherits from <see cref="IFuncPtr"/>.
@@ -136,7 +158,11 @@ namespace Reloaded.Hooks.Definitions
         /// Ignores float and double parameters.
         /// </summary>
         /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        int GetNumberofParametersWithoutFloats<TFunction>();
+        int GetNumberofParametersWithoutFloats<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>();
 
         /// <summary>
         /// A macro for "push eax\npush ecx\npush edx" that preserves all CDECL caller saved registers before
@@ -163,7 +189,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="type">Type where the method can be found.</param>
         /// <param name="name">Name of the method in question.</param>
         /// <returns></returns>
-        unsafe void* GetFunctionPointer(Type type, string name);
+        unsafe void* GetFunctionPointer(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string name);
 
         /*
          * -----------------

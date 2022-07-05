@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Reloaded.Hooks.Definitions.Helpers;
 
 namespace Reloaded.Hooks.Definitions
 {
@@ -13,7 +15,11 @@ namespace Reloaded.Hooks.Definitions
     }
 
     /// <summary/>
-    public interface IReverseWrapper<TFunction> : IReverseWrapper
+    public interface IReverseWrapper<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction> : IReverseWrapper
     {
         /// <summary> Copy of C# function behind the pointer. </summary>
         TFunction CSharpFunction { get; }

@@ -1,1 +1,5 @@
-﻿
+﻿const Reloaded.Hooks.Definitions.Helpers.Trimming.FuncPtrTypes = System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicFields | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicNestedTypes -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+const Reloaded.Hooks.Definitions.Helpers.Trimming.Methods = System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicMethods | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicMethods -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+const Reloaded.Hooks.Definitions.Helpers.Trimming.ReloadedAttributeTypes = System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicParameterlessConstructor | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicMethods | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.NonPublicMethods | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicFields | System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicNestedTypes -> System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes
+Reloaded.Hooks.Definitions.Helpers.Trimming
+Reloaded.Hooks.Definitions.Helpers.Trimming.Trimming() -> void

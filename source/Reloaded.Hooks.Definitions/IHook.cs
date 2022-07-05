@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Structs;
 
 namespace Reloaded.Hooks.Definitions
@@ -92,7 +94,11 @@ namespace Reloaded.Hooks.Definitions
 
     /// <summary/>
     /// <typeparam name="TFunction">A valid delegate type or struct representing a function pointer.</typeparam>
-    public interface IHook<TFunction> : IHook
+    public interface IHook<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction> : IHook
     {
         /// <summary>
         /// Allows you to call the original function that was hooked.

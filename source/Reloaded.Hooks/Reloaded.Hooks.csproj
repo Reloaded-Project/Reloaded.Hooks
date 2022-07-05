@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net7.0;net5.0;netstandard2.0</TargetFrameworks>
@@ -23,7 +23,9 @@
 	<DebugType>full</DebugType>
 
     <!-- The trimming metadata/attributes consumes more space than saved from trimming. -->
-    <IsTrimmable>false</IsTrimmable>
+    <!-- Hopefully these attributes can be stripped in the future. -->
+    <IsTrimmable>true</IsTrimmable>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
 
   <ItemGroup>

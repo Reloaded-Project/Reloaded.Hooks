@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Reloaded.Hooks.Definitions.Helpers;
 
 namespace Reloaded.Hooks.Definitions
 {
     /// <summary>
     /// Utility interface for working with pointers to functions with non-standard conventions.
     /// </summary>
-    public interface IFunctionPtr<TDelegate> where TDelegate : Delegate
+    public interface IFunctionPtr<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TDelegate> where TDelegate : Delegate
     {
         /// <summary>
         /// The address of the pointer in memory with which this class was instantiated with.

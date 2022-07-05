@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if NET5_0_OR_GREATER
+using System.Diagnostics.CodeAnalysis;
+#endif
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -170,7 +173,11 @@ namespace Reloaded.Hooks.Tools
         ///     Please keep a reference to this class as long as you are using the generated code.
         ///     i.e. make it a class/struct member on heap.
         /// </param>
-        public static string GetAbsoluteJumpMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
+        public static string GetAbsoluteJumpMnemonics<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
         {
             var hooks = ReloadedHooks.Instance;
             reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
@@ -186,7 +193,11 @@ namespace Reloaded.Hooks.Tools
         ///     Please keep a reference to this class as long as you are using the generated code.
         ///     i.e. make it a class/struct member on heap.
         /// </param>
-        public static string GetAbsoluteCallMnemonics<TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
+        public static string GetAbsoluteCallMnemonics<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, out IReverseWrapper<TFunction> reverseWrapper) where TFunction : Delegate
         {
             var hooks = ReloadedHooks.Instance;
             reverseWrapper = hooks.CreateReverseWrapper<TFunction>(function);
@@ -294,7 +305,11 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="delegateType">A Type extracted from a Delegate.</param>
         /// <returns>Number of parameters for the supplied delegate type.</returns>
-        public static int GetNumberofParameters(Type delegateType)
+        public static int GetNumberofParameters(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
+#endif
+            Type delegateType)
         {
             MethodInfo method = delegateType.GetMethod("Invoke");
             return method != null ? method.GetParameters().Length : 0;
@@ -306,7 +321,11 @@ namespace Reloaded.Hooks.Tools
         /// </summary>
         /// <param name="delegateType">A Type extracted from a Delegate.</param>
         /// <returns>Number of parameters for the supplied delegate type, without floats.</returns>
-        public static int GetNumberofParametersWithoutFloats(Type delegateType)
+        public static int GetNumberofParametersWithoutFloats(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
+#endif
+            Type delegateType)
         {
             MethodInfo method = delegateType.GetMethod("Invoke");
             return method != null ? GetNonFloatParameters(method) : 0;
@@ -317,7 +336,11 @@ namespace Reloaded.Hooks.Tools
         /// Otherwise defaults to checking by type, assuming the type is a <see cref="Delegate"/>
         /// </summary>
         /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        public static int GetNumberofParameters<TFunction>()
+        public static int GetNumberofParameters<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>()
         {
             if (TryGetIFuncPtrFromType<TFunction>(out IFuncPtr ptr))
                 return ptr.NumberOfParameters;
@@ -332,7 +355,11 @@ namespace Reloaded.Hooks.Tools
         /// Ignores float and double parameters.
         /// </summary>
         /// <typeparam name="TFunction">Type that inherits from <see cref="IFuncPtr"/> or contains a field that inherits from <see cref="IFuncPtr"/>.</typeparam>
-        public static int GetNumberofParametersWithoutFloats<TFunction>()
+        public static int GetNumberofParametersWithoutFloats<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>()
         {
             if (TryGetIFuncPtrFromType<TFunction>(out IFuncPtr ptr))
                 return ptr.NumberOfParametersWithoutFloats;
@@ -343,7 +370,12 @@ namespace Reloaded.Hooks.Tools
         /// <summary>
         /// Tries to instantiate <see cref="IFuncPtr"/> from a <typeparamref name="TType"/> or and of the type's fields.
         /// </summary>
-        private static bool TryGetIFuncPtrFromType<TType>(out IFuncPtr value)
+        private static bool TryGetIFuncPtrFromType<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.FuncPtrTypes)]
+        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "Nested parameterless constructor preserved via nested types.")]
+#endif
+        TType>(out IFuncPtr value)
         {
             value = null;
 

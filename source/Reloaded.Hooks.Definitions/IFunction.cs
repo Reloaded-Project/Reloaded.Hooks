@@ -1,14 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Reloaded.Hooks.Definitions.Enums;
+using Reloaded.Hooks.Definitions.Helpers;
 
 namespace Reloaded.Hooks.Definitions
 {
     /// <summary>
     /// An interface for performing operations on native functions in memory.
     /// </summary>
-    public interface IFunction<TFunction>
+    public interface IFunction<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TFunction>
     {
         /// <summary>
         /// Address of the function in memory.
@@ -53,7 +59,11 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        unsafe IHook<TFunction> Hook(Type type, string methodName, int minHookLength);
+        unsafe IHook<TFunction> Hook(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, int minHookLength);
 
         /// <summary>
         /// Creates a hook for a function at a given address.
@@ -61,20 +71,32 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
-        unsafe IHook<TFunction> Hook(Type type, string methodName);
+        unsafe IHook<TFunction> Hook(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName);
 
         /// <summary>
         /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function, int minHookLength);
+        unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(void* function, int minHookLength);
 
         /// <summary>
         /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
         /// </summary>
         /// <param name="function">The function to detour the original function to.</param>
-        unsafe IHook<TFunctionType> HookAs<TFunctionType>(void* function);
+        unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(void* function);
 
         /// <summary>
         /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
@@ -83,7 +105,15 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
-        unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName, int minHookLength);
+        unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName, int minHookLength);
 
         /// <summary>
         /// Creates a hook for this function using an alternative delegate/function pointer specified by <typeparamref name="TFunctionType"/>.
@@ -91,7 +121,15 @@ namespace Reloaded.Hooks.Definitions
         /// </summary>
         /// <param name="type">The type containing the method. Use "typeof()"</param>
         /// <param name="methodName">The name of the method. Use nameof()</param>
-        unsafe IHook<TFunctionType> HookAs<TFunctionType>(Type type, string methodName);
+        unsafe IHook<TFunctionType> HookAs<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunctionType>(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.Methods)]
+#endif
+            Type type, string methodName);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling

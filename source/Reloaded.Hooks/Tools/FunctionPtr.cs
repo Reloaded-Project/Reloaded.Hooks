@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 
@@ -8,7 +9,11 @@ namespace Reloaded.Hooks.Tools
     /// <summary>
     /// Represents a native function pointer.
     /// </summary>
-    public unsafe class FunctionPtr<TDelegate> : IFunctionPtr<TDelegate> where TDelegate : Delegate
+    public unsafe class FunctionPtr<
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+    TDelegate> : IFunctionPtr<TDelegate> where TDelegate : Delegate
     {
         /// <inheritdoc />
         public ulong FunctionPointer { get; }
