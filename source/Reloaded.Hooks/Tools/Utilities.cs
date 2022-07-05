@@ -373,7 +373,6 @@ namespace Reloaded.Hooks.Tools
         private static bool TryGetIFuncPtrFromType<
 #if NET5_0_OR_GREATER
         [DynamicallyAccessedMembers(Trimming.FuncPtrTypes)]
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "Nested parameterless constructor preserved via nested types.")]
 #endif
         TType>(out IFuncPtr value)
         {
@@ -391,12 +390,17 @@ namespace Reloaded.Hooks.Tools
             {
                 if (typeof(IFuncPtr).IsAssignableFrom(field.FieldType))
                 {
-                    value = (IFuncPtr)Activator.CreateInstance(field.FieldType);
+                    value = (IFuncPtr)CreateInstanceSuppressed(field);
                     return true;
                 }
             }
 
             return false;
+
+#if NET5_0_OR_GREATER
+            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2072", Justification = "Nested parameterless constructor preserved via nested types.")]
+#endif
+            static object CreateInstanceSuppressed(FieldInfo field) => Activator.CreateInstance(field.FieldType);
         }
 
         /// <summary>
