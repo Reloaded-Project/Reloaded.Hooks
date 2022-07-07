@@ -46,8 +46,10 @@ If you are implementing new features, please do provide the appropriate unit tes
 
 ## Authors & Contributions
 
-- Reloaded.Hooks uses the `SharpDisasm` library by *Justin Stenning (spazzarama)*, a partial port of Udis86 by *Vivek Thampi*. Both of these libraries are originally distributed under the under the 2-clause "Simplified BSD License". 
-
 - Reloaded.Hooks uses the `Flat Assembler` (FASM) by Tomasz Grysztar.
 
 - Reloaded.Hooks uses the `Iced` library by 0xd4d.
+
+### Legacy
+
+- Older versions of `Reloaded.Hooks` used the `SharpDisasm` library by *Justin Stenning (spazzarama)*, a partial port of Udis86 by *Vivek Thampi*. Both of these libraries are originally distributed under the under the 2-clause "Simplified BSD License". 
