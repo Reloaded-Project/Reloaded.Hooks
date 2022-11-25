@@ -26,9 +26,9 @@ namespace Reloaded.Hooks
         private Patch _disableHookPatch;
         private Patch _enableHookPatch;
         private bool _activated = false;
-        private bool _is64Bit;
+        private readonly bool _is64Bit;
         
-        private List<Patch> _otherHookPatches;
+        private List<Patch>? _otherHookPatches;
 
         /* Construction - Destruction */
 
@@ -107,15 +107,15 @@ namespace Reloaded.Hooks
                 options.hookLength = Utilities.GetHookLength(functionAddress, options.MaxOpcodeSize, _is64Bit);
 
             CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, options.hookLength);
-            var functionPatcher   = new FunctionPatcher(_is64Bit);
-            var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
-            originalFunction = functionPatch.NewFunction.ToArray();
-            _otherHookPatches = functionPatch.Patches;
-            
+
             nuint jumpBackAddress = functionAddress + (nuint)options.hookLength;
 
             /* Size calculations for buffer, must have sufficient space. */
 
+            // Theoretical largest possible expansion is 2 byte jmp to 6 byte jmp,
+            // Which means an increase in 4 bytes per 2 bytes.
+            int exceptionHandlingBytes = ((originalFunction.Length / 2) + 1) * 4;
+            
             // Stubs:
             // Stub Entry   => Stub Hook.
             // Stub Hook    => Caller.
@@ -132,40 +132,59 @@ namespace Reloaded.Hooks
             int stubHookSize           = asmCode.Length + options.hookLength + Constants.MaxAbsJmpSize;
             int stubOriginalSize       = options.hookLength + Constants.MaxAbsJmpSize + pointerSize; // 1 call to AssembleAbsoluteJump
 
-            int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes;
+            int requiredSizeOfBuffer   = stubEntrySize + stubHookSize + stubOriginalSize + alignmentRequiredBytes + pointerRequiredBytes + exceptionHandlingBytes;
             var minMax                 = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - requiredSizeOfBuffer);
             var buffer                 = Utilities.FindOrCreateBufferInRange(requiredSizeOfBuffer, minMax.min, minMax.max);
 
             buffer.ExecuteWithLock(() =>
             {
-                var patcher             = new IcedPatcher(_is64Bit, originalFunction, functionAddress);
-
-                // Make Hook and Original Stub
-                buffer.SetAlignment(codeAlignment);
-                nuint hookStubAddr     = MakeHookStub(buffer, patcher, asmCode, originalFunction.Length, jumpBackAddress, options.Behaviour);
-
-                buffer.SetAlignment(codeAlignment);
-                nuint originalStubAddr = MakeOriginalStub(buffer, patcher, originalFunction.Length, jumpBackAddress);
-
-                // Make Jump to Entry, Original Stub
-                buffer.SetAlignment(codeAlignment);
-                var currAddress = buffer.Properties.WritePointer;
-                byte[] jmpToOriginal = Utilities.AssembleRelativeJump(currAddress, originalStubAddr, _is64Bit);
-                byte[] jmpToHook     = Utilities.AssembleRelativeJump(currAddress, hookStubAddr, _is64Bit);
-
-                // Make Entry Stub
-                nuint entryStubAddr = buffer.Add(jmpToHook, codeAlignment);
-
-                // Make Disable/Enable
-                _disableHookPatch = new Patch(entryStubAddr, jmpToOriginal);
-                _enableHookPatch  = new Patch(entryStubAddr, jmpToHook);
-
-                // Make Hook Enabler
-                var jumpOpcodes = options.PreferRelativeJump ? Utilities.AssembleRelativeJump(functionAddress, entryStubAddr, _is64Bit).ToList() : Utilities.AssembleAbsoluteJump(entryStubAddr, _is64Bit).ToList();
-                Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, options.hookLength);
-                _activateHookPatch = new Patch(functionAddress, jumpOpcodes.ToArray());
-                return true;
+                try
+                {
+                    return MakeAsmHook(asmCode, functionAddress, options, originalFunction, buffer, codeAlignment, jumpBackAddress);
+                }
+                catch (Exception)
+                {
+                    // In very exceptional case, we can't re-encode due to another hook, so rewrite as absolute.
+                    var functionPatcher = new FunctionPatcher(_is64Bit);
+                    var functionPatch   = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
+                    originalFunction    = functionPatch.NewFunction.ToArray();
+                    _otherHookPatches   = functionPatch.Patches;
+                    return MakeAsmHook(asmCode, functionAddress, options, originalFunction, buffer, codeAlignment, jumpBackAddress);
+                }
             });
+        }
+
+        private bool MakeAsmHook(byte[] asmCode, nuint functionAddress, AsmHookOptions options, byte[] originalFunction, MemoryBuffer buffer, int codeAlignment, nuint jumpBackAddress)
+        {
+            var patcher = new IcedPatcher(_is64Bit, originalFunction, functionAddress);
+
+            // Make Hook and Original Stub
+            buffer.SetAlignment(codeAlignment);
+            nuint hookStubAddr = MakeHookStub(buffer, patcher, asmCode, originalFunction.Length, jumpBackAddress, options.Behaviour);
+
+            buffer.SetAlignment(codeAlignment);
+            nuint originalStubAddr = MakeOriginalStub(buffer, patcher, originalFunction.Length, jumpBackAddress);
+
+            // Make Jump to Entry, Original Stub
+            buffer.SetAlignment(codeAlignment);
+            var currAddress = buffer.Properties.WritePointer;
+            byte[] jmpToOriginal = Utilities.AssembleRelativeJump(currAddress, originalStubAddr, _is64Bit);
+            byte[] jmpToHook = Utilities.AssembleRelativeJump(currAddress, hookStubAddr, _is64Bit);
+
+            // Make Entry Stub
+            nuint entryStubAddr = buffer.Add(jmpToHook, codeAlignment);
+
+            // Make Disable/Enable
+            _disableHookPatch = new Patch(entryStubAddr, jmpToOriginal);
+            _enableHookPatch = new Patch(entryStubAddr, jmpToHook);
+
+            // Make Hook Enabler
+            var jumpOpcodes = options.PreferRelativeJump
+                ? Utilities.AssembleRelativeJump(functionAddress, entryStubAddr, _is64Bit).ToList()
+                : Utilities.AssembleAbsoluteJump(entryStubAddr, _is64Bit).ToList();
+            Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, options.hookLength);
+            _activateHookPatch = new Patch(functionAddress, jumpOpcodes.ToArray());
+            return true;
         }
 
         private nuint MakeHookStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] asmCode, int originalCodeLength, nuint jumpBackAddress, AsmHookBehaviour behaviour)
@@ -212,15 +231,18 @@ namespace Reloaded.Hooks
         /// <inheritdoc />
         public IAsmHook Activate()
         {
-            if (!_activated)
-            {
-                _activated = true;
-                _activateHookPatch.Apply();
-                _enableHookPatch.ApplyUnsafe();
-                
-                foreach (var hookPatch in _otherHookPatches)
-                    hookPatch.Apply();
-            }
+            if (_activated) 
+                return this;
+            
+            _activated = true;
+            _activateHookPatch.Apply();
+            _enableHookPatch.ApplyUnsafe();
+
+            if (_otherHookPatches == null) 
+                return this;
+            
+            foreach (var hookPatch in _otherHookPatches)
+                hookPatch.Apply();
 
             return this;
         }
