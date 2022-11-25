@@ -27,6 +27,8 @@ namespace Reloaded.Hooks
         private Patch _enableHookPatch;
         private bool _activated = false;
         private bool _is64Bit;
+        
+        private List<Patch> _otherHookPatches;
 
         /* Construction - Destruction */
 
@@ -105,6 +107,11 @@ namespace Reloaded.Hooks
                 options.hookLength = Utilities.GetHookLength(functionAddress, options.MaxOpcodeSize, _is64Bit);
 
             CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, options.hookLength);
+            var functionPatcher   = new FunctionPatcher(_is64Bit);
+            var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
+            originalFunction = functionPatch.NewFunction.ToArray();
+            _otherHookPatches = functionPatch.Patches;
+            
             nuint jumpBackAddress = functionAddress + (nuint)options.hookLength;
 
             /* Size calculations for buffer, must have sufficient space. */
@@ -135,10 +142,10 @@ namespace Reloaded.Hooks
 
                 // Make Hook and Original Stub
                 buffer.SetAlignment(codeAlignment);
-                nuint hookStubAddr     = MakeHookStub(buffer, patcher, asmCode, originalFunction, jumpBackAddress, options.Behaviour);
+                nuint hookStubAddr     = MakeHookStub(buffer, patcher, asmCode, originalFunction.Length, jumpBackAddress, options.Behaviour);
 
                 buffer.SetAlignment(codeAlignment);
-                nuint originalStubAddr = MakeOriginalStub(buffer, patcher, originalFunction, jumpBackAddress);
+                nuint originalStubAddr = MakeOriginalStub(buffer, patcher, originalFunction.Length, jumpBackAddress);
 
                 // Make Jump to Entry, Original Stub
                 buffer.SetAlignment(codeAlignment);
@@ -161,9 +168,9 @@ namespace Reloaded.Hooks
             });
         }
 
-        private nuint MakeHookStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] asmCode, byte[] originalCode, nuint jumpBackAddress, AsmHookBehaviour behaviour)
+        private nuint MakeHookStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] asmCode, int originalCodeLength, nuint jumpBackAddress, AsmHookBehaviour behaviour)
         {
-            var bytes        = new List<byte>(asmCode.Length + originalCode.Length);
+            var bytes        = new List<byte>(asmCode.Length + originalCodeLength);
            
             switch (behaviour)
             {
@@ -190,9 +197,9 @@ namespace Reloaded.Hooks
             return buffer.Add(bytes.ToArray(), 1); // Buffer is pre-aligned
         }
 
-        private nuint MakeOriginalStub(MemoryBuffer buffer, IcedPatcher patcher, byte[] originalCode, nuint jumpBackAddress)
+        private nuint MakeOriginalStub(MemoryBuffer buffer, IcedPatcher patcher, int originalCodeLength, nuint jumpBackAddress)
         {
-            var bytes         = new List<byte>(originalCode.Length);
+            var bytes         = new List<byte>(originalCodeLength);
             bytes.AddRange(patcher.EncodeForNewAddress(buffer.Properties.WritePointer));
 
             var jmpBackBytes = Utilities.AssembleRelativeJump(buffer.Properties.WritePointer + (nuint)bytes.Count, jumpBackAddress, _is64Bit);
@@ -210,6 +217,9 @@ namespace Reloaded.Hooks
                 _activated = true;
                 _activateHookPatch.Apply();
                 _enableHookPatch.ApplyUnsafe();
+                
+                foreach (var hookPatch in _otherHookPatches)
+                    hookPatch.Apply();
             }
 
             return this;
