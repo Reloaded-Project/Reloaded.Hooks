@@ -1,4 +1,1 @@
-﻿Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string asmCode, long functionAddress) -> Reloaded.Hooks.Definitions.IAsmHook
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string asmCode, long functionAddress, Reloaded.Hooks.Definitions.AsmHookOptions options) -> Reloaded.Hooks.Definitions.IAsmHook
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour) -> Reloaded.Hooks.Definitions.IAsmHook
-Reloaded.Hooks.Definitions.IReloadedHooks.CreateAsmHook(string asmCode, long functionAddress, Reloaded.Hooks.Definitions.Enums.AsmHookBehaviour behaviour, int hookLength) -> Reloaded.Hooks.Definitions.IAsmHook
+﻿
