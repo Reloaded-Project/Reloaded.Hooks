@@ -172,17 +172,21 @@ namespace Reloaded.Hooks
 #endif
         TDelegate>(ulong functionPointer) where TDelegate : Delegate => new FunctionPtr<TDelegate>(functionPointer);
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
+        public IAsmHook CreateAsmHook(string asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
 
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress) => CreateAsmHook(asmCode, functionAddress, AsmHookBehaviour.ExecuteFirst, -1);
 
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour) => CreateAsmHook(asmCode, functionAddress, behaviour, -1);
-
+        public IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookBehaviour behaviour) => CreateAsmHook(asmCode, functionAddress, behaviour, -1);
+        
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour) => CreateAsmHook(asmCode, functionAddress, behaviour, -1);
+        public IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), behaviour, hookLength);
 
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), behaviour, hookLength);
 
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), behaviour, hookLength);
         public IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookOptions options) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), options);
+        public IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookOptions options) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), options);
 
         public IAsmHook CreateAsmHook(byte[] asmCode, long functionAddress, AsmHookOptions options) => new AsmHook(asmCode, (nuint)functionAddress.ToUnsigned(), options);
 

@@ -42,16 +42,13 @@ namespace Reloaded.Hooks.Tests.X64
         private void TestHookAddNoOriginal_Internal(AsmHookOptions options)
         {
             int wordSize = IntPtr.Size;
-            string[] addFunction =
-            {
-                $"{Macros._use32}",
-                $"push {Macros._ebp}",
-                $"mov {Macros._ebp}, {Macros._esp}",
-
-                $"mov {Macros._eax}, [{Macros._ebp} + {wordSize * 2}]", // Left Parameter
-                $"mov {Macros._ecx}, [{Macros._ebp} + {wordSize * 3}]", // Right Parameter
-                $"add {Macros._eax}, 1",                         // Left Parameter
-            };
+            string addFunction =
+@$"{Macros._use32}
+push {Macros._ebp}
+mov {Macros._ebp}, {Macros._esp}
+mov {Macros._eax}, [{Macros._ebp} + {wordSize * 2}]
+mov {Macros._ecx}, [{Macros._ebp} + {wordSize * 3}] 
+add {Macros._eax}, 1";
 
             _addNoOriginalHook = ReloadedHooks.Instance.CreateAsmHook(addFunction, (long)_nativeCalculator.Add, options).Activate();
 

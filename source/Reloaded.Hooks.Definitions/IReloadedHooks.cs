@@ -296,6 +296,16 @@ namespace Reloaded.Hooks.Definitions
         /// </param>
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
         IAsmHook CreateAsmHook(string[] asmCode, long functionAddress);
+        
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">
+        ///     The assembly code to execute, in FASM syntax.
+        ///     (Should start with use32/use64)
+        /// </param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        IAsmHook CreateAsmHook(string asmCode, long functionAddress);
 
         /// <summary>
         /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
@@ -314,7 +324,18 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour);
-
+        
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">
+        ///     The assembly code to execute, in FASM syntax.
+        ///     (Should start with use32/use64)
+        /// </param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
+        IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookBehaviour behaviour);
+        
         /// <summary>
         /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
         /// </summary>
@@ -334,6 +355,18 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
         /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode. Default: -1</param>
         IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength);
+        
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">
+        ///     The assembly code to execute, in FASM syntax.
+        ///     (Should start with use32/use64)
+        /// </param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        /// <param name="behaviour">Defines what should be done with the original code that was replaced with the JMP instruction.</param>
+        /// <param name="hookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode. Default: -1</param>
+        IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookBehaviour behaviour, int hookLength);
 
         /// <summary>
         /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
@@ -354,6 +387,17 @@ namespace Reloaded.Hooks.Definitions
         /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
         /// <param name="options">Controls the generation behaviour of assembly hooks.</param>
         IAsmHook CreateAsmHook(string[] asmCode, long functionAddress, AsmHookOptions options);
+        
+        /// <summary>
+        /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
+        /// </summary>
+        /// <param name="asmCode">
+        ///     The assembly code to execute, in FASM syntax.
+        ///     (Should start with use32/use64)
+        /// </param>
+        /// <param name="functionAddress">The address of the function or mid-function to hook.</param>
+        /// <param name="options">Controls the generation behaviour of assembly hooks.</param>
+        IAsmHook CreateAsmHook(string asmCode, long functionAddress, AsmHookOptions options);
 
         /// <summary>
         /// Creates a cheat engine style hook, replacing instruction(s) with a JMP to a user provided set of ASM instructions (and optionally the original ones).
