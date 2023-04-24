@@ -168,7 +168,7 @@ public SomeClass()
     IntPtr kernel32Handle = LoadLibraryW("kernel32");
     IntPtr createFileAPointer = GetProcAddress(kernel32Handle, "CreateFileA");  
 
-    _createFileAHook = ReloadedHooks.CreateHook<CreateFileA>(CreateFileAImpl, (long)createFileAPointer).Activate();
+    _createFileAHook = ReloadedHooks.Instance.CreateHook<CreateFileA>(CreateFileAImpl, (long)createFileAPointer).Activate();
 }
 
 /* Hook Function */
