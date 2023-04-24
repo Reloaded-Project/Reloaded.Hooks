@@ -48,7 +48,7 @@ private CalculatorFunction _addFunctionPointer;
 
 void makeFunctionPointer() 
 {
-    var addFuncPointer = ReloadedHooks.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Add, out var _);
+    var addFuncPointer = ReloadedHooks.Instance.CreateWrapper<CalculatorFunction>((long)_nativeCalculator.Add, out var _);
     var three = addFuncPointer.Value.Invoke(1, 2); 
 }
 ```

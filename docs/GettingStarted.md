@@ -134,7 +134,7 @@ In order to create an instance of your own custom delegate from a supplied funct
 
 ```csharp
 // Based on the delegate above.
-var rwCameraSetViewWindow = ReloadedHooks.CreateWrapper<RwCameraSetViewWindow>(0x0064AC80);
+var rwCameraSetViewWindow = ReloadedHooks.Instance.CreateWrapper<RwCameraSetViewWindow>(0x0064AC80);
 
 // You may now call the delegate instance/native/game fuction like if it was your own.
 rwCameraSetViewWindow(camera, view);
@@ -168,7 +168,7 @@ public SomeClass()
     IntPtr kernel32Handle = LoadLibraryW("kernel32");
     IntPtr createFileAPointer = GetProcAddress(kernel32Handle, "CreateFileA");  
 
-    _createFileAHook = ReloadedHooks.CreateHook<CreateFileA>(CreateFileAImpl, (long)createFileAPointer).Activate();
+    _createFileAHook = ReloadedHooks.Instance.CreateHook<CreateFileA>(CreateFileAImpl, (long)createFileAPointer).Activate();
 }
 
 /* Hook Function */
@@ -240,10 +240,10 @@ private FastcallExample                  _functionWrapper;
 void FastcallCSharpFunctionPointerTest()
 {
     // Create wrapper to make our "C# fastcall" function.
-    _reverseFunctionWrapper = ReloadedHooks.CreateReverseWrapper<FastcallExample>(CSharpFastcallFunction);
+    _reverseFunctionWrapper = ReloadedHooks.Instance.CreateReverseWrapper<FastcallExample>(CSharpFastcallFunction);
 
     // To prove our "C# fastcall" function works, let's just call it like a native function.
-    _functionWrapper = ReloadedHooks.CreateWrapper<FastcallExample>((long)_reverseFunctionWrapper.WrapperPointer);
+    _functionWrapper = ReloadedHooks.Instance.CreateWrapper<FastcallExample>((long)_reverseFunctionWrapper.WrapperPointer);
     _functionWrapper(1,2,3);
 }
 
