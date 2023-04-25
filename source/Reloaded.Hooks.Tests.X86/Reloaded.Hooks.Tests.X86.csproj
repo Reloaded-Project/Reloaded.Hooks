@@ -32,6 +32,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Reloaded.Hooks.Tests.X64\AutoPreferRelativeJumpTest.cs">
+      <Link>AutoPreferRelativeJumpTest.cs</Link>
+    </Compile>
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorAsmHookTest.cs" Link="CalculatorAsmHookTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorDoubleHookEnableDisableTest.cs" Link="CalculatorDoubleHookEnableDisableTest.cs" />
     <Compile Include="..\Reloaded.Hooks.Tests.X64\CalculatorDoubleHookTest.cs" Link="CalculatorDoubleHookTest.cs" />
