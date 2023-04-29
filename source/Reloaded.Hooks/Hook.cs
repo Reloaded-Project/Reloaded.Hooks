@@ -136,7 +136,7 @@ namespace Reloaded.Hooks
 
             /* Create Hook instance. */
             OriginalFunctionAddress = icedPatcher.ToMemoryBuffer(hookEndAddress).ToSigned();
-            OriginalFunction = CreateWrapper(icedPatcher.ToMemoryBuffer(null), out nuint originalFunctionWrapperAddress);
+            OriginalFunction = CreateWrapper((UIntPtr)(void*)OriginalFunctionAddress, out nuint originalFunctionWrapperAddress);
             OriginalFunctionWrapperAddress = originalFunctionWrapperAddress.ToSigned();
 
             _otherHookPatches = functionPatch.Patches;

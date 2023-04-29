@@ -504,7 +504,7 @@ namespace Reloaded.Hooks.Tools
             var minMax = GetRelativeJumpMinMax(source, Int32.MaxValue - minCodeSize);
             isRelative = new AddressRange(minMax.min, minMax.max).Contains(target);
             return isRelative ?
-                is64Bit ? $"call qword {target}" : $"call dword {target}" :
+                $"call {target}" :
                 GetAbsoluteCallMnemonics(target, is64Bit);
         }
 
