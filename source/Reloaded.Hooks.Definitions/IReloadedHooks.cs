@@ -178,6 +178,33 @@ namespace Reloaded.Hooks.Definitions
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
         TFunction>(long functionAddress);
+        
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
+        /// <param name="wrapperAddress">Address of the wrapper used to call the original function.</param>
+        /// <param name="options">Options influencing wrapper generation behaviour.</param>
+        /// <returns>The function ready to be called.</returns>
+        TFunction CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(long functionAddress, WrapperOptions options, out IntPtr wrapperAddress);
+
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention using the convention of <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to create a wrapper for.</param>
+        /// <param name="options">Options influencing wrapper generation behaviour.</param>
+        /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
+        IntPtr CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(long functionAddress, WrapperOptions options);
 
         /// <summary>
         /// Creates a wrapper function which allows you to call a function with a custom calling
@@ -220,6 +247,81 @@ namespace Reloaded.Hooks.Definitions
         TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention);
 
         /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention using the convention of <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">The address of the function.</param>
+        /// <param name="fromConvention">Describes the calling convention of the function to wrap.</param>
+        /// <param name="options">Options influencing wrapper generation.</param>
+        /// <returns>Function pointer to the wrapper in memory you can call using <typeparamref name="TFunction"/>'s calling convention.</returns>
+        IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, WrapperOptions options);
+
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling
+        /// convention using the convention of <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="options">Options influencing wrapper generation.</param>
+        /// <returns>Address of the wrapper in memory you can call.</returns>
+        IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention, WrapperOptions options);
+
+        /// <summary>
+        /// Creates a wrapper function converting a call to a source calling convention to a given target calling convention.
+        /// </summary>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="options">Options influencing wrapper generation.</param>
+        /// <returns>Address of the wrapper in memory you can call.</returns>
+        IntPtr CreateNativeWrapperX64<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention, WrapperOptions options);
+
+        /// <summary>
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
+        /// </summary>
+        /// <remarks>
+        ///     Please keep a reference to this class as long as you are using it (if <typeparamref name="TFunction"/> is a delegate type).
+        ///     Otherwise Garbage Collection will break the native function pointer to your C# function
+        ///     resulting in a spectacular crash if it is still used anywhere.
+        /// </remarks>
+        /// <param name="function">The function to be called by the wrapper.</param>
+        /// <param name="options">Options which influence wrapper generation.</param>
+        IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(TFunction function, WrapperOptions options);
+
+        /// <summary>
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
+        /// </summary>
+        /// <remarks>
+        ///     Please keep a reference to this class as long as you are using it (if <typeparamref name="TFunction"/> is a delegate type).
+        ///     Otherwise Garbage Collection will break the native function pointer to your C# function
+        ///     resulting in a spectacular crash if it is still used anywhere.
+        /// </remarks>
+        /// <param name="function">Pointer of native function to wrap.</param>
+        /// <param name="options">Options which influence wrapper generation.</param>
+        IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr function, WrapperOptions options);
+        
+        /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <remarks>
@@ -232,7 +334,7 @@ namespace Reloaded.Hooks.Definitions
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
-        TFunction>(TFunction function);
+            TFunction>(TFunction function);
 
         /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
@@ -247,7 +349,7 @@ namespace Reloaded.Hooks.Definitions
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
-        TFunction>(IntPtr function);
+            TFunction>(IntPtr function);
 
         /// <summary>
         /// Initiates a virtual function table from an object address in memory.

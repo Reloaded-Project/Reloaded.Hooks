@@ -12,6 +12,7 @@ using static Reloaded.Hooks.Definitions.X86.FunctionAttribute;
 
 using Reloaded.Hooks.Definitions.Structs;
 using System.Diagnostics.CodeAnalysis;
+using Reloaded.Hooks.Definitions;
 
 namespace Reloaded.Hooks.X86
 {
@@ -49,11 +50,58 @@ namespace Reloaded.Hooks.X86
 #endif
         TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
-            CreatePointer<TFunction>(functionAddress, out wrapperAddress);
+            return Create<TFunction>(functionAddress, new WrapperOptions(), out wrapperAddress);
+        }
+
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
+        /// <param name="options">Options that influence wrapper generation.</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the source and target calling conventions match, this is the same as <paramref name="functionAddress"/>
+        /// </param>
+        public static TFunction Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(nuint functionAddress, WrapperOptions options, out nuint wrapperAddress)
+        {
+            CreatePointer<TFunction>(functionAddress, options, out wrapperAddress);
             if (typeof(TFunction).IsValueType && !typeof(TFunction).IsPrimitive)
                 return Unsafe.As<nuint, TFunction>(ref wrapperAddress);
 
             return Marshal.GetDelegateForFunctionPointer<TFunction>(wrapperAddress.ToSigned());
+        }
+
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">Address of the function to reverse wrap..</param>
+        /// <param name="options">Influences wrapper generation.</param>
+        /// <param name="wrapperAddress">
+        ///     Address of the wrapper used to call the original function.
+        ///     If the original function is CDECL, the wrapper address equals the function address.
+        /// </param>
+        /// <returns>Address of the wrapper in native memory.</returns>
+        public static nuint CreatePointer<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(nuint functionAddress, WrapperOptions options, out nuint wrapperAddress)
+        {
+            var attribute = GetAttribute<TFunction>();
+            wrapperAddress = functionAddress;
+
+            // Hot path: Don't create wrapper if both conventions are already compatible.
+            var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
+            if (!attribute.IsEquivalent(funcPtrAttribute))
+                wrapperAddress = Create<TFunction>(functionAddress, attribute, attribute.GetEquivalent(funcPtrAttribute), options);
+
+            return wrapperAddress;
         }
 
         /// <summary>
@@ -72,15 +120,7 @@ namespace Reloaded.Hooks.X86
 #endif
         TFunction>(nuint functionAddress, out nuint wrapperAddress)
         {
-            var attribute = GetAttribute<TFunction>();
-            wrapperAddress = functionAddress;
-
-            // Hot path: Don't create wrapper if both conventions are already compatible.
-            var funcPtrAttribute = Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>();
-            if (!attribute.IsEquivalent(funcPtrAttribute))
-                wrapperAddress = Create<TFunction>(functionAddress, attribute, attribute.GetEquivalent(funcPtrAttribute));
-
-            return wrapperAddress;
+            return CreatePointer<TFunction>(functionAddress, new WrapperOptions(), out wrapperAddress);
         }
 
         /// <summary>
@@ -97,12 +137,37 @@ namespace Reloaded.Hooks.X86
 #endif
         TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention)
         {
+            return Create<TFunction>(functionAddress, fromConvention, toConvention, new WrapperOptions());
+        }
+
+        /// <summary>
+        /// Creates a wrapper function which allows you to call a function with a custom calling convention using the calling convention of
+        /// <typeparamref name="TFunction"/>.
+        /// </summary>
+        /// <param name="functionAddress">The address of the function using <paramref name="fromConvention"/>.</param>
+        /// <param name="fromConvention">The calling convention to convert to <paramref name="toConvention"/>. This is the convention of the function (<paramref name="functionAddress"/>) called.</param>
+        /// <param name="toConvention">The target convention to which convert to <paramref name="fromConvention"/>. This is the convention of the function returned.</param>
+        /// <param name="options">Options that influence wrapper generation.</param>
+        /// <returns>Address of the wrapper in memory.</returns>
+        public static nuint Create<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(nuint functionAddress, IFunctionAttribute fromConvention, IFunctionAttribute toConvention, WrapperOptions options)
+        {
             // 256 Bytes should allow for around 60-70 parameters in worst case scenario.
             // If you need more than that, then... I don't know what you're doing with your life.
             // Please do a pull request though and we can stick some code to predict the size.
             const int MaxFunctionSize = 256;
-            var minMax = Utilities.GetRelativeJumpMinMax(functionAddress, Int32.MaxValue - MaxFunctionSize);
-            var buffer = Utilities.FindOrCreateBufferInRange(MaxFunctionSize, minMax.min, minMax.max);
+            var target = options.ProximityTarget;
+            
+            var usesCustomTarget = target != null;
+            var targetAddress = usesCustomTarget ? target.TargetAddress : functionAddress;
+            var functionSize = usesCustomTarget ? target.ItemSize : MaxFunctionSize;
+            var targetProximity = usesCustomTarget ? target.RequestedProximity : Int32.MaxValue;
+            
+            var minMax = Utilities.GetRelativeJumpMinMax(targetAddress, targetProximity - functionSize);
+            var buffer = Utilities.FindOrCreateBufferInRange(functionSize, minMax.min, minMax.max);
             var numberOfParameters = Utilities.GetNumberofParameters<TFunction>();
 
             return buffer.ExecuteWithLock(() =>
@@ -139,7 +204,7 @@ namespace Reloaded.Hooks.X86
                     assemblyCode.AddRange(AssembleFunctionParameters(numberOfParameters, fromConvention.SourceRegisters, toConvention.SourceRegisters));
 
                 // Call target function
-                assemblyCode.Add($"call {functionAddress}");
+                assemblyCode.Add(Utilities.TryAssembleRelativeCallMnemonics_WithUnknownSourceAddress(codeAddress, functionAddress, functionSize, false, out _));
 
                 // Stack cleanup if necessary 
                 if (stackCleanupBytesTotal > 0)

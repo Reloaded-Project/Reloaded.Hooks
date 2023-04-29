@@ -42,7 +42,7 @@ public class AutoPreferRelativeJumpTest : IDisposable
     }
 
     [Fact]
-    public void TestHookAdd()
+    public unsafe void TestAutoRelativeJump()
     {
         int Hookfunction(int a, int b)
         {
@@ -77,6 +77,10 @@ public class AutoPreferRelativeJumpTest : IDisposable
         // Now add a hook. After the 0xE9 jump, there should be some 'junk' left. This is obviously undesired.
         _addHook = ReloadedHooks.Instance.CreateHook<NativeCalculator.AddFunction>(Hookfunction, (long)_nativeCalculator.Add).Activate();
 
+        // Verify our hook produced a 0xE9.
+        Assert.Equal(0xE9, *(byte*)_nativeCalculator.Add);
+        
+        // Run our hook for sanity.
         for (int x = 0; x < 100; x++)
         {
             for (int y = 1; y < 100;)

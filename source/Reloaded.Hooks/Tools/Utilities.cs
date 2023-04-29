@@ -253,8 +253,8 @@ namespace Reloaded.Hooks.Tools
         {
             const int alignment = 16;
             int maxFunctionSize = alignment + Constants.MaxAbsJmpSize + minBytesUsed;
-            var minMax = Utilities.GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
-            var buffer = Utilities.FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
+            var minMax = GetRelativeJumpMinMax(targetPtr, Int32.MaxValue - maxFunctionSize);
+            var buffer = FindOrCreateBufferInRange(maxFunctionSize, minMax.min, minMax.max);
             
             return buffer.ExecuteWithLock(() =>
             {
@@ -483,6 +483,29 @@ namespace Reloaded.Hooks.Tools
         public static List<byte> TryAssembleRelativeJump(nuint source, nuint target, bool is64Bit, out bool isRelative)
         {
             return TryAssembleRelativeJumpArray(source, target, is64Bit, out isRelative).ToList();
+        }
+
+        // Note: Internal because I don't yet know if I want to expose this.
+
+        /// <summary>
+        /// Gets mnemonics for a relative call if the target is within range,
+        /// else gets mnemonics for an absolute call. This function can be used when exact address
+        /// of 'source' is unknown; (i.e. included as part of some assembler generated code).
+        /// </summary>
+        /// <param name="source">The source address to start of assembled instructions.</param>
+        /// <param name="target">The target address to jump to.</param>
+        /// <param name="minCodeSize">Minimum size of code assembled at <paramref name="source"/>.</param>
+        /// <param name="is64Bit">True if 64 bit, else false.</param>
+        /// <param name="isRelative">True if the call is relative, else false.</param>
+        internal static string TryAssembleRelativeCallMnemonics_WithUnknownSourceAddress(nuint source, nuint target, int minCodeSize, bool is64Bit, out bool isRelative)
+        {
+            // If call is `20 bytes` after `source`, and target is behind source, we need 20 more bytes; hence our use of minCodeSize is ok.
+            // If call is `20 bytes` after `source`, and target is after source, we are 20 bytes closer and are also ok.
+            var minMax = GetRelativeJumpMinMax(source, Int32.MaxValue - minCodeSize);
+            isRelative = new AddressRange(minMax.min, minMax.max).Contains(target);
+            return isRelative ?
+                is64Bit ? $"call qword {target}" : $"call dword {target}" :
+                GetAbsoluteCallMnemonics(target, is64Bit);
         }
 
         /// <summary>

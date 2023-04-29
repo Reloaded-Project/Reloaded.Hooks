@@ -37,7 +37,19 @@ namespace Reloaded.Hooks.X86
         ///     resulting in a spectacular crash if it is still used anywhere.
         /// </remarks>
         /// <param name="function">The function to create a pointer to.</param>
-        public ReverseWrapper(TFunction function)
+        public ReverseWrapper(TFunction function) : this(function, new WrapperOptions()) { }
+        
+        /// <summary>
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
+        /// </summary>
+        /// <remarks>
+        ///     Please keep a reference to this class as long as you are using it (if <typeparamref name="TFunction"/> is a delegate type).
+        ///     Otherwise Garbage Collection will break the native function pointer to your C# function
+        ///     resulting in a spectacular crash if it is still used anywhere.
+        /// </remarks>
+        /// <param name="function">The function to create a pointer to.</param>
+        /// <param name="options">Options used for wrapper generation.</param>
+        public ReverseWrapper(TFunction function, WrapperOptions options)
         {
             CSharpFunction = function;
 
@@ -49,23 +61,30 @@ namespace Reloaded.Hooks.X86
             WrapperPointer = NativeFunctionPtr;
 
             // Call above may or may not replace WrapperPointer.
-            Create(this, NativeFunctionPtr.ToUnsigned());
+            Create(this, NativeFunctionPtr.ToUnsigned(), options);
         }
 
         /// <summary>
         /// Creates a wrapper function with a custom calling convention which calls the supplied function.
         /// </summary>
         /// <param name="function">Pointer of native function to wrap.</param>
-        public ReverseWrapper(nuint function)
+        public ReverseWrapper(nuint function) : this(function, new WrapperOptions()) { }
+        
+        /// <summary>
+        /// Creates a wrapper function with a custom calling convention which calls the supplied function.
+        /// </summary>
+        /// <param name="function">Pointer of native function to wrap.</param>
+        /// <param name="options">Options used for wrapper generation.</param>
+        public ReverseWrapper(nuint function, WrapperOptions options)
         {
             NativeFunctionPtr = function.ToSigned();
             WrapperPointer = NativeFunctionPtr;
 
             // Call above may or may not replace WrapperPointer.
-            Create(this, function);
+            Create(this, function, options);
         }
-
-        private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, nuint functionPtr)
+        
+        private static void Create(ReverseWrapper<TFunction> reverseFunctionWrapper, nuint functionPtr, WrapperOptions options)
         {
             var attribute = FunctionAttribute.GetAttribute<TFunction>();
 

@@ -106,33 +106,68 @@ namespace Reloaded.Hooks
 #endif
         TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention) => X64.Wrapper.Create<TFunction>(functionAddress.ToUnsigned(), fromConvention, toConvention).ToSigned();
 
+        public IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention, WrapperOptions options) => X86.Wrapper.Create<TFunction>(functionAddress.ToUnsigned(), fromConvention, FunctionAttribute.GetAttribute<TFunction>().GetEquivalent(Misc.TryGetAttributeOrDefault<TFunction, UnmanagedFunctionPointerAttribute>()), options).ToSigned();
+
+        public IntPtr CreateNativeWrapperX86<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(IntPtr functionAddress, IFunctionAttribute fromConvention,
+            IFunctionAttribute toConvention, WrapperOptions options) => X86.Wrapper.Create<TFunction>(functionAddress.ToUnsigned(), fromConvention, toConvention, options).ToSigned();
+
+        public IntPtr CreateNativeWrapperX64<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(IntPtr functionAddress, Definitions.X64.IFunctionAttribute fromConvention, Definitions.X64.IFunctionAttribute toConvention, WrapperOptions options) 
+            => X64.Wrapper.Create<TFunction>(functionAddress.ToUnsigned(), fromConvention, toConvention, options).ToSigned();
+
         public unsafe IntPtr CreateWrapper<
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
         TFunction>(long functionAddress)
+            => CreateWrapper<TFunction>(functionAddress, new WrapperOptions());
+
+        public unsafe IntPtr CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(long functionAddress, WrapperOptions options)
         {
             if (sizeof(IntPtr) == 4)
-                return X86.Wrapper.CreatePointer<TFunction>((nuint)functionAddress.ToUnsigned(), out _).ToSigned();
+                return X86.Wrapper.CreatePointer<TFunction>((nuint)functionAddress.ToUnsigned(), options, out _).ToSigned();
 
-            return X64.Wrapper.CreatePointer<TFunction>((nuint)functionAddress.ToUnsigned(), out _).ToSigned();
+            return X64.Wrapper.CreatePointer<TFunction>((nuint)functionAddress.ToUnsigned(), options, out _).ToSigned();
         }
 
         public unsafe TFunction CreateWrapper<
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
-        TFunction>(long functionAddress, out IntPtr wrapperAddress)
+        TFunction>(long functionAddress, out IntPtr wrapperAddress) 
+            => CreateWrapper<TFunction>(functionAddress, new WrapperOptions(), out wrapperAddress);
+        
+        
+        public unsafe TFunction CreateWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(long functionAddress, WrapperOptions options, out IntPtr wrapperAddress)
         {
             nuint wrapperAddr;
             if (sizeof(IntPtr) == 4)
             {
-                var res86 = X86.Wrapper.Create<TFunction>((nuint)functionAddress.ToUnsigned(), out wrapperAddr);
+                var res86 = X86.Wrapper.Create<TFunction>((nuint)functionAddress.ToUnsigned(), options, out wrapperAddr);
                 wrapperAddress = wrapperAddr.ToSigned();
                 return res86;
             }
 
-            var result = X64.Wrapper.Create<TFunction>((nuint)functionAddress.ToUnsigned(), out wrapperAddr);
+            var result = X64.Wrapper.Create<TFunction>((nuint)functionAddress.ToUnsigned(), options, out wrapperAddr);
             wrapperAddress = wrapperAddr.ToSigned();
             return result;
         }
@@ -141,7 +176,20 @@ namespace Reloaded.Hooks
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
-        TFunction>(TFunction function)
+        TFunction>(TFunction function) => CreateReverseWrapper(function, new WrapperOptions());
+
+        public unsafe IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+        TFunction>(IntPtr function) => CreateReverseWrapper<TFunction>(function, new WrapperOptions());
+        
+        
+        public unsafe IReverseWrapper<TFunction> CreateReverseWrapper<
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
+#endif
+            TFunction>(TFunction function, WrapperOptions options)
         {
             if (sizeof(IntPtr) == 4)
                 return new X86.ReverseWrapper<TFunction>(function);
@@ -153,7 +201,7 @@ namespace Reloaded.Hooks
 #if NET5_0_OR_GREATER
             [DynamicallyAccessedMembers(Trimming.ReloadedAttributeTypes)]
 #endif
-        TFunction>(IntPtr function)
+            TFunction>(IntPtr function, WrapperOptions options)
         {
             if (sizeof(IntPtr) == 4)
                 return new X86.ReverseWrapper<TFunction>(function.ToUnsigned());

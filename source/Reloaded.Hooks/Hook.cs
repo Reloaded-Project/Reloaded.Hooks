@@ -5,6 +5,7 @@ using System.Linq;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Internal;
+using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X86;
@@ -55,7 +56,7 @@ namespace Reloaded.Hooks
         public unsafe Hook(TFunction function, nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
-            ReverseWrapper = CreateReverseWrapper(function);
+            ReverseWrapper = CreateReverseWrapper(function, functionAddress);
             CreateHook(functionAddress, minHookLength, options);
         }
 
@@ -69,7 +70,7 @@ namespace Reloaded.Hooks
         public unsafe Hook(void* targetAddress, nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             _is64Bit = sizeof(IntPtr) == 8;
-            ReverseWrapper = CreateReverseWrapper(targetAddress);
+            ReverseWrapper = CreateReverseWrapper(targetAddress, functionAddress);
             CreateHook(functionAddress, minHookLength, options);
         }
 
@@ -79,7 +80,7 @@ namespace Reloaded.Hooks
         /// <param name="functionAddress">The address of the function to hook.</param>
         /// <param name="minHookLength">Optional explicit length of hook. Use only in rare cases where auto-length check overflows a jmp/call opcode.</param>
         /// <param name="options">Options which control the hook generation procedure.</param>
-        private void CreateHook(nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
+        private unsafe void CreateHook(nuint functionAddress, int minHookLength = -1, FunctionHookOptions options = null)
         {
             // Set options if not passed in.
             if (options == null)
@@ -101,6 +102,14 @@ namespace Reloaded.Hooks
 
                Note: For X64 the same principles apply, just replace CDECL with Microsoft calling convention.  
             */
+            
+            /*
+               Auto-prefer relative jump if there's already a relative jump in place.
+               Fixes an edge case with libraries like Steam which don't nop out remaining bytes after the jmp leading
+               to invalid instructions being copied.
+            */
+            if (*(byte*)functionAddress == 0xE9)
+                options.PreferRelativeJump = true;
 
             /* Create Target Convention => TFunction Wrapper. */
             var jumpOpcodes = options.PreferRelativeJump ?
@@ -179,20 +188,22 @@ namespace Reloaded.Hooks
             }
         }
 
-        protected IReverseWrapper<TFunction> CreateReverseWrapper(TFunction function)
+        protected IReverseWrapper<TFunction> CreateReverseWrapper(TFunction function, nuint proximityTarget)
         {
+            var target = new WrapperOptions(new ProximityTarget(proximityTarget));
             if (_is64Bit)
-                return new X64.ReverseWrapper<TFunction>(function);
+                return new X64.ReverseWrapper<TFunction>(function, target);
 
-            return new ReverseWrapper<TFunction>(function);
+            return new ReverseWrapper<TFunction>(function, target);
         }
 
-        protected unsafe IReverseWrapper<TFunction> CreateReverseWrapper(void* function)
+        protected unsafe IReverseWrapper<TFunction> CreateReverseWrapper(void* function, nuint proximityTarget)
         {
+            var target = new WrapperOptions(new ProximityTarget(proximityTarget));
             if (_is64Bit)
-                return new X64.ReverseWrapper<TFunction>((nuint)function);
+                return new X64.ReverseWrapper<TFunction>((nuint)function, target);
 
-            return new ReverseWrapper<TFunction>((nuint) function);
+            return new ReverseWrapper<TFunction>((nuint)function, target);
         }
 
         protected TFunction CreateWrapper(nuint functionAddress, out nuint wrapperAddress)
