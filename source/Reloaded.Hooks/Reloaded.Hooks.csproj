@@ -13,7 +13,7 @@
     <RepositoryType>git</RepositoryType>
 	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Description>Advanced native function hooks for x86, x64. Welcome to the next level!</Description>
-    <Version>4.3.1</Version>
+    <Version>4.3.2</Version>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageIcon>Icon.png</PackageIcon>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="Iced" Version="1.17.0" />
-    <PackageReference Include="Reloaded.Assembler" Version="1.0.14">
+    <PackageReference Include="Reloaded.Assembler" Version="1.0.14-mem-buffers-2.0">
       <IncludeAssets>All</IncludeAssets>
       <PrivateAssets>None</PrivateAssets>
     </PackageReference>
