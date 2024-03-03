@@ -1,0 +1,992 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://reloaded-project.github.io/Reloaded.Hooks/GettingStarted/">
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../FunctionPointers/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>Getting Started - Reloaded.Hooks Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="red">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#getting-started" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Reloaded.Hooks Documentation" class="md-header__button md-logo" aria-label="Reloaded.Hooks Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Reloaded.Hooks Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Getting Started
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Reloaded-Project/Reloaded.Hooks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Reloaded-Project/Reloaded.Hooks
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Reloaded.Hooks Documentation" class="md-nav__button md-logo" aria-label="Reloaded.Hooks Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Reloaded.Hooks Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Reloaded-Project/Reloaded.Hooks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Reloaded-Project/Reloaded.Hooks
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/Reloaded-Project/Reloaded.Hooks/issues/1" class="md-nav__link">
+        What's This?
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="true">
+          Manual
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Manual" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Manual
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Getting Started
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-reloadedhooks-to-your-project" class="md-nav__link">
+    Adding Reloaded.Hooks to your project.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prologue-definiting-functions" class="md-nav__link">
+    Prologue: Definiting Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Prologue: Definiting Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-reloaded-compatible-delegates" class="md-nav__link">
+    Defining Reloaded-Compatible Delegates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-native-cdecl-function" class="md-nav__link">
+    Example: Native CDECL Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-function-with-registers-as-parameters" class="md-nav__link">
+    Example: Function with registers as parameters
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Function with registers as parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deciphering-the-function-signature" class="md-nav__link">
+    Deciphering the Function Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-note-about-the-api" class="md-nav__link">
+    Important Note About the API
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calling-functions" class="md-nav__link">
+    Calling Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hooking-functions" class="md-nav__link">
+    Hooking Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Hooking Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-file-monitor" class="md-nav__link">
+    Example: File Monitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#marshalling-support" class="md-nav__link">
+    Marshalling Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pointers-to-net-functions" class="md-nav__link">
+    Pointers to .NET Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Pointers to .NET Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-assembly-code" class="md-nav__link">
+    In Assembly Code
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#misc-performance-notes" class="md-nav__link">
+    Misc Performance Notes
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FunctionPointers/" class="md-nav__link">
+        Function Pointers (C#9)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../AssemblyHooks/" class="md-nav__link">
+        Assembly Hooks (Advanced)
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Benchmarks/" class="md-nav__link">
+        Benchmarks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Utilities/" class="md-nav__link">
+        Extras & Utilities
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-reloadedhooks-to-your-project" class="md-nav__link">
+    Adding Reloaded.Hooks to your project.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prologue-definiting-functions" class="md-nav__link">
+    Prologue: Definiting Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Prologue: Definiting Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defining-reloaded-compatible-delegates" class="md-nav__link">
+    Defining Reloaded-Compatible Delegates
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-native-cdecl-function" class="md-nav__link">
+    Example: Native CDECL Function
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-function-with-registers-as-parameters" class="md-nav__link">
+    Example: Function with registers as parameters
+  </a>
+  
+    <nav class="md-nav" aria-label="Example: Function with registers as parameters">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deciphering-the-function-signature" class="md-nav__link">
+    Deciphering the Function Signature
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#important-note-about-the-api" class="md-nav__link">
+    Important Note About the API
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#calling-functions" class="md-nav__link">
+    Calling Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hooking-functions" class="md-nav__link">
+    Hooking Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Hooking Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#example-file-monitor" class="md-nav__link">
+    Example: File Monitor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#marshalling-support" class="md-nav__link">
+    Marshalling Support
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pointers-to-net-functions" class="md-nav__link">
+    Pointers to .NET Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Pointers to .NET Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#in-assembly-code" class="md-nav__link">
+    In Assembly Code
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#misc-performance-notes" class="md-nav__link">
+    Misc Performance Notes
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="getting-started">Getting Started</h1>
+<h2 id="introduction">Introduction</h2>
+<p>In this article, will quickly-ish demonstrate simple usage allowing you to get started with Reloaded.Hooks.</p>
+<p>As this library, was originally created to deal with modifying and reverse engineering games; many of the examples in this documentation show snippets of real game functions as opposed to common APIs. That said, nothing changes when hooking arbitrary APIs.</p>
+<h2 id="adding-reloadedhooks-to-your-project">Adding Reloaded.Hooks to your project.</h2>
+<ol>
+<li>Open/Create project in Visual Studio.</li>
+<li>Right-click your project within the Solution Explorer and select “Manage NuGet Packages…”.</li>
+<li>Search for "Reloaded.Hooks”.</li>
+<li>Install the package.</li>
+</ol>
+<h2 id="prologue-definiting-functions">Prologue: Definiting Functions</h2>
+<p>Calling, hooking and performing other operations with native functions with Reloaded.Hooks is performed through the use of delegate declarations.</p>
+<p>Reloaded.Hooks' main library is able to create individual <em>delegate</em> instances given supplied function addresses in memory - allowing you to use native functions as if they were your own.</p>
+<h3 id="defining-reloaded-compatible-delegates">Defining Reloaded-Compatible Delegates</h3>
+<p>Defining delegates to call native functions under Reloaded.Hooks is performed just like defining regular delegates with only one catch. <strong>You must inform Reloaded.Hooks of the kind of function you are going to call with the use of Reloaded's own <code>FunctionAttribute</code></strong>.</p>
+<p>There are two <code>FunctionAttribute</code>(s), namely <code>X86.FunctionAttribute</code> and <code>X64.FunctionAttribute</code> for x86 and x64 respectively. Depending on your project you may wish to apply one, the other or both.</p>
+<p>Note: Examples bwlow have been lifted from real pieces of source code.</p>
+<h3 id="example-native-cdecl-function">Example: Native CDECL Function</h3>
+<div class="highlight"><pre><span></span><code><span class="cm">/* RenderWare Graphics | Function that is step one to widescreen hacks in RenderWare games. */</span>
+<span class="na">[Function(CallingConventions.Cdecl)]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">delegate</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">RwCameraSetViewWindow</span><span class="p">(</span><span class="k">ref</span><span class="w"> </span><span class="n">RWCamera</span><span class="w"> </span><span class="n">RwCamera</span><span class="p">,</span><span class="w"> </span><span class="k">ref</span><span class="w"> </span><span class="n">RWView</span><span class="w"> </span><span class="n">view</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="example-function-with-registers-as-parameters">Example: Function with registers as parameters</h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>In the real world, compilers will often optimise function calls to optimise for performance. This will often lead to the function using non-standard conventions, such e.g. accepting parameters via registers where normally the stack should be used.  </p>
+<p>This is more common in x86 (32-bit) applications rather than x64 applications.  </p>
+</div>
+<p>Reloaded.Hooks allows for mapping parameters to given registers.  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">/// &lt;summary&gt;</span>
+<span class="c1">/// Reads a ANM/HAnim stream from a .ONE archive. Returns address of a decompressed ANM file.</span>
+<span class="c1">/// &lt;/summary&gt;</span>
+<span class="c1">/// &lt;param name=&quot;fileIndex&quot;&gt;[EAX] The index of the file inside the .ONE archive (starting with 2)&lt;/param&gt;</span>
+<span class="c1">/// &lt;param name=&quot;addressToDecompressTo&quot;&gt;[ECX] The address to which the file inside the ONE archive will be decompressed to.&lt;/param&gt;</span>
+<span class="c1">/// &lt;param name=&quot;thisPointer&quot;&gt;&quot;This&quot; pointer for the ONEFILE class instance.&lt;/param&gt;</span>
+<span class="c1">/// &lt;returns&gt;The address containing the read in ANM (RenderWare Hierarchical Animation) stream.&lt;/returns&gt;</span>
+<span class="na">[Function(new[]</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Register</span><span class="p">.</span><span class="n">eax</span><span class="p">,</span><span class="w"> </span><span class="n">Register</span><span class="p">.</span><span class="n">ecx</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">Register</span><span class="p">.</span><span class="n">eax</span><span class="p">,</span><span class="w"> </span><span class="n">StackCleanup</span><span class="p">.</span><span class="n">Callee</span><span class="p">)]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">delegate</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">OneFileLoadHAnimation</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">fileIndex</span><span class="p">,</span><span class="w"> </span><span class="k">void</span><span class="o">*</span><span class="w"> </span><span class="n">addressToDecompressTo</span><span class="p">,</span><span class="w"> </span><span class="k">ref</span><span class="w"> </span><span class="n">ONEFILE</span><span class="w"> </span><span class="n">thisPointer</span><span class="p">);</span>
+<span class="cm">/* Lifted from a disassembly of Sonic Heroes */</span>
+</code></pre></div>
+<p><em>This was an example of a custom function with the following properties:</em></p>
+<ul>
+<li>Two parameters (left to right) in registers <code>EAX</code> and <code>ECX</code>. </li>
+<li>Return register of <code>EAX</code>. </li>
+<li>"Callee" stack cleanup, i.e. the stack pointer is reset at the end of the function either via <code>ret X</code> (XXX Stdcall) or <code>add esp, X</code>. </li>
+</ul>
+<p>Those with some experience in reverse engineering might know that the popular IDA decompiler would identify such function as <code>userpurge</code>.</p>
+<p>For custom functions, under the hood <code>Reloaded.Hooks</code> creates wrappers that automatically convert between <a href="https://en.wikipedia.org/wiki/Calling_convention">calling conventions</a> such as the special one above that uses registers. These wrappers are actually what will be called behind the scenes as you call/hook your native functions, doing all the difficult work for you ❤.</p>
+<h4 id="deciphering-the-function-signature">Deciphering the Function Signature</h4>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Some disassemblers may contain useful information about how the function is called.<br />
+Below is guidance on deciphering the function signatures in some common disassemblers.  </p>
+<p>Please note that disassemblers are not perfect; they can and will sometimes make mistakes.</p>
+</div>
+<p><strong>IDA Pro (Decompiler):</strong> 
+<div class="highlight"><pre><span></span><code><span class="c1">// Example</span>
+<span class="k">void</span><span class="o">*</span><span class="w"> </span><span class="n">__userpurge</span><span class="w"> </span><span class="n">OneFileLoadHAnimation</span><span class="err">@</span><span class="o">&lt;</span><span class="n">eax</span><span class="o">&gt;</span><span class="p">(</span><span class="n">RwUInt32</span><span class="w"> </span><span class="n">type</span><span class="err">@</span><span class="o">&lt;</span><span class="n">eax</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="o">*</span><span class="n">dest</span><span class="err">@</span><span class="o">&lt;</span><span class="n">ecx</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ONEFILE</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">)</span>
+
+<span class="c1">// Breakdown</span>
+<span class="n">FUNCTION_NAME</span><span class="err">@</span><span class="o">&lt;</span><span class="n">eax</span><span class="o">&gt;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="n">specifies</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">register</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">EAX</span><span class="p">.</span>
+<span class="n">type</span><span class="err">@</span><span class="o">&lt;</span><span class="n">eax</span><span class="o">&gt;</span><span class="w"> </span><span class="n">specifies</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="err">`</span><span class="n">type</span><span class="err">`</span><span class="w"> </span><span class="n">argument</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">passed</span><span class="w"> </span><span class="n">via</span><span class="w"> </span><span class="n">EAX</span><span class="w"> </span><span class="n">register</span><span class="p">.</span>
+<span class="n">dest</span><span class="err">@</span><span class="o">&lt;</span><span class="n">ecx</span><span class="o">&gt;</span><span class="w"> </span><span class="n">specifies</span><span class="w"> </span><span class="n">the</span><span class="w"> </span><span class="err">`</span><span class="n">dest</span><span class="err">`</span><span class="w"> </span><span class="n">argument</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="n">passed</span><span class="w"> </span><span class="n">via</span><span class="w"> </span><span class="n">ECX</span><span class="w"> </span><span class="n">register</span><span class="p">.</span>
+<span class="n">remaining</span><span class="w"> </span><span class="n">parameters</span><span class="w"> </span><span class="n">are</span><span class="w"> </span><span class="n">passed</span><span class="w"> </span><span class="n">via</span><span class="w"> </span><span class="n">stack</span><span class="p">.</span>
+
+<span class="c1">// Extra Info (IDA Specific)</span>
+<span class="n">_userpurge</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Callee</span><span class="err">&#39;</span><span class="w"> </span><span class="n">Stack</span><span class="w"> </span><span class="n">Cleanup</span>
+<span class="n">_usercall</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="err">&#39;</span><span class="n">Caller</span><span class="err">&#39;</span><span class="w"> </span><span class="n">Stack</span><span class="w"> </span><span class="n">Cleanup</span>
+</code></pre></div></p>
+<p><strong>Ghidra:</strong> </p>
+<p>Right click function name and click <code>Edit Function</code>.<br />
+Inside the dialog, you will find the following:  </p>
+<p><img alt="EditFunction" src="../Images/GhidraFunctionRegisters.png" />  </p>
+<p>Note: Ghidra did not disassemble this correctly; I manually fixed this function for this example.  </p>
+<p><strong>Binary Ninja:</strong></p>
+<p>This one is pretty self explanatory.  </p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Example</span>
+<span class="k">void</span><span class="o">*</span><span class="w"> </span><span class="n">__stdcall</span><span class="w"> </span><span class="n">OneFileLoadHAnimation</span><span class="p">(</span><span class="n">int32_t</span><span class="w"> </span><span class="n">arg1</span><span class="w"> </span><span class="err">@</span><span class="w"> </span><span class="n">eax</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">arg2</span><span class="w"> </span><span class="err">@</span><span class="w"> </span><span class="n">ecx</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">arg3</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>General:</strong><br />
+Some disassemblers might not provide information on return registers and/or stack cleanup because they are implied by the given convention (such as <code>__stdcall</code>). Consider using the following presets in <code>Reloaded.Hooks</code> to determine these settings.  </p>
+<ul>
+<li><a href="https://github.com/Reloaded-Project/Reloaded.Hooks/blob/496d52fae5290a43ff2cbba0400b8ec46e6207b3/source/Reloaded.Hooks.Definitions/X86/CallingConventions.cs#L30">X86 Calling Conventions (Presets)</a></li>
+<li><a href="https://github.com/Reloaded-Project/Reloaded.Hooks/blob/496d52fae5290a43ff2cbba0400b8ec46e6207b3/source/Reloaded.Hooks.Definitions/X64/CallingConventions.cs#L24">X64 Calling Conventions (Presets)</a></li>
+</ul>
+<h3 id="important-note-about-the-api">Important Note About the API</h3>
+<p>This is just a quick note before we introduce any direct code examples.</p>
+<p>To make things convenient, high level functions for all the features of the library are available within the <code>ReloadedHooks</code> class (<code>Reloaded.Hooks.ReloadedHooks</code>). These automatically detect if the current process is x86/x64 and use the appropriate underlying API. </p>
+<p>Please assume any usage of <code>ReloadedHooks</code> is an instance of <code>Reloaded.Hooks.ReloadedHooks</code>, which you can get easily via <code>ReloadedHooks.Instance</code>.</p>
+<h2 id="calling-functions">Calling Functions</h2>
+<p>In order to create an instance of your own custom delegate from a supplied function pointer, <code>ReloadedHooks.CreateWrapper</code> function is used. These will return you an instance of your requested function at address which you can call like a native function.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Based on the delegate above.</span>
+<span class="kt">var</span><span class="w"> </span><span class="n">rwCameraSetViewWindow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReloadedHooks</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateWrapper</span><span class="o">&lt;</span><span class="n">RwCameraSetViewWindow</span><span class="o">&gt;</span><span class="p">(</span><span class="m">0</span><span class="n">x0064AC80</span><span class="p">);</span>
+
+<span class="c1">// You may now call the delegate instance/native/game fuction like if it was your own.</span>
+<span class="n">rwCameraSetViewWindow</span><span class="p">(</span><span class="n">camera</span><span class="p">,</span><span class="w"> </span><span class="n">view</span><span class="p">);</span>
+</code></pre></div>
+<p>Regarding the other, more complex nonstandard function seen above that has been optimized out by the compiler - nothing changes. The process is exactly the same and saves you having to write what would otherwise be custom inline assembly in the C++ world.</p>
+<p>Lower level APIs:</p>
+<ul>
+<li><code>Reloaded.Hooks.X86.Wrapper</code></li>
+<li><code>Reloaded.Hooks.X64.Wrapper</code></li>
+</ul>
+<h2 id="hooking-functions">Hooking Functions</h2>
+<p>The hooking of arbitrary functions in Reloaded can also be considered a simple walk in the park.
+Below is a simple example of how you could hook a Win32 API to print out all files being opened by the current program.</p>
+<h3 id="example-file-monitor">Example: File Monitor</h3>
+<div class="highlight"><pre><span></span><code><span class="cm">/* You MUST store the returned hook to prevent the Garbage Collector </span>
+<span class="cm">   from freeing your hook function (CreateFileAImpl). */</span>
+
+<span class="cm">/* Fields */</span>
+<span class="k">private</span><span class="w"> </span><span class="n">IHook</span><span class="o">&lt;</span><span class="n">CreateFileA</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_createFileAHook</span><span class="p">;</span><span class="w"> </span>
+
+<span class="cm">/* Constructor */</span>
+<span class="k">public</span><span class="w"> </span><span class="nf">SomeClass</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Get Address of Windows API function.</span>
+<span class="w">    </span><span class="n">IntPtr</span><span class="w"> </span><span class="n">kernel32Handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LoadLibraryW</span><span class="p">(</span><span class="s">&quot;kernel32&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">IntPtr</span><span class="w"> </span><span class="n">createFileAPointer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GetProcAddress</span><span class="p">(</span><span class="n">kernel32Handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;CreateFileA&quot;</span><span class="p">);</span><span class="w">  </span>
+
+<span class="w">    </span><span class="n">_createFileAHook</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReloadedHooks</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateHook</span><span class="o">&lt;</span><span class="n">CreateFileA</span><span class="o">&gt;</span><span class="p">(</span><span class="n">CreateFileAImpl</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="n">createFileAPointer</span><span class="p">).</span><span class="n">Activate</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="cm">/* Hook Function */</span>
+
+<span class="c1">/// &lt;summary&gt;</span>
+<span class="c1">/// Contains the implementation of the CreateFileA hook.</span>
+<span class="c1">/// Simply prints the file name to the console and calls + returns the original function.</span>
+<span class="c1">/// &lt;/summary&gt;</span>
+<span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">IntPtr</span><span class="w"> </span><span class="nf">CreateFileAImpl</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">FileAccess</span><span class="w"> </span><span class="n">access</span><span class="p">,</span><span class="w"> </span><span class="n">FileShare</span><span class="w"> </span><span class="n">share</span><span class="p">,</span><span class="w"> </span><span class="n">IntPtr</span><span class="w"> </span><span class="n">securityAttributes</span><span class="p">,</span><span class="w"> </span><span class="n">FileMode</span><span class="w"> </span><span class="n">creationDisposition</span><span class="p">,</span><span class="w"> </span><span class="n">FileAttributes</span><span class="w"> </span><span class="n">flagsAndAttributes</span><span class="p">,</span><span class="w"> </span><span class="n">IntPtr</span><span class="w"> </span><span class="n">templateFile</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// If statement filters out non-files such as HID devices;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">filename</span><span class="p">.</span><span class="n">StartsWith</span><span class="p">(</span><span class="s">@&quot;\\?\&quot;</span><span class="p">))</span>
+<span class="w">        </span><span class="n">Bindings</span><span class="p">.</span><span class="n">PrintInfo</span><span class="p">(</span><span class="s">$&quot;[CFA] Opening File {filename}&quot;</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// Calls the original function we hooked and returns its value.</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">_createFileAHook</span><span class="p">.</span><span class="n">OriginalFunction</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">access</span><span class="p">,</span><span class="w"> </span><span class="n">share</span><span class="p">,</span><span class="w"> </span><span class="n">securityAttributes</span><span class="p">,</span><span class="w"> </span><span class="n">creationDisposition</span><span class="p">,</span><span class="w"> </span><span class="n">flagsAndAttributes</span><span class="p">,</span><span class="w"> </span><span class="n">templateFile</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>There is nothing extra you need to do. <code>Reloaded.Hooks</code> handles everything for you under the hood such as calculating hook lengths and handling register parameters for special functions. You will never have to do silly error prone stuff such as writing custom inline assembler by hand. </p>
+<p>Reloaded's hooking code is really, really powerful, even patching common forms of hooks created by other programs and libraries for maximum compatibility (you can hook hooks!). For example, you can easily hook DirectX 9's <code>EndScene</code> or <code>Present</code> without breaking the Steam Overlay; this is something people normally struggle with and write dirty hacks to get around.</p>
+<p>Lower level APIs:</p>
+<ul>
+<li><code>Reloaded.Hooks.Hook</code></li>
+</ul>
+<h3 id="marshalling-support">Marshalling Support</h3>
+<p>As <code>Reloaded.Hooks</code> uses .NET delegates, for both hooking and calling function, there is support for extra features such as marshalling. Here is an example:</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/*</span>
+<span class="cm">    Within native code this individual function would be expressed as &quot;int PlayADX(char* fileName)&quot;,</span>
+<span class="cm">    here thanks to marshalling we are able to simply specify it as a string.</span>
+
+<span class="cm">    In this specific case, additionally, CharSet = CharSet.Ansi must be specified as the game from</span>
+<span class="cm">    which this function originates from did not use the Unicode encoding that is default in C#. </span>
+<span class="cm">*/</span>
+
+<span class="na">[Function(CallingConventions.Cdecl)]</span>
+<span class="p">[</span><span class="n">UnmanagedFunctionPointer</span><span class="p">(</span><span class="n">CallingConvention</span><span class="p">.</span><span class="n">Cdecl</span><span class="p">,</span><span class="w"> </span><span class="n">CharSet</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CharSet</span><span class="p">.</span><span class="n">Ansi</span><span class="p">)</span>
+<span class="k">public</span><span class="w"> </span><span class="k">delegate</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">PlayADX</span><span class="p">(</span><span class="kt">string</span><span class="w"> </span><span class="n">fileName</span><span class="p">);</span><span class="w"> </span>
+<span class="cm">/* Sourced from a clean room disassembly of Sonic Heroes */</span>
+</code></pre></div>
+<h2 id="pointers-to-net-functions">Pointers to .NET Functions</h2>
+<p>No hacking adventure would be ever complete with pointers to our own functions.</p>
+<p><code>Reloaded.Hooks</code> supports this and as you'd expect, making life very easy for you. You can even make pointers to C# functions with custom calling conventions; e.g. effectively create a <code>fastcall</code> method in C#.</p>
+<p>Support for this functionality is provided through the use of the <code>CreateReverseWrapper</code> function. This returns a class, which contains a property <code>WrapperPointer</code> that can be used to call the C# function from native code.</p>
+<div class="highlight"><pre><span></span><code><span class="cm">/*  You MUST store the returned ReverseWrapper to prevent the Garbage Collector </span>
+<span class="cm">    from freeing your function (CSharpFastcallFunction). */</span>
+
+<span class="c1">// Define an x86 fastcall function (via template).</span>
+<span class="c1">// Microsoft Fastcall passes first two parameters in registers ECX, EDX and returns value in EAX.</span>
+<span class="na">[Function(CallingConventions.Fastcall)]</span>
+<span class="k">public</span><span class="w"> </span><span class="k">delegate</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">FastcallExample</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="p">);</span>
+
+<span class="cm">/* Fields */</span>
+<span class="k">private</span><span class="w"> </span><span class="n">IReverseWrapper</span><span class="o">&lt;</span><span class="n">FastcallExample</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_reverseFunctionWrapper</span><span class="p">;</span>
+<span class="k">private</span><span class="w"> </span><span class="n">FastcallExample</span><span class="w">                  </span><span class="n">_functionWrapper</span><span class="p">;</span>
+
+<span class="cm">/* Main/Init Method */</span>
+<span class="k">void</span><span class="w"> </span><span class="nf">FastcallCSharpFunctionPointerTest</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="c1">// Create wrapper to make our &quot;C# fastcall&quot; function.</span>
+<span class="w">    </span><span class="n">_reverseFunctionWrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReloadedHooks</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateReverseWrapper</span><span class="o">&lt;</span><span class="n">FastcallExample</span><span class="o">&gt;</span><span class="p">(</span><span class="n">CSharpFastcallFunction</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// To prove our &quot;C# fastcall&quot; function works, let&#39;s just call it like a native function.</span>
+<span class="w">    </span><span class="n">_functionWrapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ReloadedHooks</span><span class="p">.</span><span class="n">Instance</span><span class="p">.</span><span class="n">CreateWrapper</span><span class="o">&lt;</span><span class="n">FastcallExample</span><span class="o">&gt;</span><span class="p">((</span><span class="kt">long</span><span class="p">)</span><span class="n">_reverseFunctionWrapper</span><span class="p">.</span><span class="n">WrapperPointer</span><span class="p">);</span>
+<span class="w">    </span><span class="n">_functionWrapper</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="cm">/* Function Implementation */</span>
+
+<span class="c1">/// &lt;summary&gt;</span>
+<span class="c1">/// When called through the address in reverseFunctionWrapper.Pointer,</span>
+<span class="c1">/// this function is now a &quot;fastcall&quot; function.</span>
+<span class="c1">/// &lt;/summary&gt;</span>
+<span class="c1">/// &lt;param name=&quot;a&quot;&gt;This number is passed via ECX register!&lt;/param&gt;</span>
+<span class="c1">/// &lt;param name=&quot;b&quot;&gt;This number is passed via EDX register!&lt;/param&gt;</span>
+<span class="c1">/// &lt;param name=&quot;c&quot;&gt;This number is on the stack.&lt;/param&gt;</span>
+<span class="k">private</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">void</span><span class="w"> </span><span class="nf">CSharpFastcallFunction</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">MessageBox</span><span class="p">.</span><span class="n">Show</span><span class="p">(</span><span class="s">$&quot;{a + b + c}&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Lower level APIs:</p>
+<ul>
+<li><code>Reloaded.Hooks.X86.ReverseWrapper</code></li>
+<li><code>Reloaded.Hooks.X64.ReverseWrapper</code></li>
+</ul>
+<h3 id="in-assembly-code">In Assembly Code</h3>
+<p>If you would like to call managed C# code from assembly code generated at run-time (such as <code>AsmHook</code>), consider using the <code>ReloadedHooksUtilities.GetAbsoluteCallMnemonics</code> helper function to generate the appropriate x86/x64 call instruction.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// SomeFunction is a Stdcall C# function accepting two integers.</span>
+<span class="c1">// _reverseWrapAddFunction is a `ReverseWrapper`, it is a class member.</span>
+<span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>
+<span class="p">{</span>
+<span class="w">    </span><span class="s">$&quot;use32&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="c1">// Backup registers meant to be saved by caller. </span>
+<span class="w">    </span><span class="c1">// Not always necessary but good practice to do so!</span>
+<span class="w">    </span><span class="s">$&quot;{Utilities.PushCdeclCallerSavedRegisters()}&quot;</span><span class="w"> </span>
+
+<span class="w">    </span><span class="s">$&quot;push ecx&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// Right Parameter</span>
+<span class="w">    </span><span class="s">$&quot;push edx&quot;</span><span class="p">,</span><span class="w"> </span><span class="c1">// Left Parameter</span>
+<span class="w">    </span><span class="s">$&quot;{Utilities.GetAbsoluteCallMnemonics(SomeFunction, out _reverseWrapAddFunction)}&quot;</span><span class="p">,</span>
+
+<span class="w">    </span><span class="c1">// Restore backed up registers.</span>
+<span class="w">    </span><span class="s">$&quot;{Utilities.PopCdeclCallerSavedRegisters()}&quot;</span><span class="w"> </span>
+<span class="w">    </span><span class="s">$&quot;ret&quot;</span>
+<span class="p">};</span>
+
+<span class="c1">// You should reference the ReverseWrapper (out parameter) as long as you plan on using the</span>
+<span class="c1">// native/ASM function. Failure to do so will cause issues after Garbage Collection occurs. </span>
+</code></pre></div>
+<p>The calling convention of your C# function is controlled by <code>UnmanagedFunctionPointerAttribute</code> for Delegates (default is <code>StdCall</code>). While not always necessary*, it is good practice that you wrap your call with <code>PushCdeclCallerSavedRegisters</code> and <code>PopCdeclCallerSavedRegisters</code> respectively (for both Cdecl and Stdcall). </p>
+<p>For a more advanced example, consider looking at <a href="https://github.com/Reloaded-Project/Reloaded.Hooks/blob/2f58cee30ffc144cd33142ab46f194a4fdf2cdef/Source/Reloaded.Hooks.Tests.X64/CSharpFromAssembly.cs#L102">CSharpFromAssembly.cs</a> from Reloaded.Hooks' test code.</p>
+<p>* This depends on context; if using an assembly hook, the original function might be doing the backup/restore for you already. If you are unsure, you should always backup and restore.</p>
+<h2 id="misc-performance-notes">Misc Performance Notes</h2>
+<ul>
+<li>Reloaded has checks and 'hot paths' implemented to prevent creating unnecessary wrappers.</li>
+<li>
+<p>For example, if you call <code>CreateReverseWrapper&lt;T&gt;</code> for a function marked <code>Stdcall</code> with <code>FunctionAttribute</code> and the target function is already Stdcall, no wrapper will be generated and the input pointer will be returned.</p>
+</li>
+<li>
+<p>You can reduce the overhead of transitions between native code and .NET by <a href="../FunctionPointers/">using Function Pointers</a> (C#9).</p>
+</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+      
+      
+    
+    <a href="https://github.com/Sewer56" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+      
+      
+    
+    <a href="https://twitter.com/TheSewer56" target="_blank" rel="noopener" title="twitter.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+    
+  </body>
+</html>
