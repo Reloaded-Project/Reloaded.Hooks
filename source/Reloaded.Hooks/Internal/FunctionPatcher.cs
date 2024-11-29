@@ -168,6 +168,8 @@ namespace Reloaded.Hooks.Internal
         private nuint GetRewriteRIPRelativeJumpTarget(Instruction instruction)
         {
             var pointerAddress = instruction.IPRelativeMemoryAddress;
+            if (Utilities.IsBadReadPtr((IntPtr)pointerAddress)) 
+                return 0;
             CurrentProcess.Read((nuint)pointerAddress, out nuint targetAddress);
             return targetAddress;
         }
