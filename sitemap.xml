@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/AssemblyHooks/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/Benchmarks/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/FunctionPointers/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/GettingStarted/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://reloaded-project.github.io/Reloaded.Hooks/Utilities/</loc>
+         <lastmod>2024-11-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+</urlset>
