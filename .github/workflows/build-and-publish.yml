@@ -25,7 +25,7 @@ jobs:
         shell: pwsh
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     
@@ -41,12 +41,6 @@ jobs:
         # Optional SDK version(s) to use. If not provided, will install global.json version when available. Examples: 2.2.104, 3.1, 3.1.x
         dotnet-version: 7.0.x
         include-prerelease: true
-    
-    # Required for C#10 features.
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
 
     - name: Setup AutoChangelog
       run: npm install -g auto-changelog
@@ -90,7 +84,7 @@ jobs:
         }
         
     - name: Upload NuGet Package Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: NuGet Packages
@@ -100,7 +94,7 @@ jobs:
           ${{ env.RELOADED_HOOKS_DEFINITIONS_NUPKG_GLOB }}
         
     - name: Upload Changelog Artifact
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v4
       with:
         # Artifact name
         name: Changelog
@@ -110,7 +104,7 @@ jobs:
         
         
     - name: Upload to GitHub Releases
-      uses: softprops/action-gh-release@v0.1.14
+      uses: softprops/action-gh-release@v2.1.0
       if: env.IS_RELEASE == 'true'
       with:
         # Path to load note-worthy description of changes in release from
