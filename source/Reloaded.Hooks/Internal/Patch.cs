@@ -1,6 +1,5 @@
 ﻿using System;
-using Reloaded.Memory.Sources;
-using static Reloaded.Memory.Sources.Memory;
+using Reloaded.Hooks.Tools;
 
 namespace Reloaded.Hooks.Internal
 {
@@ -23,7 +22,7 @@ namespace Reloaded.Hooks.Internal
         /// </summary>
         public void Apply()
         {
-            CurrentProcess.SafeWriteRaw(_address, _bytes);
+            Utilities.SafeWriteRaw(_address, _bytes);
         }
 
         /// <summary>

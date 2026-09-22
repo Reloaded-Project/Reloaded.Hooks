@@ -18,7 +18,7 @@ namespace Reloaded.Hooks.Tests.X64
     public class CSharpFromAssembly
     {
         private Assembler.Assembler _assembler  = new Assembler.Assembler();
-        private Memory.Sources.Memory _memory   = new Memory.Sources.Memory();
+        private Reloaded.Memory.Memory _memory  = Reloaded.Memory.Memory.Instance;
 
         private Function<ManagedCalculator.AddFunction>       _addFunction;
         private Function<ManagedCalculator.SubtractFunction>  _subtractFunction;
@@ -167,7 +167,7 @@ namespace Reloaded.Hooks.Tests.X64
         private nuint CreateAsmFunction(string[] function)
         {
             var result  = _assembler.Assemble(function);
-            var address = _memory.Allocate(result.Length);
+            var address = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(address, result);
             return address;
         }

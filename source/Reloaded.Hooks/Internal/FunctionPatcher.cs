@@ -7,8 +7,6 @@ using Iced.Intel;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Sources;
-using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks.Internal
 {
@@ -168,10 +166,9 @@ namespace Reloaded.Hooks.Internal
         private nuint GetRewriteRIPRelativeJumpTarget(Instruction instruction)
         {
             var pointerAddress = instruction.IPRelativeMemoryAddress;
-            if (Utilities.IsBadReadPtr((IntPtr)pointerAddress)) 
+            if (Utilities.IsBadReadPtr((IntPtr)pointerAddress))
                 return 0;
-            CurrentProcess.Read((nuint)pointerAddress, out nuint targetAddress);
-            return targetAddress;
+            return Utilities.Read<nuint>((nuint)pointerAddress);
         }
 
         private JumpDetails RewriteRelativeJump(Instruction instruction, FunctionPatch patch)
@@ -394,12 +391,12 @@ namespace Reloaded.Hooks.Internal
             byte[] memory;
             try
             {
-                CurrentProcess.ReadRaw(address, out memory, size);
+                memory = Utilities.ReadRaw(address, size);
             }
             catch (Exception)
             {
                 /* Ignore exception, and only take 2nd one. */
-                CurrentProcess.SafeReadRaw(address, out memory, size);
+                memory = Utilities.SafeReadRaw(address, size);
             }
 
             return memory;

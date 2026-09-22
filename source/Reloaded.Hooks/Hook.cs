@@ -8,8 +8,6 @@ using Reloaded.Hooks.Definitions.Internal;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
 using Reloaded.Hooks.X86;
-using Reloaded.Memory.Sources;
-using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
 { 
@@ -116,7 +114,7 @@ namespace Reloaded.Hooks
             Utilities.FillArrayUntilSize<byte>(jumpOpcodes, 0x90, minHookLength);
 
             /* Get bytes from original function prologue and patch them. */
-            CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, minHookLength);
+            var originalFunction = Utilities.SafeReadRaw(functionAddress, minHookLength);
 
             var functionPatcher   = new FunctionPatcher(_is64Bit, options);
             var functionPatch     = functionPatcher.Patch(originalFunction.ToList(), functionAddress);
@@ -139,7 +137,7 @@ namespace Reloaded.Hooks
         {
             /* Create enable/disable patch. */
             var disableOpCodes = Utilities.AssembleAbsoluteJump(OriginalFunctionAddress.ToUnsigned(), _is64Bit);
-            CurrentProcess.SafeReadRaw(ReverseWrapper.WrapperPointer.ToUnsigned(), out var originalOpcodes, disableOpCodes.Length);
+            var originalOpcodes = Utilities.SafeReadRaw(ReverseWrapper.WrapperPointer.ToUnsigned(), disableOpCodes.Length);
             _disableHookPatch = new Patch(ReverseWrapper.WrapperPointer.ToUnsigned(), disableOpCodes);
             _enableHookPatch = new Patch(ReverseWrapper.WrapperPointer.ToUnsigned(), originalOpcodes);
 

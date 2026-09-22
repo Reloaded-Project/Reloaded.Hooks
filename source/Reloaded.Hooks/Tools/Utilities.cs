@@ -12,7 +12,10 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.Definitions.Structs;
 using Reloaded.Hooks.Internal;
+using Reloaded.Memory;
 using Reloaded.Memory.Buffers;
+using Reloaded.Memory.Buffers.Structs.Params;
+using Reloaded.Memory.Interfaces;
 using static Reloaded.Hooks.Internal.Native.MEM_PROTECTION;
 
 namespace Reloaded.Hooks.Tools
@@ -26,12 +29,59 @@ namespace Reloaded.Hooks.Tools
         public static Assembler.Assembler Assembler { get; }
 
         private static object _lock = new object();
-        private static MemoryBufferHelper _bufferHelper;
+
+        private static readonly object _bufferLock = new object();
+        private static readonly List<MemoryBuffer> _buffers = new List<MemoryBuffer>();
 
         static Utilities()
         {
-            Assembler     = new Assembler.Assembler();
-            _bufferHelper = new MemoryBufferHelper(Process.GetCurrentProcess());
+            Assembler = new Assembler.Assembler();
+        }
+
+        /// <summary>
+        /// The current process' memory, used for reading/writing.
+        /// </summary>
+        internal static Reloaded.Memory.Memory CurrentProcess { get; } = Reloaded.Memory.Memory.Instance;
+
+        /// <summary>
+        /// Reads a number of bytes from process memory, temporarily changing page protection if needed.
+        /// </summary>
+        internal static byte[] SafeReadRaw(nuint address, int length)
+        {
+            var buffer = new byte[length];
+            CurrentProcess.SafeRead(address, buffer);
+            return buffer;
+        }
+
+        /// <summary>
+        /// Reads a number of bytes from process memory.
+        /// </summary>
+        internal static byte[] ReadRaw(nuint address, int length) => CurrentProcess.ReadRaw(address, length);
+
+        /// <summary>
+        /// Writes a number of bytes to process memory, temporarily changing page protection if needed.
+        /// </summary>
+        internal static void SafeWriteRaw(nuint address, byte[] bytes) => CurrentProcess.SafeWrite(address, bytes);
+
+        /// <summary>
+        /// Reads an unmanaged value from process memory.
+        /// </summary>
+        internal static T Read<T>(nuint address) where T : unmanaged
+        {
+            CurrentProcess.Read(address, out T value);
+            return value;
+        }
+
+        /// <summary>
+        /// Writes an unmanaged value to process memory, temporarily changing page protection if needed.
+        /// </summary>
+        internal static unsafe void SafeWrite<T>(nuint address, in T value) where T : unmanaged
+        {
+            var buffer = new byte[sizeof(T)];
+            fixed (byte* bufferPtr = buffer)
+                *(T*)bufferPtr = value;
+
+            CurrentProcess.SafeWrite(address, buffer);
         }
 
         private static string Architecture(bool is64bit) => is64bit ? "use64" : "use32";
@@ -495,8 +545,28 @@ namespace Reloaded.Hooks.Tools
         /// <exception cref="Exception">Unable to find or create a buffer in given range.</exception>
         public static MemoryBuffer FindOrCreateBufferInRange(int size, nuint minimumAddress = 1, nuint maximumAddress = int.MaxValue, int alignment = 4)
         {
-            var buffers = _bufferHelper.FindBuffers(size + alignment, minimumAddress, maximumAddress);
-            return buffers.Length > 0 ? buffers[0] : _bufferHelper.CreateMemoryBuffer(size, minimumAddress, maximumAddress);
+            int requiredSize = size + alignment;
+
+            lock (_bufferLock)
+            {
+                foreach (var existing in _buffers)
+                {
+                    if (existing.CanFit(requiredSize, minimumAddress, maximumAddress))
+                        return existing;
+                }
+
+                var settings = new BufferAllocatorSettings
+                {
+                    MinAddress = minimumAddress,
+                    MaxAddress = maximumAddress,
+                    Size       = (uint)Math.Max(requiredSize, Environment.SystemPageSize)
+                };
+
+                var allocation = Reloaded.Memory.Buffers.Buffers.AllocatePrivateMemory(settings);
+                var buffer     = new MemoryBuffer(allocation);
+                _buffers.Add(buffer);
+                return buffer;
+            }
         }
 
         /*

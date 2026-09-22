@@ -150,7 +150,7 @@ namespace Reloaded.Hooks.X86
                     assemblyCode.Add($"mov {toConvention.ReturnRegister}, {fromConvention.ReturnRegister}");
 
                 // Callee Restore Registers
-                foreach (var register in toConvention.CalleeSavedRegisters.Reverse())
+                foreach (var register in Enumerable.Reverse(toConvention.CalleeSavedRegisters))
                     assemblyCode.Add($"pop {register}");
 
                 assemblyCode.Add("pop ebp");

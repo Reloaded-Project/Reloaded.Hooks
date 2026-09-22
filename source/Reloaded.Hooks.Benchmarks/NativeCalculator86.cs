@@ -7,7 +7,7 @@ namespace Reloaded.Hooks.Benchmarks
     {
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();
-        private Memory.Sources.Memory _memory  = new Memory.Sources.Memory();
+        private Reloaded.Memory.Memory _memory = Reloaded.Memory.Memory.Instance;
 
         public NativeCalculator86()
         {
@@ -17,7 +17,7 @@ namespace Reloaded.Hooks.Benchmarks
         [ExcludeFromCodeCoverage]
         public void Dispose()
         {
-            _memory.Free(Add);
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Add, (nuint)0));
             _assembler.Dispose();
         }
 
@@ -32,7 +32,7 @@ namespace Reloaded.Hooks.Benchmarks
             };
 
             var result = _assembler.Assemble(addFunction);
-            Add = _memory.Allocate(result.Length);
+            Add = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(Add, result);
         }
     }

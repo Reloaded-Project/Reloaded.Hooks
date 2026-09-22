@@ -193,7 +193,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void CallRewrittenRelativeJmp()
         {
             var functionPatcher = new FunctionPatcher(Environment.Is64BitProcess);
-            Memory.Sources.Memory.CurrentProcess.ReadRaw(_relativeJmpPtr, out byte[] originalBytes, _relativeJmpLength);
+            var originalBytes = Reloaded.Memory.Memory.Instance.ReadRaw(_relativeJmpPtr, _relativeJmpLength);
             var patch = functionPatcher.Patch(originalBytes.ToList(), _relativeJmpPtr);
 
             var buffer = Utilities.FindOrCreateBufferInRange(patch.NewFunction.Count);
@@ -206,7 +206,7 @@ namespace Reloaded.Hooks.Tests.X64
         public void CallRewrittenPushReturn()
         {
             var functionPatcher = new FunctionPatcher(Environment.Is64BitProcess);
-            Memory.Sources.Memory.CurrentProcess.ReadRaw(_pushReturnPtr, out byte[] originalBytes, _pushReturnLength);
+            var originalBytes = Reloaded.Memory.Memory.Instance.ReadRaw(_pushReturnPtr, _pushReturnLength);
             var patch = functionPatcher.Patch(originalBytes.ToList(), _pushReturnPtr);
 
             var buffer = Utilities.FindOrCreateBufferInRange(patch.NewFunction.Count);

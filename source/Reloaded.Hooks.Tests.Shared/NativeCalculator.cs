@@ -51,7 +51,7 @@ namespace Reloaded.Hooks.Tests.Shared
 
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();
-        private Memory.Sources.Memory _memory  = new Memory.Sources.Memory();
+        private Reloaded.Memory.Memory _memory = Reloaded.Memory.Memory.Instance;
 
         /* For testing VTable */
         public enum VTableFunctions
@@ -79,10 +79,10 @@ namespace Reloaded.Hooks.Tests.Shared
         [ExcludeFromCodeCoverage]
         public void Dispose()
         {
-            _memory.Free(Add);
-            _memory.Free(Subtract);
-            _memory.Free(Multiply);
-            _memory.Free(Divide);
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Add, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Subtract, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Multiply, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Divide, (nuint)0));
             _assembler.Dispose();
         }
 
