@@ -50,7 +50,7 @@ namespace Reloaded.Hooks.Tests.Shared
 
         // Used for cleaning up function later.
         private Assembler.Assembler _assembler = new Assembler.Assembler();
-        private Memory.Sources.Memory _memory  = new Memory.Sources.Memory();
+        private Reloaded.Memory.Memory _memory = Reloaded.Memory.Memory.Instance;
 
         /* For testing VTable */
         public enum VTableFunctions
@@ -75,10 +75,10 @@ namespace Reloaded.Hooks.Tests.Shared
         [ExcludeFromCodeCoverage]
         public void Dispose()
         {
-            _memory.Free(Add);
-            _memory.Free(Subtract);
-            _memory.Free(Multiply);
-            _memory.Free(Divide);
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Add, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Subtract, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Multiply, (nuint)0));
+            _memory.Free(new Reloaded.Memory.Structs.MemoryAllocation(Divide, (nuint)0));
             _assembler.Dispose();
         }
 
@@ -100,7 +100,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(addFunction);
-            Add = _memory.Allocate(result.Length);
+            Add = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(Add, result);
         }
 
@@ -120,7 +120,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(multiplyFunction);
-            Multiply = _memory.Allocate(result.Length);
+            Multiply = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(Multiply, result);
         }
 
@@ -142,7 +142,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(divideFunction);
-            Divide = _memory.Allocate(result.Length);
+            Divide = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(Divide, result);
         }
 
@@ -162,7 +162,7 @@ namespace Reloaded.Hooks.Tests.Shared
             };
 
             var result = _assembler.Assemble(subtractFunction);
-            Subtract = _memory.Allocate(result.Length);
+            Subtract = _memory.Allocate((nuint)result.Length).Address;
             _memory.WriteRaw(Subtract, result);
         }
 

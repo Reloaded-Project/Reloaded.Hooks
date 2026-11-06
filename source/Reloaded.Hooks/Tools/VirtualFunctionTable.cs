@@ -4,8 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
 using Reloaded.Hooks.X64;
-using Reloaded.Memory.Sources;
-using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks.Tools
 {
@@ -99,7 +97,7 @@ namespace Reloaded.Hooks.Tools
 
         private static List<TableEntry> GetObjectVTableAddresses(nuint objectAddress, int numberOfMethods)
         {
-            CurrentProcess.SafeRead(objectAddress, out nuint virtualFunctionTableAddress);
+            var virtualFunctionTableAddress = Utilities.Read<nuint>(objectAddress);
             return VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
         }
     }
@@ -126,7 +124,7 @@ public static class VirtualFunctionTableHelpers
         {
             var targetAddress = tablePointer + (nuint)(IntPtr.Size * i);
 
-            CurrentProcess.SafeRead(targetAddress, out IntPtr functionPtr);
+            var functionPtr = Reloaded.Hooks.Tools.Utilities.Read<IntPtr>(targetAddress);
             tablePointers.Add(new TableEntry
             {
                 EntryAddress = targetAddress.ToSigned(),

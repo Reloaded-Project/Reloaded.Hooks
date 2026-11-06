@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Helpers;
-using static Reloaded.Memory.Sources.Memory;
-using Reloaded.Memory.Sources;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Reloaded.Hooks.Tools
@@ -42,7 +40,7 @@ namespace Reloaded.Hooks.Tools
             internal unsafe VTableEntryHook(HookedObjectVirtualFunctionTable vTableHook, nuint originalVirtualFunctionTableAddress, int index,
                 TFunction function)
             {
-                CurrentProcess.SafeRead(originalVirtualFunctionTableAddress + (nuint)(index * sizeof(nuint)), out nuint originalFunctionAddress);
+                var originalFunctionAddress = Utilities.Read<nuint>(originalVirtualFunctionTableAddress + (nuint)(index * sizeof(nuint)));
 
                 _vTableHook = vTableHook;
                 _index = index;
@@ -159,7 +157,7 @@ namespace Reloaded.Hooks.Tools
         /// </param>
         public static HookedObjectVirtualFunctionTable FromObject(nuint objectAddress, int numberOfMethods)
         {
-            CurrentProcess.SafeRead(objectAddress, out nuint virtualFunctionTableAddress);
+            var virtualFunctionTableAddress = Utilities.Read<nuint>(objectAddress);
             var table = VirtualFunctionTableHelpers.GetAddresses(virtualFunctionTableAddress, numberOfMethods);
             return new HookedObjectVirtualFunctionTable(objectAddress, virtualFunctionTableAddress, table);
         }
@@ -201,7 +199,7 @@ namespace Reloaded.Hooks.Tools
                 _newVTableForObject[i] = table[i].FunctionPointer.ToUnsigned();
 
             _pinnedNewVTableForObject = GCHandle.Alloc(_newVTableForObject, GCHandleType.Pinned);
-            CurrentProcess.SafeWrite(objectAddress, _pinnedNewVTableForObject.AddrOfPinnedObject());
+            Utilities.SafeWrite<IntPtr>(objectAddress, _pinnedNewVTableForObject.AddrOfPinnedObject());
         }
 
         private void SetHookedVTableEntry(int index, nuint newEntry)

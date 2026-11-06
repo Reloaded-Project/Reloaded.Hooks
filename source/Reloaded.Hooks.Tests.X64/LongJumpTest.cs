@@ -6,7 +6,6 @@ using Reloaded.Hooks.Tools;
 using Xunit;
 using static Reloaded.Hooks.Definitions.X64.FunctionAttribute;
 using static Reloaded.Hooks.Tests.Shared.Macros.Macros;
-using static Reloaded.Memory.Sources.Memory;
 using CallingConventions = Reloaded.Hooks.Definitions.X86.CallingConventions;
 
 namespace Reloaded.Hooks.Tests.X64;
@@ -44,7 +43,7 @@ public class LongJumpTest
         var tgtMethod = ReloadedHooks.Instance.CreateFunction<GetValueFunction>(target.ToSigned());
         Assert.Equal(expectedResult, tgtMethod.GetWrapper()());
 
-        CurrentProcess.WriteRaw(src, Utilities.AssembleRelativeJump(src, target, Environment.Is64BitProcess));
+        Reloaded.Memory.Memory.Instance.WriteRaw(src, Utilities.AssembleRelativeJump(src, target, Environment.Is64BitProcess));
 
         // Call the code.
         var srcMethod = ReloadedHooks.Instance.CreateFunction<GetValueFunction>(src.ToSigned());

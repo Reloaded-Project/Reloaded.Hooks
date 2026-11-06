@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Iced.Intel;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Buffers;
 
 namespace Reloaded.Hooks.Internal
 {
@@ -14,8 +12,6 @@ namespace Reloaded.Hooks.Internal
     /// </summary>
     public class IcedPatcher
     {
-        private static MemoryBufferHelper _helper = new MemoryBufferHelper(Process.GetCurrentProcess());
-
         // In
         private int _bitness;
         private byte[] _bytes;

@@ -1,8 +1,7 @@
-﻿using static Reloaded.Memory.Buffers.Internal.Kernel32.Kernel32;
+﻿using static Reloaded.Memory.Buffers.Native.Windows.Kernel32;
 using System.Diagnostics;
 using System;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Buffers;
 
 namespace Reloaded.Hooks.Tests.Shared;
 
@@ -13,21 +12,20 @@ public interface IMemoryAllocator
     public nuint Write(byte[] data)
     {
         var ptr = Allocate(data.Length);
-        Memory.Sources.Memory.CurrentProcess.WriteRaw(ptr, data);
+        Reloaded.Memory.Memory.Instance.WriteRaw(ptr, data);
         return ptr;
     }
 }
 
 public class ReloadedMemoryAllocator : IMemoryAllocator
 {
-    public nuint Allocate(int size) => Memory.Sources.Memory.CurrentProcess.Allocate(size);
+    public nuint Allocate(int size) => Reloaded.Memory.Memory.Instance.Allocate((nuint)size).Address;
 }
 
 public class LowMemoryAllocator : IMemoryAllocator
 {
     private nuint _minAddress;
     private nuint _maxAddress;
-    private MemoryBufferHelper _helper = new(Process.GetCurrentProcess());
 
     public LowMemoryAllocator(nuint size = 0x10000000) // 256MB
     {
@@ -46,7 +44,6 @@ public class HighMemoryAllocator : IMemoryAllocator
 {
     private nuint _minAddress;
     private nuint _maxAddress;
-    private MemoryBufferHelper _helper = new(Process.GetCurrentProcess());
 
     public HighMemoryAllocator(nuint size = 0x1F00000)
     {
@@ -64,7 +61,7 @@ public class HighMemoryAllocator : IMemoryAllocator
 public class MemoryAllocatorHelpers
 {
     /// <summary>
-    /// Returns the max addressable address of the process sitting behind the <see cref="MemoryBufferHelper"/>.
+    /// Returns the max addressable address of the current process.
     /// </summary>
     public static UIntPtr GetMaxAddress(bool largeAddressAware = false)
     {

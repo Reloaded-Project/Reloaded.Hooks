@@ -5,7 +5,6 @@ using System.Text;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.X64;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Interop;
 using CallingConventions = Reloaded.Hooks.Definitions.X86.CallingConventions;
 
 namespace Reloaded.Hooks.Tests.Shared

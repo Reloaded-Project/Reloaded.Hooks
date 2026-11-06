@@ -6,9 +6,6 @@ using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Internal;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Buffers;
-using Reloaded.Memory.Sources;
-using static Reloaded.Memory.Sources.Memory;
 
 namespace Reloaded.Hooks
 {
@@ -17,8 +14,6 @@ namespace Reloaded.Hooks
     /// </summary>
     public unsafe class AsmHook : IAsmHook
     {
-        private static Memory.Sources.Memory _memory = CurrentProcess;
-
         /// <inheritdoc />
         public bool IsEnabled { get; private set; } = false;
 
@@ -131,7 +126,7 @@ namespace Reloaded.Hooks
             if (options.hookLength == -1)
                 options.hookLength = Utilities.GetHookLength(functionAddress, options.MaxOpcodeSize, _is64Bit);
 
-            CurrentProcess.SafeReadRaw(functionAddress, out byte[] originalFunction, options.hookLength);
+            var originalFunction = Utilities.SafeReadRaw(functionAddress, options.hookLength);
 
             nuint jumpBackAddress = functionAddress + (nuint)options.hookLength;
 

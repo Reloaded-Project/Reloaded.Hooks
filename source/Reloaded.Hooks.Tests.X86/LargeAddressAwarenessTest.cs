@@ -7,9 +7,7 @@ using Reloaded.Hooks.Definitions.Enums;
 using Reloaded.Hooks.Tests.Shared;
 using Reloaded.Hooks.Tests.Shared.Macros;
 using Reloaded.Hooks.Tools;
-using Reloaded.Memory.Buffers;
 using Xunit;
-using static Reloaded.Memory.Buffers.Internal.Kernel32.Kernel32;
 
 namespace Reloaded.Hooks.Tests.X86
 {
@@ -32,7 +30,7 @@ namespace Reloaded.Hooks.Tests.X86
         }
 
         /// <summary>
-        /// Attempts to create a set of <see cref="MemoryBuffer"/>s at the beginning and end of the
+        /// Attempts to create a set of memory buffers at the beginning and end of the
         /// address space, and then find the given buffers.
         /// </summary>
         [Fact(Skip = "This test needs to be ran manually with a patched test runner.")]
